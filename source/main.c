@@ -2,18 +2,26 @@
 
 int main(){
     InitWindow(800, 450, "Poder e Corrupcao");
-
     SetTargetFPS(60);
-    while (!WindowShouldClose())
-    {
+
+    Texture2D titulo = LoadTexture("assets/titulo.png");
+
+    int tamanhoFonte = 100;
+    float espacos = 2;
+
+    while (!WindowShouldClose()){
         BeginDrawing();
 
         ClearBackground(RAYWHITE);
-        DrawText("Poder e Corrupção", 350, 200, 20, BLACK);
+
+        DrawTexture(titulo,
+                    (GetScreenWidth() - titulo.width) / 2,
+                    (GetScreenHeight() - titulo.height) / 2,
+                    WHITE);
 
         EndDrawing();
     }
-
+    UnloadTexture(titulo);
     CloseWindow();
 
     return 0;
