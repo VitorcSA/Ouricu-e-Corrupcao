@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/logo_otimizado_100kb.png" alt="Logo" width="120">
+  <img src="assets/logo.png" alt="Logo" width="120">
 </p>
 
 <h1 align="center">Poder e Corrupção</h1>
