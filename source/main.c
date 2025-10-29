@@ -66,7 +66,15 @@ int main() {
     while (!WindowShouldClose()) {
         BeginDrawing();
         ClearBackground(BLACK);
+
         DrawText("Jogo comeca aqui!", 300, 220, 20, RAYWHITE);
+
+        DrawRectangle(0, 
+        (int)((GetScreenHeight() / 4) + reiTextura.height/2 + 75), 
+        GetScreenWidth(), 
+        GetScreenWidth() - (int)((GetScreenHeight() / 4) + reiTextura.height/2 + 30), 
+        GRAY);
+
         DrawTexture(reiTextura,
             (int)((GetScreenWidth() - reiTextura.width) / 2 - 10),
             (int)((GetScreenHeight() / 4) + reiTextura.height/2 + 60),
