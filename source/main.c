@@ -1,24 +1,21 @@
 #include <raylib.h>
 #include <math.h>
 
-// Função que mostra e anima o título do jogo
-void TelaTitulo(Texture2D titulo) {
+void TelaTitulo(Texture2D titulo, Texture2D fundo) {
     Vector2 posTitulo = { (GetScreenWidth() - titulo.width) / 2,
                           (GetScreenHeight() - titulo.height) / 2 };
-    float alpha = 255.0f;        // Transparência inicial (visível)
-    float fadeSpeed = 100.0f;    // Velocidade da transição
-    float moveSpeed = 40.0f;     // Velocidade da subida
+    float alpha = 255.0f;
+    float fadeSpeed = 100.0f;
+    float moveSpeed = 40.0f;
     bool iniciarTransicao = false;
     bool transicaoFeita = false;
 
     while (!WindowShouldClose() && !transicaoFeita) {
 
-        // Quando o jogador aperta ENTER ou clique, inicia o fade
         if (IsKeyPressed(KEY_ENTER) || IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
             iniciarTransicao = true;
         }
 
-        // Se a transição começou, move e diminui a transparência
         if (iniciarTransicao) {
             posTitulo.y -= moveSpeed * GetFrameTime();
             if (alpha > 0.0f) {
@@ -33,14 +30,16 @@ void TelaTitulo(Texture2D titulo) {
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
-        // Desenha o título
+        DrawTexturePro(fundo,
+                       (Rectangle){0, 0, fundo.width, fundo.height},
+                       (Rectangle){0, 0, GetScreenWidth(), GetScreenHeight()},
+                       (Vector2){0, 0}, 0.0f, WHITE);
+
         DrawTexture(titulo, (int)posTitulo.x, (int)posTitulo.y,
                     (Color){255, 255, 255, (unsigned char)alpha});
 
-        // 🔥 Texto piscando
         if (!iniciarTransicao) {
-            // Calcula brilho do texto entre 0 e 1, oscilando com o tempo
-            float brilho = (sinf(GetTime() * 3.0f) + 1.0f) / 2.0f; // Pisca ~3 vezes por segundo
+            float brilho = (sinf(GetTime() * 3.0f) + 1.0f) / 2.0f;
             unsigned char intensidade = (unsigned char)(brilho * 255);
 
             DrawText("Pressione ENTER ou clique para continuar",
@@ -55,13 +54,12 @@ int main() {
     InitWindow(800, 450, "Poder e Corrupcao");
     SetTargetFPS(60);
 
+    Texture2D fundo = LoadTexture("assets/fundotitulo.png");
     Texture2D titulo = LoadTexture("assets/titulo.png");
     Texture2D rei = LoadTexture("assets/rei.png");
 
-    // Chama a tela de título (animação)
-    TelaTitulo(titulo);
+    TelaTitulo(titulo, fundo);
 
-    // Aqui começaria o jogo de verdade
     while (!WindowShouldClose()) {
         BeginDrawing();
         ClearBackground(BLACK);
@@ -74,6 +72,7 @@ int main() {
     }
 
     UnloadTexture(titulo);
+    UnloadTexture(fundo);
     CloseWindow();
     return 0;
 }
