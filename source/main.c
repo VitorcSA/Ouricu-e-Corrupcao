@@ -54,9 +54,12 @@ int main() {
     InitWindow(800, 450, "Poder e Corrupcao");
     SetTargetFPS(60);
 
+    Image rei = LoadImage("assets/rei.png");
+    ImageResize(&rei, 200, 200); 
+
     Texture2D fundo = LoadTexture("assets/fundotitulo.png");
     Texture2D titulo = LoadTexture("assets/titulo.png");
-    Texture2D rei = LoadTexture("assets/rei.png");
+    Texture2D reiTextura = LoadTextureFromImage(rei);
 
     TelaTitulo(titulo, fundo);
 
@@ -64,9 +67,9 @@ int main() {
         BeginDrawing();
         ClearBackground(BLACK);
         DrawText("Jogo comeca aqui!", 300, 220, 20, RAYWHITE);
-        DrawTexture(rei,
-            (int)((GetScreenHeight() - rei.height) / 8),
-            (int)((GetScreenWidth() - rei.width) / 4),
+        DrawTexture(reiTextura,
+            (int)((GetScreenWidth() - reiTextura.width) / 2 - 10),
+            (int)((GetScreenHeight() / 4) + reiTextura.height/2 + 60),
             WHITE);
         EndDrawing();
     }
