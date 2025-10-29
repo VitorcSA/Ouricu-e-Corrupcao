@@ -1,5 +1,6 @@
 #include <raylib.h>
 #include <math.h>
+#include "HUD.h"
 
 void TelaTitulo(Texture2D titulo, Texture2D fundo) {
     Vector2 posTitulo = { (GetScreenWidth() - titulo.width) / 2,
@@ -69,16 +70,10 @@ int main() {
 
         DrawText("Jogo comeca aqui!", 300, 220, 20, RAYWHITE);
 
-        DrawRectangle(0, 
-        (int)((GetScreenHeight() / 4) + reiTextura.height/2 + 75), 
-        GetScreenWidth(), 
-        GetScreenWidth() - (int)((GetScreenHeight() / 4) + reiTextura.height/2 + 30), 
-        GRAY);
+        desenharRetangulo(reiTextura.height);
 
-        DrawTexture(reiTextura,
-            (int)((GetScreenWidth() - reiTextura.width) / 2 - 10),
-            (int)((GetScreenHeight() / 4) + reiTextura.height/2 + 60),
-            WHITE);
+        desenharRei(reiTextura, reiTextura.width, reiTextura.height);
+        
         EndDrawing();
     }
 
