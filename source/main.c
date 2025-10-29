@@ -56,6 +56,7 @@ int main() {
     SetTargetFPS(60);
 
     Texture2D titulo = LoadTexture("assets/titulo.png");
+    Texture2D rei = LoadTexture("assets/rei.png");
 
     // Chama a tela de título (animação)
     TelaTitulo(titulo);
@@ -65,6 +66,10 @@ int main() {
         BeginDrawing();
         ClearBackground(BLACK);
         DrawText("Jogo comeca aqui!", 300, 220, 20, RAYWHITE);
+        DrawTexture(rei,
+            (int)((GetScreenHeight() - rei.height) / 8),
+            (int)((GetScreenWidth() - rei.width) / 4),
+            WHITE);
         EndDrawing();
     }
 
