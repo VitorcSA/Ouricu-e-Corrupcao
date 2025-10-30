@@ -10,8 +10,28 @@ void TelaTitulo(Texture2D titulo, Texture2D fundo) {
     float moveSpeed = 40.0f;
     bool iniciarTransicao = false;
     bool transicaoFeita = false;
+    static bool borderless = false;
 
     while (!WindowShouldClose() && !transicaoFeita) {
+        if (IsWindowResized()) {
+            posTitulo.x = (GetScreenWidth() - titulo.width) / 2;
+            posTitulo.y = (GetScreenHeight() - titulo.height) / 2;
+        }
+        if (IsKeyPressed(KEY_F11)) {
+            borderless = !borderless;
+            if (borderless) {
+                SetWindowState(FLAG_WINDOW_UNDECORATED);
+                SetWindowSize(GetMonitorWidth(0), GetMonitorHeight(0));
+                SetWindowPosition(0, 0);
+            } else {
+                ClearWindowState(FLAG_WINDOW_UNDECORATED);
+                SetWindowSize(1280, 720);
+                SetWindowPosition(
+                    (GetMonitorWidth(0) - 1280) / 2,
+                    (GetMonitorHeight(0) - 720) / 2
+                );
+            }
+        }
 
         if (IsKeyPressed(KEY_ENTER) || IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
             iniciarTransicao = true;
@@ -44,7 +64,11 @@ void TelaTitulo(Texture2D titulo, Texture2D fundo) {
             unsigned char intensidade = (unsigned char)(brilho * 255);
 
             DrawText("Pressione ENTER ou clique para continuar",
-                     160, 400, 20, (Color){intensidade, intensidade, intensidade, 255});
+                     (GetScreenWidth() - MeasureText("Pressione ENTER ou clique para continuar", 20)) / 2,
+                     GetScreenHeight() - 60, 20,
+                     (Color){intensidade, intensidade, intensidade, 255});
+
+            DrawText("[F11] alterna fullscreen", 10, 10, 20, GRAY);
         }
 
         EndDrawing();
@@ -52,11 +76,12 @@ void TelaTitulo(Texture2D titulo, Texture2D fundo) {
 }
 
 int main() {
-    InitWindow(800, 450, "Poder e Corrupcao");
+    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+    InitWindow(1280, 720, "Poder e Corrupcao");
     SetTargetFPS(60);
 
     Image rei = LoadImage("assets/rei.png");
-    ImageResize(&rei, 200, 200); 
+    ImageResize(&rei, 200, 200);
 
     Texture2D fundo = LoadTexture("assets/fundotitulo.png");
     Texture2D titulo = LoadTexture("assets/titulo.png");
@@ -64,14 +89,35 @@ int main() {
 
     TelaTitulo(titulo, fundo);
 
+    static bool borderless = false;
+
     while (!WindowShouldClose()) {
+        if (IsKeyPressed(KEY_F11)) {
+            borderless = !borderless;
+            if (borderless) {
+                SetWindowState(FLAG_WINDOW_UNDECORATED);
+                SetWindowSize(GetMonitorWidth(0), GetMonitorHeight(0));
+                SetWindowPosition(0, 0);
+            } else {
+                ClearWindowState(FLAG_WINDOW_UNDECORATED);
+                SetWindowSize(1280, 720);
+                SetWindowPosition(
+                    (GetMonitorWidth(0) - 1280) / 2,
+                    (GetMonitorHeight(0) - 720) / 2
+                );
+            }
+        }
+
         BeginDrawing();
         ClearBackground(BLACK);
 
-        DrawText("Jogo comeca aqui!", 300, 220, 20, RAYWHITE);
+        DrawText("Jogo comeca aqui!",
+                 (GetScreenWidth() - MeasureText("Jogo comeca aqui!", 20)) / 2,
+                 GetScreenHeight() / 2, 20, RAYWHITE);
+
+        DrawText("[F11] alterna fullscreen", 10, 10, 20, GRAY);
 
         desenharRetangulo(reiTextura.height);
-
         desenharRei(reiTextura, reiTextura.width, reiTextura.height);
         
         EndDrawing();
