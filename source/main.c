@@ -2,6 +2,55 @@
 #include <math.h>
 #include "HUD.h"
 
+void TelaLogo(Texture2D logo)
+{
+    float alpha = 0.0f;
+    float fadeSpeed = 100.0f;
+    float timer = 0.0f;
+    int fase = 0;
+    bool transicaoFeita = false;
+
+    while (!WindowShouldClose() && !transicaoFeita)
+    {
+        float dt = GetFrameTime();
+
+        switch (fase)
+        {
+            case 0:
+                alpha += fadeSpeed * dt;
+                if (alpha >= 255.0f)
+                {
+                    alpha = 255.0f;
+                    fase = 1;
+                }
+                break;
+            case 1:
+                timer += dt;
+                if (timer >= 1.0f)
+                    fase = 2;
+                break;
+            case 2:
+                alpha -= fadeSpeed * dt;
+                if (alpha <= 0.0f)
+                {
+                    alpha = 0.0f;
+                    transicaoFeita = true;
+                }
+                break;
+        }
+
+        BeginDrawing();
+        ClearBackground(BLACK);
+
+        DrawTexture(logo,
+                    (GetScreenWidth() - logo.width) / 2,
+                    (GetScreenHeight() - logo.height) / 2,
+                    (Color){255, 255, 255, (unsigned char)alpha});
+
+        EndDrawing();
+    }
+}
+
 void TelaTitulo(Texture2D titulo, Texture2D fundo) {
     Vector2 posTitulo = { (GetScreenWidth() - titulo.width) / 2,
                           (GetScreenHeight() - titulo.height) / 2 };
@@ -13,10 +62,12 @@ void TelaTitulo(Texture2D titulo, Texture2D fundo) {
     static bool borderless = false;
 
     while (!WindowShouldClose() && !transicaoFeita) {
+
         if (IsWindowResized()) {
             posTitulo.x = (GetScreenWidth() - titulo.width) / 2;
             posTitulo.y = (GetScreenHeight() - titulo.height) / 2;
         }
+
         if (IsKeyPressed(KEY_F11)) {
             borderless = !borderless;
             if (borderless) {
@@ -31,6 +82,8 @@ void TelaTitulo(Texture2D titulo, Texture2D fundo) {
                     (GetMonitorHeight(0) - 720) / 2
                 );
             }
+            posTitulo.x = (GetScreenWidth() - titulo.width) / 2;
+            posTitulo.y = (GetScreenHeight() - titulo.height) / 2;
         }
 
         if (IsKeyPressed(KEY_ENTER) || IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
@@ -62,12 +115,11 @@ void TelaTitulo(Texture2D titulo, Texture2D fundo) {
         if (!iniciarTransicao) {
             float brilho = (sinf(GetTime() * 3.0f) + 1.0f) / 2.0f;
             unsigned char intensidade = (unsigned char)(brilho * 255);
-
-            DrawText("Pressione ENTER ou clique para continuar",
-                     (GetScreenWidth() - MeasureText("Pressione ENTER ou clique para continuar", 20)) / 2,
+            const char *texto = "Pressione ENTER ou clique para continuar";
+            DrawText(texto,
+                     (GetScreenWidth() - MeasureText(texto, 20)) / 2,
                      GetScreenHeight() - 60, 20,
                      (Color){intensidade, intensidade, intensidade, 255});
-
             DrawText("[F11] alterna fullscreen", 10, 10, 20, GRAY);
         }
 
@@ -86,12 +138,16 @@ int main() {
     Texture2D fundo = LoadTexture("assets/fundotitulo.png");
     Texture2D titulo = LoadTexture("assets/titulo.png");
     Texture2D reiTextura = LoadTextureFromImage(rei);
+    Texture2D logo = LoadTexture("assets/logo.png");
 
+    TelaLogo(logo);
     TelaTitulo(titulo, fundo);
 
     static bool borderless = false;
+    const char *textoJogo = "Jogo comeca aqui!";
 
     while (!WindowShouldClose()) {
+
         if (IsKeyPressed(KEY_F11)) {
             borderless = !borderless;
             if (borderless) {
@@ -108,11 +164,14 @@ int main() {
             }
         }
 
+        if (IsWindowResized()) {
+        }
+
         BeginDrawing();
         ClearBackground(BLACK);
 
-        DrawText("Jogo comeca aqui!",
-                 (GetScreenWidth() - MeasureText("Jogo comeca aqui!", 20)) / 2,
+        DrawText(textoJogo,
+                 (GetScreenWidth() - MeasureText(textoJogo, 20)) / 2,
                  GetScreenHeight() / 2, 20, RAYWHITE);
 
         DrawText("[F11] alterna fullscreen", 10, 10, 20, GRAY);
@@ -125,6 +184,7 @@ int main() {
 
     UnloadTexture(titulo);
     UnloadTexture(fundo);
+    UnloadTexture(logo);
     CloseWindow();
     return 0;
 }
