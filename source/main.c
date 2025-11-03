@@ -16,6 +16,9 @@ int main() {
     Texture2D reiTextura = LoadTextureFromImage(rei);
     Texture2D logo = LoadTexture("assets/logo.png");
 
+    Vector2 posicaoRei = {(GetScreenWidth() - reiTextura.width) / 2,
+                        (GetScreenHeight() - reiTextura.height) / 2};                    
+
     TelaLogo(logo);
     TelaTitulo(titulo, fundo);
 
@@ -23,6 +26,11 @@ int main() {
     const char *textoJogo = "Jogo comeca aqui!";
 
     while (!WindowShouldClose()) {
+
+        if (IsWindowResized()) {
+            posicaoRei.x = (GetScreenWidth() - reiTextura.width) / 2;
+            posicaoRei.y = (GetScreenHeight() - reiTextura.height) / 2;
+        }
 
         if (IsKeyPressed(KEY_F11)) {
             borderless = !borderless;
@@ -38,9 +46,10 @@ int main() {
                     (GetMonitorHeight(0) - 720) / 2
                 );
             }
+            if (IsWindowResized()) {
+            posicaoRei.x = (GetScreenWidth() - reiTextura.width) / 2;
+            posicaoRei.y = (GetScreenHeight() - reiTextura.height) / 2;
         }
-
-        if (IsWindowResized()) {
         }
 
         BeginDrawing();
@@ -53,7 +62,7 @@ int main() {
         DrawText("[F11] alterna fullscreen", 10, 10, 20, GRAY);
 
         desenharRetangulo(reiTextura.height);
-        desenharRei(reiTextura, reiTextura.width, reiTextura.height);
+        desenharRei(reiTextura, posicaoRei.x, posicaoRei.y);
         
         EndDrawing();
     }

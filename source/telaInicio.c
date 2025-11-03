@@ -107,7 +107,9 @@ void TelaTitulo(Texture2D titulo, Texture2D fundo) {
         DrawTexturePro(fundo,
                        (Rectangle){0, 0, fundo.width, fundo.height},
                        (Rectangle){0, 0, GetScreenWidth(), GetScreenHeight()},
-                       (Vector2){0, 0}, 0.0f, WHITE);
+                       (Vector2){0, 0}, 
+                       0.0f, 
+                       WHITE);
 
         DrawTexture(titulo, (int)posTitulo.x, (int)posTitulo.y,
                     (Color){255, 255, 255, (unsigned char)alpha});
