@@ -3,6 +3,7 @@
 #include "HUD.h"
 #include "telaInicio.h"
 #include "enemies.h"
+#include "player.h"
 
 Vector2 pathStart;
 Vector2 pathEnd;
@@ -57,6 +58,8 @@ int main() {
     const char *textoJogo = "Pressione [ENTER] para iniciar o jogo!";
 
     InitEnemies();
+    InitPlayer();
+
     float enemyTimer = 0;
 
     while (!WindowShouldClose()) {
@@ -65,6 +68,7 @@ int main() {
             posicaoRei.y = (GetScreenHeight() - reiTextura.height) / 2;
             AtualizarCaminho(&pathStart, &pathEnd);
             ReposicionarInimigos(pathStart, pathEnd);
+            RecenterTowers(GetScreenWidth(), GetScreenHeight());
         }
 
         if (IsKeyPressed(KEY_F11)) {
@@ -83,9 +87,11 @@ int main() {
             }
             AtualizarCaminho(&pathStart, &pathEnd);
             ReposicionarInimigos(pathStart, pathEnd);
+            RecenterTowers(GetScreenWidth(), GetScreenHeight());
         }
 
-        if (IsKeyPressed(KEY_ENTER)) jogoIniciado = true;
+        if (IsKeyPressed(KEY_ENTER) || IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+            jogoIniciado = true;
 
         BeginDrawing();
         ClearBackground(BLACK);
@@ -107,9 +113,11 @@ int main() {
 
             UpdateEnemies(dt, pathStart, pathEnd);
             ReposicionarInimigos(pathStart, pathEnd);
+            UpdatePlayer();
 
             ClearBackground((Color){20, 20, 30, 255});
             DrawEnemies();
+            DrawTowers();
             DrawText("Tower Defense - fase de inimigos", 10, 10, 20, WHITE);
         }
 
@@ -120,6 +128,7 @@ int main() {
     UnloadTexture(fundo);
     UnloadTexture(logo);
     UnloadTexture(reiTextura);
+    UnloadPlayer();
     CloseWindow();
     return 0;
 }
