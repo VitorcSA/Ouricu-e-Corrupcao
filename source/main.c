@@ -17,10 +17,15 @@ void AtualizarCaminho(Vector2 *start, Vector2 *end) {
 }
 
 void ReposicionarInimigos(Vector2 start, Vector2 end) {
+    float largura = end.x - start.x;
+    float amplitude = 80.0f;
+    float freq = 4.0f * PI / largura;
+
     for (int i = 0; i < MAX_ENEMIES; i++) {
         if (enemies[i].active) {
-            enemies[i].pos.x = start.x + (end.x - start.x) * enemies[i].progress;
-            enemies[i].pos.y = start.y + (end.y - start.y) * enemies[i].progress;
+            float t = enemies[i].progress;
+            enemies[i].pos.x = start.x + largura * t;
+            enemies[i].pos.y = start.y + sinf((start.x + largura * t) * freq) * amplitude;
         }
     }
 }
@@ -99,9 +104,11 @@ int main() {
                 SpawnEnemy(pathStart);
                 enemyTimer = 0;
             }
+
             UpdateEnemies(dt, pathStart, pathEnd);
+            ReposicionarInimigos(pathStart, pathEnd);
+
             ClearBackground((Color){20, 20, 30, 255});
-            DrawLineV(pathStart, pathEnd, GRAY);
             DrawEnemies();
             DrawText("Tower Defense - fase de inimigos", 10, 10, 20, WHITE);
         }
