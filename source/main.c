@@ -4,6 +4,7 @@
 #include "telaInicio.h"
 #include "enemies.h"
 #include "player.h"
+#include "mapa.h"
 
 Vector2 pathStart;
 Vector2 pathEnd;
@@ -59,6 +60,7 @@ int main() {
 
     InitEnemies();
     InitPlayer();
+    InitMap();
 
     float enemyTimer = 0;
 
@@ -70,6 +72,7 @@ int main() {
             ReposicionarInimigos(pathStart, pathEnd);
             RecenterTowers(GetScreenWidth(), GetScreenHeight());
         }
+        HandleTowerPlacement();
 
         if (IsKeyPressed(KEY_F11)) {
             borderless = !borderless;
@@ -104,6 +107,8 @@ int main() {
             desenharRetangulo(reiTextura.height);
             desenharRei(reiTextura, posicaoRei.x, posicaoRei.y);
         } else {
+            DrawMap();
+
             float dt = GetFrameTime();
             enemyTimer += dt;
             if (enemyTimer > 2.0f) {
