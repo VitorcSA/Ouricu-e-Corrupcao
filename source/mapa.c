@@ -1,23 +1,48 @@
 #include "mapa.h"
-#include <stdio.h>   
+#include <raylib.h>  
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
 
-// apenas define o grid real (não o enum!)
-CellType grid[GRID_HEIGHT][GRID_WIDTH];
+bool CheckFile(FILE *file){
+    if(file){
+        return true;
+    }
+    perror("Erro No arquivo:");
+    return false;
+}
 
-void InitMap(void) {
-    for (int y = 0; y < GRID_HEIGHT; y++) {
-        for (int x = 0; x < GRID_WIDTH; x++) {
-            grid[y][x] = CELL_BUILDABLE;
-        }
+unsigned char *ReadMap(const char *fileName) {
+
+    unsigned char *map = malloc(sizeof(unsigned char) * GRID_HEIGHT * GRID_WIDTH);
+
+    FILE *file = fopen(fileName, "rb");
+
+    if (CheckFile(file))
+    {
+        fread(map, sizeof(unsigned char), GRID_HEIGHT * GRID_WIDTH, file);
+        fclose(file);
+
+        return map;
     }
 
-    // Caminho horizontal no meio
-    for (int x = 0; x < GRID_WIDTH; x++) {
-        grid[GRID_HEIGHT / 2][x] = CELL_PATH;
+    fclose(file);
+    free(map);
+
+    return NULL;
+}
+
+Color CheckTile(unsigned char tile) {
+    switch (tile) {
+        case 0: return LIGHTGRAY;
+        case 1: return DARKGRAY;
+        case 2: return RED;
+        case 3: return BLUE;
+        default: return BLACK;
     }
 }
 
-void DrawMap(void) {
+void DrawMap(unsigned char *self) {
     int screenWidth = GetScreenWidth();
     int screenHeight = GetScreenHeight();
 
@@ -28,19 +53,15 @@ void DrawMap(void) {
         for (int x = 0; x < GRID_WIDTH; x++) {
             Rectangle cell = { x * cellWidth, y * cellHeight, cellWidth, cellHeight };
 
-            Color color;
-            switch (grid[y][x]) {
-                case CELL_PATH: color = BROWN; break;
-                case CELL_BUILDABLE: color = GREEN; break;
-                case CELL_OCCUPIED: color = DARKGREEN; break;
-            }
+            unsigned char tile = self[y * GRID_HEIGHT + x];
+            Color color = CheckTile(tile);
 
             DrawRectangleRec(cell, color);
             DrawRectangleLines(cell.x, cell.y, cell.width, cell.height, BLACK);
         }
     }
 }
-
+/*
 // tipo de retorno precisa bater com o .h -> bool
 bool HandleTowerPlacement(void) {
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
@@ -55,16 +76,16 @@ bool HandleTowerPlacement(void) {
         int gridY = mouse.y / cellHeight;
 
         if (gridX >= 0 && gridX < GRID_WIDTH && gridY >= 0 && gridY < GRID_HEIGHT) {
-            if (grid[gridY][gridX] == CELL_BUILDABLE) {
-                grid[gridY][gridX] = CELL_OCCUPIED;
+            if (grid[gridY * GRID_WIDTH + gridX] == CELL_BUILDABLE) {
+                grid[gridY * GRID_WIDTH + gridX] = CELL_OCCUPIED;
                 return true;
-            } else if (grid[gridY][gridX] == CELL_PATH) {
+            } else if (grid[gridY * GRID_WIDTH + gridX] == CELL_PATH) {
                 printf("⚠️ Não pode colocar torre no caminho!\n");
-            } else if (grid[gridY][gridX] == CELL_OCCUPIED) {
-                printf("Já tem uma torre aqui!\n");
-            }
+                } else if (grid[gridY * GRID_WIDTH + gridX] == CELL_OCCUPIED) {
+                    printf("Já tem uma torre aqui!\n");
+                }
         }
     }
     return false;
 }
-
+*/

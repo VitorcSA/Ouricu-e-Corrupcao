@@ -60,7 +60,7 @@ int main() {
 
     InitEnemies();
     InitPlayer();
-    InitMap();
+    unsigned char *map = ReadMap("assets/mapa/mapaDefense.bin");
 
     float enemyTimer = 0;
 
@@ -72,7 +72,6 @@ int main() {
             ReposicionarInimigos(pathStart, pathEnd);
             RecenterTowers(GetScreenWidth(), GetScreenHeight());
         }
-        HandleTowerPlacement();
 
         if (IsKeyPressed(KEY_F11)) {
             borderless = !borderless;
@@ -107,7 +106,7 @@ int main() {
             desenharRetangulo(reiTextura.height);
             desenharRei(reiTextura, posicaoRei.x, posicaoRei.y);
         } else {
-            DrawMap();
+            DrawMap(map);
 
             float dt = GetFrameTime();
             enemyTimer += dt;
