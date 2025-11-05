@@ -1,5 +1,6 @@
 #include <raylib.h>
 #include <math.h>
+#include <stdlib.h>
 #include "HUD.h"
 #include "telaInicio.h"
 #include "enemies.h"
@@ -36,6 +37,7 @@ int main() {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(1280, 720, "Poder e Corrupcao");
     SetTargetFPS(60);
+    
 
     Image rei = LoadImage("assets/rei.png");
     ImageResize(&rei, 200, 200);
@@ -60,7 +62,43 @@ int main() {
 
     InitEnemies();
     InitPlayer();
-    unsigned char *map = ReadMap("assets/mapa/mapaDefense.bin");
+
+    unsigned char map_map[GRID_HEIGHT][GRID_WIDTH] = {
+        {0,3,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,1,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
+    };
+
+    FILE *file = fopen("map.bin", "wb");
+    if (!file) {
+        perror("Erro ao criar arquivo binário");
+        return 1;
+    }
+
+    for (int y = 0; y < GRID_HEIGHT; y++) {
+        fwrite(map_map[y], sizeof(unsigned char), GRID_WIDTH, file);
+    }
+
+    fclose(file);
+    printf("Arquivo map.bin criado com sucesso!\n");
+
+    unsigned char *map = ReadMap("map.bin");
+    if (!map) {
+        CloseWindow();
+        return 1;
+    }
 
     float enemyTimer = 0;
 
@@ -132,6 +170,7 @@ int main() {
     UnloadTexture(fundo);
     UnloadTexture(logo);
     UnloadTexture(reiTextura);
+    free(map);
     UnloadPlayer();
     CloseWindow();
     return 0;

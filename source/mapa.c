@@ -1,5 +1,5 @@
 #include "mapa.h"
-#include <raylib.h>  
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -46,6 +46,7 @@ void DrawMap(unsigned char *self) {
     int screenWidth = GetScreenWidth();
     int screenHeight = GetScreenHeight();
 
+    // Calcular tamanho das células para preencher a tela
     float cellWidth = (float)screenWidth / GRID_WIDTH;
     float cellHeight = (float)screenHeight / GRID_HEIGHT;
 
@@ -53,11 +54,11 @@ void DrawMap(unsigned char *self) {
         for (int x = 0; x < GRID_WIDTH; x++) {
             Rectangle cell = { x * cellWidth, y * cellHeight, cellWidth, cellHeight };
 
-            unsigned char tile = self[y * GRID_HEIGHT + x];
+            unsigned char tile = self[y * GRID_WIDTH + x];
             Color color = CheckTile(tile);
 
             DrawRectangleRec(cell, color);
-            DrawRectangleLines(cell.x, cell.y, cell.width, cell.height, BLACK);
+            DrawRectangleLinesEx(cell, 1.0f, BLACK); // Bordas finas
         }
     }
 }
