@@ -2,12 +2,8 @@
 #include "player.h"
 #include "enemies.h"
 #include <math.h>
-#include "enemies.h"
-#include <math.h>
 
 #define MAX_TOWERS 50
-#define MAX_ARCHERS 50
-#define ATTACK_RANGE 225.0f
 #define MAX_ARCHERS 50
 #define ATTACK_RANGE 225.0f
 
@@ -26,43 +22,25 @@ typedef struct {
     float shotTimer;
 } Archer;
 
-typedef struct {
-    Vector2 pos;
-    bool active;
-    int frame;
-    float frameTime;
-    float shotTimer;
-} Archer;
-
 static Tower towers[MAX_TOWERS];
-static Archer archers[MAX_ARCHERS];
 static Archer archers[MAX_ARCHERS];
 static int towerCount = 0;
 static int archerCount = 0;
 
-static int archerCount = 0;
-
 static Texture2D torreTexture;
 static Texture2D archerTexture;
-static Texture2D archerTexture;
 
-// -----------------------------------------------------------
-// Inicialização
-// -----------------------------------------------------------
 void InitPlayer() {
     Image torre = LoadImage("assets/torre_colocar.png");
     ImageResize(&torre, 64, 64);
     torreTexture = LoadTextureFromImage(torre);
     UnloadImage(torre);
 
-    Image arqueiro = LoadImage("assets/Shot.png");
+    Image arqueiro = LoadImage("assets/inimigosAnimation/Shot.png");
     archerTexture = LoadTextureFromImage(arqueiro);
     UnloadImage(arqueiro);
 }
 
-// -----------------------------------------------------------
-// Adiciona uma torre
-// -----------------------------------------------------------
 void AddTower(Vector2 pos) {
     if (towerCount >= MAX_TOWERS) return;
     towers[towerCount].pos = pos;
@@ -75,9 +53,6 @@ void AddTower(Vector2 pos) {
     towerCount++;
 }
 
-// -----------------------------------------------------------
-// Adiciona um arqueiro (apenas se clicou em uma torre)
-// -----------------------------------------------------------
 void AddArcher(Vector2 pos) {
     if (archerCount >= MAX_ARCHERS) return;
     archers[archerCount].pos = pos;
@@ -88,11 +63,7 @@ void AddArcher(Vector2 pos) {
     archerCount++;
 }
 
-// -----------------------------------------------------------
-// Atualiza jogador (coloca torres ou arqueiros, atira em inimigos)
-// -----------------------------------------------------------
 void UpdatePlayer() {
-    // Colocar torre com botão esquerdo
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
         Vector2 mouse = GetMousePosition();
         AddTower(mouse);
@@ -148,9 +119,6 @@ void UpdatePlayer() {
     }
 }
 
-// -----------------------------------------------------------
-// Desenha torres
-// -----------------------------------------------------------
 void DrawTowers() {
     for (int i = 0; i < towerCount; i++) {
         if (towers[i].active)
@@ -160,9 +128,6 @@ void DrawTowers() {
     }
 }
 
-// -----------------------------------------------------------
-// Desenha arqueiros animados
-// -----------------------------------------------------------
 void DrawArchers() {
     int frameWidth = archerTexture.width / 14;
     for (int i = 0; i < archerCount; i++) {
@@ -175,9 +140,6 @@ void DrawArchers() {
     }
 }
 
-// -----------------------------------------------------------
-// Reposiciona torres (para fullscreen etc.)
-// -----------------------------------------------------------
 void RecenterTowers(int newWidth, int newHeight) {
     float scaleX = (float)newWidth / 1280.0f;
     float scaleY = (float)newHeight / 720.0f;
@@ -192,18 +154,9 @@ void RecenterTowers(int newWidth, int newHeight) {
         archers[i].pos.x *= scaleX;
         archers[i].pos.y *= scaleY;
     }
-
-    for (int i = 0; i < archerCount; i++) {
-        archers[i].pos.x *= scaleX;
-        archers[i].pos.y *= scaleY;
-    }
 }
 
-// -----------------------------------------------------------
-// Descarrega texturas
-// -----------------------------------------------------------
 void UnloadPlayer() {
     UnloadTexture(torreTexture);
-    UnloadTexture(archerTexture);
     UnloadTexture(archerTexture);
 }

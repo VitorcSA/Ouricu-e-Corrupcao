@@ -105,33 +105,8 @@ int main() {
 
     InitEnemies();
     InitPlayer();
-
-    unsigned char map_map[GRID_HEIGHT][GRID_WIDTH] = {
-        {0,3,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,1,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
-    };
-
-    FILE *file = fopen("map.bin", "wb");
-    if (!file) {
-        perror("Erro ao criar arquivo binário");
-        return 1;
-    }
-
-    for (int y = 0; y < GRID_HEIGHT; y++) {
-        fwrite(map_map[y], sizeof(unsigned char), GRID_WIDTH, file);
+    if(!verificarSeMapaExiste(arquivoMapaTowerDefense)){
+        criadorDeMapa(arquivoMapaTowerDefense,15, 15);
     }
 
     unsigned char *mapTower = ReadMap(arquivoMapaTowerDefense);
@@ -212,13 +187,11 @@ int main() {
         EndDrawing();
     }
 
-    // --- LIBERAÇÃO DE MEMÓRIA SEGURA ---
-    free(map);
     UnloadTexture(titulo);
     UnloadTexture(fundo);
     UnloadTexture(logo);
     UnloadTexture(reiTextura);
-    free(map);
+    free(mapTower);
     UnloadPlayer();
     CloseWindow();
     return 0;
