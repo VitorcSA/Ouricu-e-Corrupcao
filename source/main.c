@@ -38,14 +38,56 @@ int main() {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(1280, 720, "Poder e Corrupcao");
     SetTargetFPS(60);
-    
+
+    // --- VERIFICAÇÕES E SEGURANÇA ADICIONADAS AQUI ---
+    if (!FileExists("assets/rei.png")) {
+        printf("Erro: assets/rei.png nao encontrado\n");
+        CloseWindow();
+        return 1;
+    }
+
     Image rei = LoadImage("assets/rei.png");
+    if (rei.data == NULL) {
+        printf("Erro: falha ao carregar rei.png\n");
+        CloseWindow();
+        return 1;
+    }
+
     ImageResize(&rei, 200, 200);
+    Texture2D reiTextura = LoadTextureFromImage(rei);
+    UnloadImage(rei);
+    if (reiTextura.id == 0) {
+        printf("Erro: falha ao criar textura do rei\n");
+        CloseWindow();
+        return 1;
+    }
+
+    if (!FileExists("assets/fundotitulo.png") || !FileExists("assets/titulo.png") || !FileExists("assets/logo.png")) {
+        printf("Erro: algum asset de titulo/logo/fundo esta faltando em assets/\n");
+        UnloadTexture(reiTextura);
+        CloseWindow();
+        return 1;
+    }
 
     Texture2D fundo = LoadTexture("assets/fundotitulo.png");
     Texture2D titulo = LoadTexture("assets/titulo.png");
-    Texture2D reiTextura = LoadTextureFromImage(rei);
     Texture2D logo = LoadTexture("assets/logo.png");
+
+    if (fundo.id == 0 || titulo.id == 0 || logo.id == 0) {
+        printf("Erro: falha ao carregar uma das texturas de titulo/fundo/logo\n");
+        if (fundo.id) UnloadTexture(fundo);
+        if (titulo.id) UnloadTexture(titulo);
+        if (logo.id) UnloadTexture(logo);
+        UnloadTexture(reiTextura);
+        CloseWindow();
+        return 1;
+    }
+    // ---------------------------------------------------
+    if (reiTextura.id == 0) {
+        printf("Erro: falha ao criar textura do rei\n");
+        CloseWindow();
+        return 1;
+    }
 
     Vector2 posicaoRei = {
         (GetScreenWidth() - reiTextura.width) / 2,
@@ -69,6 +111,11 @@ int main() {
 
     unsigned char *mapTower = ReadMap(arquivoMapaTowerDefense);
     if (!mapTower) {
+        printf("Erro: ReadMap retornou NULL\n");
+        UnloadTexture(titulo);
+        UnloadTexture(fundo);
+        UnloadTexture(logo);
+        UnloadTexture(reiTextura);
         CloseWindow();
         return 1;
     }
@@ -133,6 +180,7 @@ int main() {
             ClearBackground((Color){20, 20, 30, 255});
             DrawEnemies();
             DrawTowers();
+            DrawArchers();
             DrawText("Tower Defense - fase de inimigos", 10, 10, 20, WHITE);
         }
 

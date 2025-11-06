@@ -1,7 +1,11 @@
 #include <raylib.h>
 #include "player.h"
+#include "enemies.h"
+#include <math.h>
 
 #define MAX_TOWERS 50
+#define MAX_ARCHERS 50
+#define ATTACK_RANGE 225.0f
 
 typedef struct {
     Vector2 pos;
@@ -10,15 +14,31 @@ typedef struct {
     bool active;
 } Tower;
 
+typedef struct {
+    Vector2 pos;
+    bool active;
+    int frame;
+    float frameTime;
+    float shotTimer;
+} Archer;
+
 static Tower towers[MAX_TOWERS];
+static Archer archers[MAX_ARCHERS];
 static int towerCount = 0;
+static int archerCount = 0;
+
 static Texture2D torreTexture;
+static Texture2D archerTexture;
 
 void InitPlayer() {
     Image torre = LoadImage("assets/torre_colocar.png");
     ImageResize(&torre, 64, 64);
     torreTexture = LoadTextureFromImage(torre);
     UnloadImage(torre);
+
+    Image arqueiro = LoadImage("assets/inimigosAnimation/Shot.png");
+    archerTexture = LoadTextureFromImage(arqueiro);
+    UnloadImage(arqueiro);
 }
 
 void AddTower(Vector2 pos) {
@@ -33,17 +53,90 @@ void AddTower(Vector2 pos) {
     towerCount++;
 }
 
+void AddArcher(Vector2 pos) {
+    if (archerCount >= MAX_ARCHERS) return;
+    archers[archerCount].pos = pos;
+    archers[archerCount].active = true;
+    archers[archerCount].frame = 0;
+    archers[archerCount].frameTime = 0;
+    archers[archerCount].shotTimer = 0;
+    archerCount++;
+}
+
 void UpdatePlayer() {
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
         Vector2 mouse = GetMousePosition();
         AddTower(mouse);
+    }
+
+    // Colocar arqueiro com botão direito em uma torre
+    if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
+        Vector2 mouse = GetMousePosition();
+        for (int i = 0; i < towerCount; i++) {
+            if (towers[i].active &&
+                CheckCollisionPointCircle(mouse, towers[i].pos, towers[i].size / 2)) {
+                AddArcher((Vector2){towers[i].pos.x, towers[i].pos.y - 32});
+                break;
+            }
+        }
+    }
+
+    float dt = GetFrameTime();
+
+    // Atualiza arqueiros
+    for (int i = 0; i < archerCount; i++) {
+        if (!archers[i].active) continue;
+
+        // animação do arqueiro
+        archers[i].frameTime += dt;
+        if (archers[i].frameTime >= 0.1f) {
+            archers[i].frame = (archers[i].frame + 1) % 14; // 14 frames no shot.png
+            archers[i].frameTime = 0;
+        }
+
+        // controle de tiro
+        archers[i].shotTimer -= dt;
+        if (archers[i].shotTimer <= 0) {
+            // procura inimigos próximos
+            for (int e = 0; e < MAX_ENEMIES; e++) {
+                if (!enemies[e].active) continue;
+
+                float dx = enemies[e].pos.x - archers[i].pos.x;
+                float dy = enemies[e].pos.y - archers[i].pos.y;
+                float dist = sqrtf(dx * dx + dy * dy);
+
+                if (dist <= ATTACK_RANGE) {
+                    enemies[e].health -= 10;
+                    if (enemies[e].health <= 0) enemies[e].active = false;
+
+                    // feedback visual (flecha simples)
+                    DrawLineV(archers[i].pos, enemies[e].pos, GOLD);
+                    archers[i].shotTimer = 1.0f; // atira a cada 1s
+                    break;
+                }
+            }
+        }
     }
 }
 
 void DrawTowers() {
     for (int i = 0; i < towerCount; i++) {
         if (towers[i].active)
-            DrawTextureEx(torreTexture, (Vector2){towers[i].pos.x - towers[i].size / 2, towers[i].pos.y - towers[i].size / 2}, 0.0f, towers[i].size / 64.0f, WHITE);
+            DrawTextureEx(torreTexture,
+                (Vector2){towers[i].pos.x - towers[i].size / 2, towers[i].pos.y - towers[i].size / 2},
+                0.0f, towers[i].size / 64.0f, WHITE);
+    }
+}
+
+void DrawArchers() {
+    int frameWidth = archerTexture.width / 14;
+    for (int i = 0; i < archerCount; i++) {
+        if (!archers[i].active) continue;
+
+        Rectangle src = { frameWidth * archers[i].frame, 0, frameWidth, archerTexture.height };
+        Rectangle dest = { archers[i].pos.x, archers[i].pos.y - 32, frameWidth, archerTexture.height };
+        DrawTexturePro(archerTexture, src, dest,
+            (Vector2){frameWidth / 2, archerTexture.height / 2}, 0.0f, WHITE);
     }
 }
 
@@ -56,8 +149,14 @@ void RecenterTowers(int newWidth, int newHeight) {
         towers[i].pos.y = towers[i].basePos.y * scaleY;
         towers[i].size = 64 * scaleX;
     }
+
+    for (int i = 0; i < archerCount; i++) {
+        archers[i].pos.x *= scaleX;
+        archers[i].pos.y *= scaleY;
+    }
 }
 
 void UnloadPlayer() {
     UnloadTexture(torreTexture);
+    UnloadTexture(archerTexture);
 }
