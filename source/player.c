@@ -7,6 +7,8 @@
 #define MAX_TOWERS 50
 #define MAX_ARCHERS 50
 #define ATTACK_RANGE 225.0f
+#define MAX_ARROWS 500
+#define ARROW_SPEED 300.0f
 
 typedef struct {
     Vector2 pos;
@@ -24,6 +26,13 @@ typedef struct {
     bool isShooting;
 } Archer;
 
+typedef struct {
+    Vector2 pos;
+    Vector2 vel;
+    bool active;
+} Arrow;
+
+static Arrow flechas[MAX_ARROWS];
 static Tower towers[MAX_TOWERS];
 static Archer archers[MAX_ARCHERS];
 static int towerCount = 0;
@@ -32,6 +41,7 @@ static int archerCount = 0;
 static Texture2D torreTexture;
 static Texture2D archerTexture;
 static Texture2D archerIdeleTexture;
+static Texture2D flechaTextura;
 
 void InitPlayer() {
     Image torre = LoadImage("assets/torre_colocar.png");
@@ -46,6 +56,10 @@ void InitPlayer() {
     Image arqueiroIdele = LoadImage("assets/inimigosAnimation/Idle.png");
     archerIdeleTexture = LoadTextureFromImage(arqueiroIdele);
     UnloadImage(arqueiroIdele);
+
+    Image flecha = LoadImage("assets/inimigosAnimation/Flecha.png");
+    flechaTextura = LoadTextureFromImage(flecha);
+    UnloadImage(flecha);
 }
 
 void AddTower(Vector2 pos) {
@@ -70,6 +84,22 @@ void AddArcher(Vector2 pos) {
     archers[archerCount].isShooting = false;
     archerCount++;
 }
+
+void AddArrow(Vector2 startPos, Vector2 targetPos) {
+    for (int i = 0; i < MAX_ARROWS; i++) {
+        if (!flechas[i].active) {
+            flechas[i].pos = startPos;
+            
+            Vector2 dir = Vector2Subtract(targetPos, startPos);
+            dir = Vector2Normalize(dir);
+            flechas[i].vel = Vector2Scale(dir, ARROW_SPEED);
+            
+            flechas[i].active = true;
+            return;
+        }
+    }
+}
+
 
 void UpdatePlayer(void) {
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
@@ -101,8 +131,6 @@ void UpdatePlayer(void) {
             archers[i].frame = (archers[i].frame + 1) % 14; // 14 frames no shot.png
             archers[i].frameTime = 0;
         }
-        Vector2 pontoA = {archers[i].pos.x, archers[i].pos.y};  // início
-        Vector2 posFlecha = pontoA;         // posição atual
 
         // controle de tiro
         archers[i].shotTimer -= dt;
@@ -110,12 +138,6 @@ void UpdatePlayer(void) {
             // procura inimigos próximos
             for (int e = 0; e < MAX_ENEMIES; e++) {
                 if (!enemies[e].active) continue;
-                 
-                Vector2 pontoB = {enemies[e].pos.x, enemies[e].pos.y};  // destino
-                float velocidade = 0.5f;    // 100 px/s (ajuste para "1 m/s" conforme escala)
-
-                // Calcula direção normalizada
-                Vector2 direcao = Vector2Normalize(Vector2Subtract(pontoB, pontoA));
 
                 float dx = enemies[e].pos.x - archers[i].pos.x;
                 float dy = enemies[e].pos.y - archers[i].pos.y;
@@ -124,21 +146,12 @@ void UpdatePlayer(void) {
                 if (dist <= ATTACK_RANGE) {
                     archers[i].isShooting = true;
                     enemies[e].health -= 10;
+
+                    AddArrow(archers[i].pos, enemies[e].pos);
+
+                    archers[i].shotTimer = 1.0f; // tempo entre tiros
                     if (enemies[e].health <= 0) enemies[e].active = false;
 
-                    // feedback visual (flecha simples)
-                    if (Vector2Distance(posFlecha, pontoB) > velocidade * dt) {
-                            posFlecha.x += direcao.x * velocidade * dt;
-                            posFlecha.y += direcao.y * velocidade * dt;
-                    }else{
-                        posFlecha = pontoB;
-                    }
-
-                    DrawLineV(pontoA, pontoB, LIGHTGRAY);
-
-                    DrawRectangleV(posFlecha, (Vector2){50, 50}, BLUE);
-
-                    DrawLineV(archers[i].pos, enemies[e].pos, GOLD);
                     archers[i].shotTimer = 1.0f; // atira a cada 1s
                     break;
                 }else{
@@ -147,6 +160,37 @@ void UpdatePlayer(void) {
             }
         }
     }
+
+    // Atualiza flechas
+for (int i = 0; i < MAX_ARROWS; i++) {
+    if (!flechas[i].active) continue;
+    
+    flechas[i].pos.x += flechas[i].vel.x * dt;
+    flechas[i].pos.y += flechas[i].vel.y * dt;
+
+    // Verifica colisão com inimigos
+    for (int e = 0; e < MAX_ENEMIES; e++) {
+        if (!enemies[e].active) continue;
+
+        float dx = enemies[e].pos.x - flechas[i].pos.x;
+        float dy = enemies[e].pos.y - flechas[i].pos.y;
+        float dist = sqrtf(dx * dx + dy * dy);
+
+        if (dist < 16) { // raio de colisão aproximado
+            enemies[e].health -= 10;
+            flechas[i].active = false;
+            if (enemies[e].health <= 0) enemies[e].active = false;
+            break;
+        }
+    }
+
+    // remove se sair da tela
+    if (flechas[i].pos.x < 0 || flechas[i].pos.x > GetScreenWidth() ||
+        flechas[i].pos.y < 0 || flechas[i].pos.y > GetScreenHeight()) {
+        flechas[i].active = false;
+    }
+}
+
 }
 
 void DrawTowers() {
@@ -171,7 +215,7 @@ void DrawArchers() {
 
         DrawTexturePro(archerTexture, src, dest,
             (Vector2){frameWidth / 2, archerTexture.height / 2}, 0.0f, WHITE);
-            
+
         }else{
             Rectangle srcIdel = { frameWidth * archers[i].frame, 0, frameIdleWidth, archerIdeleTexture.height };
             Rectangle destIdel = { archers[i].pos.x, archers[i].pos.y - 32, frameIdleWidth, archerIdeleTexture.height };
@@ -181,6 +225,19 @@ void DrawArchers() {
         }
     }
 }
+
+void DrawArrows() {
+    for (int i = 0; i < MAX_ARROWS; i++) {
+        if (!flechas[i].active) continue;
+
+        DrawTextureEx(flechaTextura,
+            (Vector2){ flechas[i].pos.x - flechaTextura.width/2, flechas[i].pos.y - flechaTextura.height/2 },
+            0.0f,
+            0.5f,
+            WHITE);
+    }
+}
+
 
 void RecenterTowers(int newWidth, int newHeight) {
     float scaleX = (float)newWidth / 1280.0f;
