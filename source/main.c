@@ -95,7 +95,7 @@ int main() {
     };
 
     AtualizarCaminho(&pathStart, &pathEnd);
-    TelaLogo(logo);
+    //TelaLogo(logo);
     TelaTitulo(titulo, fundo);
 
     static bool borderless = false;
@@ -181,6 +181,7 @@ int main() {
             DrawEnemies();
             DrawTowers();
             DrawArchers();
+            DrawArrows();
             DrawText("Tower Defense - fase de inimigos", 10, 10, 20, WHITE);
         }
 

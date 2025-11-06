@@ -10,6 +10,8 @@ void AddArcher(Vector2 pos);
 void UpdateArchers(float dt);
 void DrawArchers(void);
 void UnloadArchers(void);
+void DrawArrows(void);
+void UnloadArrows(void);
 void UnloadPlayer(void);
 void RecenterTowers(int newWidth, int newHeight);
 
