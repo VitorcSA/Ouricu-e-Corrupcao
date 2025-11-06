@@ -2,8 +2,12 @@
 #include "player.h"
 #include "enemies.h"
 #include <math.h>
+#include "enemies.h"
+#include <math.h>
 
 #define MAX_TOWERS 50
+#define MAX_ARCHERS 50
+#define ATTACK_RANGE 225.0f
 #define MAX_ARCHERS 50
 #define ATTACK_RANGE 225.0f
 
@@ -22,12 +26,24 @@ typedef struct {
     float shotTimer;
 } Archer;
 
+typedef struct {
+    Vector2 pos;
+    bool active;
+    int frame;
+    float frameTime;
+    float shotTimer;
+} Archer;
+
 static Tower towers[MAX_TOWERS];
+static Archer archers[MAX_ARCHERS];
 static Archer archers[MAX_ARCHERS];
 static int towerCount = 0;
 static int archerCount = 0;
 
+static int archerCount = 0;
+
 static Texture2D torreTexture;
+static Texture2D archerTexture;
 static Texture2D archerTexture;
 
 // -----------------------------------------------------------
@@ -176,6 +192,11 @@ void RecenterTowers(int newWidth, int newHeight) {
         archers[i].pos.x *= scaleX;
         archers[i].pos.y *= scaleY;
     }
+
+    for (int i = 0; i < archerCount; i++) {
+        archers[i].pos.x *= scaleX;
+        archers[i].pos.y *= scaleY;
+    }
 }
 
 // -----------------------------------------------------------
@@ -183,5 +204,6 @@ void RecenterTowers(int newWidth, int newHeight) {
 // -----------------------------------------------------------
 void UnloadPlayer() {
     UnloadTexture(torreTexture);
+    UnloadTexture(archerTexture);
     UnloadTexture(archerTexture);
 }
