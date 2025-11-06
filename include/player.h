@@ -5,6 +5,7 @@
 void InitPlayer(void);
 void UpdatePlayer(void);
 void DrawTowers(void);
+void DrawArchers(void);
 void UnloadPlayer(void);
 void RecenterTowers(int newWidth, int newHeight);
 
