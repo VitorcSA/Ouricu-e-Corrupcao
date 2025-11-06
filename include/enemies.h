@@ -11,6 +11,8 @@ typedef struct {
     float health;
     int active;
     float progress;
+    int frame;
+    float frameTime;
 } Enemy;
 
 extern Enemy enemies[MAX_ENEMIES];
@@ -19,5 +21,6 @@ void InitEnemies(void);
 void SpawnEnemy(Vector2 pathStart);
 void UpdateEnemies(float dt, Vector2 pathStart, Vector2 pathEnd);
 void DrawEnemies(void);
+void UnloadEnemies(void);
 
 #endif
