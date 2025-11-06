@@ -1,11 +1,11 @@
 #include <raylib.h>
 #include "HUD.h"
 
-void desenharRetangulo(int alturaImagem){
+void desenharRetangulo(int alturaImagem, int posYSprite){
     int screenWidth = GetScreenWidth();
     int screenHeight = GetScreenHeight();
 
-    int posY = (screenHeight / 2) + (alturaImagem / 2); 
+    int posY = posYSprite - 5; 
     int alturaRetangulo = screenHeight - posY;          
 
     DrawRectangle(0, posY, screenWidth, alturaRetangulo, GRAY);

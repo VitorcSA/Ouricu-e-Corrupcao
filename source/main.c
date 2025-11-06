@@ -91,7 +91,7 @@ int main() {
 
     Vector2 posicaoRei = {
         (GetScreenWidth() - reiTextura.width) / 2,
-        (GetScreenHeight() - reiTextura.height) / 2
+        (GetScreenHeight() - reiTextura.height)
     };
 
     AtualizarCaminho(&pathStart, &pathEnd);
@@ -125,7 +125,7 @@ int main() {
     while (!WindowShouldClose()) {
         if (IsWindowResized()) {
             posicaoRei.x = (GetScreenWidth() - reiTextura.width) / 2;
-            posicaoRei.y = (GetScreenHeight() - reiTextura.height) / 2;
+            posicaoRei.y = (GetScreenHeight() - reiTextura.height);
             AtualizarCaminho(&pathStart, &pathEnd);
             ReposicionarInimigos(pathStart, pathEnd);
             RecenterTowers(GetScreenWidth(), GetScreenHeight());
@@ -161,7 +161,7 @@ int main() {
                      (GetScreenWidth() - MeasureText(textoJogo, 20)) / 2,
                      GetScreenHeight() / 2, 20, RAYWHITE);
             DrawText("[F11] alterna fullscreen", 10, 10, 20, GRAY);
-            desenharRetangulo(reiTextura.height);
+            desenharRetangulo(reiTextura.height, posicaoRei.y);
             desenharRei(reiTextura, posicaoRei.x, posicaoRei.y);
         } else {
             DrawMap(mapTower);
