@@ -7,7 +7,6 @@
 #define MAX_TOWERS 50
 #define MAX_ARCHERS 50
 #define ATTACK_RANGE 225.0f
-#define MAX_ARROWS 200
 
 typedef struct {
     Vector2 pos;
@@ -25,15 +24,6 @@ typedef struct {
     bool isShooting;
 } Archer;
 
-typedef struct {
-    Vector2 pos;
-    Vector2 target;
-    bool active;
-    float speed;
-    int enemyIndex; // índice do inimigo alvo
-} Arrow;
-
-static Arrow arrows[MAX_ARROWS];
 static Tower towers[MAX_TOWERS];
 static Archer archers[MAX_ARCHERS];
 static int towerCount = 0;
@@ -42,7 +32,6 @@ static int archerCount = 0;
 static Texture2D torreTexture;
 static Texture2D archerTexture;
 static Texture2D archerIdeleTexture;
-static Texture2D arrowTexture;
 
 void InitPlayer() {
     Image torre = LoadImage("assets/torre_colocar.png");
@@ -57,10 +46,6 @@ void InitPlayer() {
     Image arqueiroIdele = LoadImage("assets/inimigosAnimation/Idle.png");
     archerIdeleTexture = LoadTextureFromImage(arqueiroIdele);
     UnloadImage(arqueiroIdele);
-
-    Image arrow = LoadImage("assets/inimigosAnimation/Arrow.png");
-    arrowTexture = LoadTextureFromImage(arrow);
-    UnloadImage(arrow);
 }
 
 void AddTower(Vector2 pos) {
@@ -84,38 +69,6 @@ void AddArcher(Vector2 pos) {
     archers[archerCount].shotTimer = 0;
     archers[archerCount].isShooting = false;
     archerCount++;
-}
-
-void ShootArrow(Vector2 start, Vector2 target, int enemyIndex) {
-    for (int i = 0; i < MAX_ARROWS; i++) {
-        if (!arrows[i].active) {
-            arrows[i].pos = start;
-            arrows[i].target = target;
-            arrows[i].speed = 600.0f;  // velocidade da flecha
-            arrows[i].enemyIndex = enemyIndex;
-            arrows[i].active = true;
-            break;
-        }
-    }
-}
-
-void UpdateArrows(float dt) {
-    for (int i = 0; i < MAX_ARROWS; i++) {
-        if (!arrows[i].active) continue;
-
-        Vector2 dir = Vector2Normalize(Vector2Subtract(arrows[i].target, arrows[i].pos));
-        arrows[i].pos = Vector2Add(arrows[i].pos, Vector2Scale(dir, arrows[i].speed * dt));
-
-        // aplica dano quando a flecha chega
-        if (Vector2Distance(arrows[i].pos, arrows[i].target) < 5.0f) {
-            int e = arrows[i].enemyIndex;
-            if (e >= 0 && e < MAX_ENEMIES && enemies[e].active) {
-                enemies[e].health -= 10;
-                if (enemies[e].health <= 0) enemies[e].active = false;
-            }
-            arrows[i].active = false;
-        }
-    }
 }
 
 void UpdatePlayer(void) {
@@ -161,7 +114,22 @@ void UpdatePlayer(void) {
 
                 if (dist <= ATTACK_RANGE) {
                     archers[i].isShooting = true;
-                    ShootArrow(archers[i].pos, enemies[e].pos, e);
+                    enemies[e].health -= 10;
+                    if (enemies[e].health <= 0) enemies[e].active = false;
+
+                    // feedback visual (flecha simples)
+                    if (Vector2Distance(posFlecha, pontoB) > velocidade * dt) {
+                            posFlecha.x += direcao.x * velocidade * dt;
+                            posFlecha.y += direcao.y * velocidade * dt;
+                    }else{
+                        posFlecha = pontoB;
+                    }
+
+                    DrawLineV(pontoA, pontoB, LIGHTGRAY);
+
+                    DrawRectangleV(posFlecha, (Vector2){50, 50}, BLUE);
+
+                    DrawLineV(archers[i].pos, enemies[e].pos, GOLD);
                     archers[i].shotTimer = 1.0f; // atira a cada 1s
                     break;
                 } else {
@@ -170,9 +138,6 @@ void UpdatePlayer(void) {
             }
         }
     }
-
-    // Atualiza flechas
-    UpdateArrows(dt);
 }
 
 void DrawTowers() {
@@ -191,31 +156,18 @@ void DrawArchers() {
     for (int i = 0; i < archerCount; i++) {
         if (!archers[i].active) continue;
 
-        if (archers[i].isShooting) {
-            Rectangle src = { frameWidth * archers[i].frame, 0, frameWidth, archerTexture.height };
-            Rectangle dest = { archers[i].pos.x, archers[i].pos.y - 32, frameWidth, archerTexture.height };
-            DrawTexturePro(archerTexture, src, dest,
-                (Vector2){frameWidth / 2, archerTexture.height / 2}, 0.0f, WHITE);
-        } else {
-            Rectangle srcIdel = { frameIdleWidth * archers[i].frame, 0, frameIdleWidth, archerIdeleTexture.height };
+        Rectangle src = { frameWidth * archers[i].frame, 0, frameWidth, archerTexture.height };
+        Rectangle dest = { archers[i].pos.x, archers[i].pos.y - 32, frameWidth, archerTexture.height };
+
+        DrawTexturePro(archerTexture, src, dest,
+            (Vector2){frameWidth / 2, archerTexture.height / 2}, 0.0f, WHITE);
+            
+        }else{
+            Rectangle srcIdel = { frameWidth * archers[i].frame, 0, frameIdleWidth, archerIdeleTexture.height };
             Rectangle destIdel = { archers[i].pos.x, archers[i].pos.y - 32, frameIdleWidth, archerIdeleTexture.height };
             DrawTexturePro(archerIdeleTexture, srcIdel, destIdel,
                 (Vector2){frameIdleWidth / 2, archerIdeleTexture.height / 2}, 0.0f, WHITE);
         }
-    }
-}
-
-void DrawArrows() {
-    for (int i = 0; i < MAX_ARROWS; i++) {
-        if (!arrows[i].active) continue;
-
-        float dx = arrows[i].target.x - arrows[i].pos.x;
-        float dy = arrows[i].target.y - arrows[i].pos.y;
-        float angle = atan2f(dy, dx) * RAD2DEG;
-
-        Rectangle src = { 0, 0, (float)arrowTexture.width, (float)arrowTexture.height };
-        Rectangle dest = { arrows[i].pos.x, arrows[i].pos.y, 32, 32 };
-        DrawTexturePro(arrowTexture, src, dest, (Vector2){16, 16}, angle, WHITE);
     }
 }
 
