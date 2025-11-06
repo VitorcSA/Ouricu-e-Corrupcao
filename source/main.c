@@ -6,6 +6,7 @@
 #include "enemies.h"
 #include "player.h"
 #include "mapa.h"
+#include "criadorMapa.h"
 
 Vector2 pathStart;
 Vector2 pathEnd;
@@ -38,7 +39,6 @@ int main() {
     InitWindow(1280, 720, "Poder e Corrupcao");
     SetTargetFPS(60);
     
-
     Image rei = LoadImage("assets/rei.png");
     ImageResize(&rei, 200, 200);
 
@@ -59,43 +59,16 @@ int main() {
     static bool borderless = false;
     bool jogoIniciado = false;
     const char *textoJogo = "Pressione [ENTER] para iniciar o jogo!";
+    const char *arquivoMapaTowerDefense = "assets/mapa/mapaTowerDefense";
 
     InitEnemies();
     InitPlayer();
-
-    unsigned char map_map[GRID_HEIGHT][GRID_WIDTH] = {
-        {0,3,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,1,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
-    };
-
-    FILE *file = fopen("map.bin", "wb");
-    if (!file) {
-        perror("Erro ao criar arquivo binário");
-        return 1;
+    if(!verificarSeMapaExiste(arquivoMapaTowerDefense)){
+        criadorDeMapa(arquivoMapaTowerDefense,15, 15);
     }
 
-    for (int y = 0; y < GRID_HEIGHT; y++) {
-        fwrite(map_map[y], sizeof(unsigned char), GRID_WIDTH, file);
-    }
-
-    fclose(file);
-    printf("Arquivo map.bin criado com sucesso!\n");
-
-    unsigned char *map = ReadMap("map.bin");
-    if (!map) {
+    unsigned char *mapTower = ReadMap(arquivoMapaTowerDefense);
+    if (!mapTower) {
         CloseWindow();
         return 1;
     }
@@ -144,7 +117,7 @@ int main() {
             desenharRetangulo(reiTextura.height);
             desenharRei(reiTextura, posicaoRei.x, posicaoRei.y);
         } else {
-            DrawMap(map);
+            DrawMap(mapTower);
 
             float dt = GetFrameTime();
             enemyTimer += dt;
@@ -170,7 +143,7 @@ int main() {
     UnloadTexture(fundo);
     UnloadTexture(logo);
     UnloadTexture(reiTextura);
-    free(map);
+    free(mapTower);
     UnloadPlayer();
     CloseWindow();
     return 0;
