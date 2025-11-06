@@ -10,14 +10,11 @@ void InitArchers(void);
 void AddArcher(Vector2 pos);
 void UpdateArchers(float dt);
 void DrawArchers(void);
-<<<<<<< HEAD
 void UnloadArchers(void);
 void DrawArrows(void);
 void UnloadArrows(void);
 void UnloadPlayer(void);
-=======
 void DrawArrows(void);
->>>>>>> 15cb82ff4d01fef28dc99bef784351b6960be936
 void RecenterTowers(int newWidth, int newHeight);
 void UnloadPlayer(void);
 
