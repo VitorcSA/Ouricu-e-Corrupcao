@@ -2,6 +2,7 @@
 #include "player.h"
 #include "enemies.h"
 #include <math.h>
+#include <raymath.h>
 
 #define MAX_TOWERS 50
 #define MAX_ARCHERS 50
@@ -20,6 +21,7 @@ typedef struct {
     int frame;
     float frameTime;
     float shotTimer;
+    bool isShooting;
 } Archer;
 
 static Tower towers[MAX_TOWERS];
@@ -29,6 +31,7 @@ static int archerCount = 0;
 
 static Texture2D torreTexture;
 static Texture2D archerTexture;
+static Texture2D archerIdeleTexture;
 
 void InitPlayer() {
     Image torre = LoadImage("assets/torre_colocar.png");
@@ -39,6 +42,10 @@ void InitPlayer() {
     Image arqueiro = LoadImage("assets/inimigosAnimation/Shot.png");
     archerTexture = LoadTextureFromImage(arqueiro);
     UnloadImage(arqueiro);
+
+    Image arqueiroIdele = LoadImage("assets/inimigosAnimation/Idle.png");
+    archerIdeleTexture = LoadTextureFromImage(arqueiroIdele);
+    UnloadImage(arqueiroIdele);
 }
 
 void AddTower(Vector2 pos) {
@@ -60,10 +67,11 @@ void AddArcher(Vector2 pos) {
     archers[archerCount].frame = 0;
     archers[archerCount].frameTime = 0;
     archers[archerCount].shotTimer = 0;
+    archers[archerCount].isShooting = false;
     archerCount++;
 }
 
-void UpdatePlayer() {
+void UpdatePlayer(void) {
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
         Vector2 mouse = GetMousePosition();
         AddTower(mouse);
@@ -93,6 +101,8 @@ void UpdatePlayer() {
             archers[i].frame = (archers[i].frame + 1) % 14; // 14 frames no shot.png
             archers[i].frameTime = 0;
         }
+        Vector2 pontoA = {archers[i].pos.x, archers[i].pos.y};  // início
+        Vector2 posFlecha = pontoA;         // posição atual
 
         // controle de tiro
         archers[i].shotTimer -= dt;
@@ -100,19 +110,39 @@ void UpdatePlayer() {
             // procura inimigos próximos
             for (int e = 0; e < MAX_ENEMIES; e++) {
                 if (!enemies[e].active) continue;
+                 
+                Vector2 pontoB = {enemies[e].pos.x, enemies[e].pos.y};  // destino
+                float velocidade = 0.5f;    // 100 px/s (ajuste para "1 m/s" conforme escala)
+
+                // Calcula direção normalizada
+                Vector2 direcao = Vector2Normalize(Vector2Subtract(pontoB, pontoA));
 
                 float dx = enemies[e].pos.x - archers[i].pos.x;
                 float dy = enemies[e].pos.y - archers[i].pos.y;
                 float dist = sqrtf(dx * dx + dy * dy);
 
                 if (dist <= ATTACK_RANGE) {
+                    archers[i].isShooting = true;
                     enemies[e].health -= 10;
                     if (enemies[e].health <= 0) enemies[e].active = false;
 
                     // feedback visual (flecha simples)
+                    if (Vector2Distance(posFlecha, pontoB) > velocidade * dt) {
+                            posFlecha.x += direcao.x * velocidade * dt;
+                            posFlecha.y += direcao.y * velocidade * dt;
+                    }else{
+                        posFlecha = pontoB;
+                    }
+
+                    DrawLineV(pontoA, pontoB, LIGHTGRAY);
+
+                    DrawRectangleV(posFlecha, (Vector2){50, 50}, BLUE);
+
                     DrawLineV(archers[i].pos, enemies[e].pos, GOLD);
                     archers[i].shotTimer = 1.0f; // atira a cada 1s
                     break;
+                }else{
+                    archers[i].isShooting = false;
                 }
             }
         }
@@ -130,13 +160,25 @@ void DrawTowers() {
 
 void DrawArchers() {
     int frameWidth = archerTexture.width / 14;
+    int frameIdleWidth = archerIdeleTexture.width / 9;
+
     for (int i = 0; i < archerCount; i++) {
-        if (!archers[i].active) continue;
+        if (!archers[i].active)continue;
+         if(archers[i].isShooting){
 
         Rectangle src = { frameWidth * archers[i].frame, 0, frameWidth, archerTexture.height };
         Rectangle dest = { archers[i].pos.x, archers[i].pos.y - 32, frameWidth, archerTexture.height };
+
         DrawTexturePro(archerTexture, src, dest,
             (Vector2){frameWidth / 2, archerTexture.height / 2}, 0.0f, WHITE);
+            
+        }else{
+            Rectangle srcIdel = { frameWidth * archers[i].frame, 0, frameIdleWidth, archerIdeleTexture.height };
+            Rectangle destIdel = { archers[i].pos.x, archers[i].pos.y - 32, frameIdleWidth, archerIdeleTexture.height };
+
+            DrawTexturePro(archerIdeleTexture, srcIdel, destIdel,
+                (Vector2){frameIdleWidth / 2, archerIdeleTexture.height / 2}, 0.0f, WHITE);
+        }
     }
 }
 
@@ -159,4 +201,5 @@ void RecenterTowers(int newWidth, int newHeight) {
 void UnloadPlayer() {
     UnloadTexture(torreTexture);
     UnloadTexture(archerTexture);
+    UnloadTexture(archerIdeleTexture);
 }
