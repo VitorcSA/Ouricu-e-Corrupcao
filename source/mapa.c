@@ -34,9 +34,9 @@ unsigned char *ReadMap(const char *fileName) {
 
 Color CheckTile(unsigned char tile) {
     switch (tile) {
-        case 0: return LIGHTGRAY;
-        case 1: return DARKGRAY;
-        case 2: return RED;
+        case 0: return GREEN;
+        case 1: return GRAY;
+        case 2: return DARKGREEN;
         case 3: return BLUE;
         default: return BLACK;
     }

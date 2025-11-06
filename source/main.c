@@ -6,6 +6,7 @@
 #include "enemies.h"
 #include "player.h"
 #include "mapa.h"
+#include "criadorMapa.h"
 
 Vector2 pathStart;
 Vector2 pathEnd;
@@ -37,13 +38,8 @@ int main() {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(1280, 720, "Poder e Corrupcao");
     SetTargetFPS(60);
+    
 
-    // --- VERIFICAÇÕES E SEGURANÇA ADICIONADAS AQUI ---
-    if (!FileExists("assets/rei.png")) {
-        printf("Erro: assets/rei.png nao encontrado\n");
-        CloseWindow();
-        return 1;
-    }
     Image rei = LoadImage("assets/rei.png");
     if (rei.data == NULL) {
         printf("Erro: falha ao carregar rei.png\n");
@@ -91,6 +87,7 @@ int main() {
     static bool borderless = false;
     bool jogoIniciado = false;
     const char *textoJogo = "Pressione [ENTER] para iniciar o jogo!";
+    const char *arquivoMapaTowerDefense = "assets/mapa/mapaTowerDefense";
 
     InitEnemies();
     InitPlayer();
@@ -103,7 +100,7 @@ int main() {
         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,1,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,1,0,0,0,0,0,0,0},
         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -128,11 +125,6 @@ int main() {
 
     unsigned char *map = ReadMap("map.bin");
     if (!map) {
-        printf("Erro: ReadMap retornou NULL\n");
-        UnloadTexture(titulo);
-        UnloadTexture(fundo);
-        UnloadTexture(logo);
-        UnloadTexture(reiTextura);
         CloseWindow();
         return 1;
     }
@@ -181,7 +173,7 @@ int main() {
             desenharRetangulo(reiTextura.height);
             desenharRei(reiTextura, posicaoRei.x, posicaoRei.y);
         } else {
-            DrawMap(map);
+            DrawMap(mapTower);
 
             float dt = GetFrameTime();
             enemyTimer += dt;
@@ -210,6 +202,7 @@ int main() {
     UnloadTexture(fundo);
     UnloadTexture(logo);
     UnloadTexture(reiTextura);
+    free(map);
     UnloadPlayer();
     CloseWindow();
     return 0;
