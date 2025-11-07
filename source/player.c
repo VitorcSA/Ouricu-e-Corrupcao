@@ -3,6 +3,7 @@
 #include "enemies.h"
 #include <math.h>
 #include <raymath.h>
+#include "HUD.h"
 
 #define MAX_TOWERS 50
 #define MAX_ARCHERS 50
@@ -30,7 +31,7 @@ typedef struct {
     Vector2 target;
     bool active;
     float speed;
-    int enemyIndex; // índice do inimigo alvo
+    int enemyIndex;
 } Arrow;
 
 static Arrow arrows[MAX_ARROWS];
@@ -91,7 +92,7 @@ void ShootArrow(Vector2 start, Vector2 target, int enemyIndex) {
         if (!arrows[i].active) {
             arrows[i].pos = start;
             arrows[i].target = target;
-            arrows[i].speed = 600.0f;  // velocidade da flecha
+            arrows[i].speed = 600.0f;
             arrows[i].enemyIndex = enemyIndex;
             arrows[i].active = true;
             break;
@@ -119,39 +120,54 @@ void UpdateArrows(float dt) {
 }
 
 void UpdatePlayer(void) {
+    float dt = GetFrameTime();
+
+    // Se o HUD estiver aberto, atualiza e checa seleção
+    if (HUD_IsActive()) {
+        HUD_Update();
+
+        // Se clicou em um botão do HUD
+        UnitType selected = HUD_GetSelectedUnit();
+        int selTower = HUD_GetSelectedTower();
+
+        if (selected == UNIT_ARCHER && selTower >= 0 && selTower < towerCount) {
+            AddArcher((Vector2){towers[selTower].pos.x, towers[selTower].pos.y - 32});
+        }
+
+        return; // enquanto HUD estiver aberto, não faz mais nada
+    }
+
+    // Coloca torre com botão esquerdo
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
         Vector2 mouse = GetMousePosition();
         AddTower(mouse);
     }
 
-    // Colocar arqueiro com botão direito em uma torre
+    // Abre HUD com botão direito na torre
     if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
         Vector2 mouse = GetMousePosition();
         for (int i = 0; i < towerCount; i++) {
             if (towers[i].active &&
                 CheckCollisionPointCircle(mouse, towers[i].pos, towers[i].size / 2)) {
-                AddArcher((Vector2){towers[i].pos.x, towers[i].pos.y - 32});
-                break;
+                HUD_ShowAt(towers[i].pos, i);
+                return;
             }
         }
     }
-
-    float dt = GetFrameTime();
 
     // Atualiza arqueiros
     for (int i = 0; i < archerCount; i++) {
         if (!archers[i].active) continue;
 
-        // animação do arqueiro
         archers[i].frameTime += dt;
         if (archers[i].frameTime >= 0.1f) {
-            archers[i].frame = (archers[i].frame + 1) % 14; // 14 frames no shot.png
+            archers[i].frame = (archers[i].frame + 1) % 14;
             archers[i].frameTime = 0;
         }
 
-        // controle de tiro
         archers[i].shotTimer -= dt;
         if (archers[i].shotTimer <= 0) {
+            bool foundTarget = false;
             for (int e = 0; e < MAX_ENEMIES; e++) {
                 if (!enemies[e].active) continue;
 
@@ -162,16 +178,15 @@ void UpdatePlayer(void) {
                 if (dist <= ATTACK_RANGE) {
                     archers[i].isShooting = true;
                     ShootArrow(archers[i].pos, enemies[e].pos, e);
-                    archers[i].shotTimer = 1.0f; // atira a cada 1s
+                    archers[i].shotTimer = 1.0f;
+                    foundTarget = true;
                     break;
-                } else {
-                    archers[i].isShooting = false;
                 }
             }
+            if (!foundTarget)
+                archers[i].isShooting = false;
         }
     }
-
-    // Atualiza flechas
     UpdateArrows(dt);
 }
 
@@ -181,6 +196,7 @@ void DrawTowers() {
             DrawTextureEx(torreTexture,
                 (Vector2){towers[i].pos.x - towers[i].size / 2, towers[i].pos.y - towers[i].size / 2},
                 0.0f, towers[i].size / 64.0f, WHITE);
+                HUD_Draw();
     }
 }
 
