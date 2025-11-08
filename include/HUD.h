@@ -4,15 +4,17 @@
 #include <raylib.h>
 #include <stdbool.h>
 
-typedef enum { UNIT_NONE, UNIT_ARCHER /*, outros tipos */ } UnitType;
+typedef enum { 
+    UNIT_NONE, 
+    UNIT_ARCHER, 
+    UNIT_WIZARD  // Novo defensor
+} UnitType;
 
 void HUD_ShowAt(Vector2 pos, int towerIndex);
 void HUD_Update(void);
 void HUD_Draw(void);
 UnitType HUD_GetSelectedUnit(void);
 bool HUD_IsActive(void);
-
-// >>> nova função: retorna o index da torre que abriu o HUD (ou -1 se não houver)
 int HUD_GetSelectedTower(void);
 
 void desenharRetangulo (int alturaImagem, int posYSprite);

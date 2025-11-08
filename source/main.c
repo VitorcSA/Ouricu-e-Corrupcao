@@ -39,7 +39,7 @@ int main() {
     InitWindow(1280, 720, "Poder e Corrupcao");
     SetTargetFPS(60);
 
-    // --- VERIFICAÇÕES E SEGURANÇA ADICIONADAS AQUI ---
+    // --- VERIFICAÇÕES E SEGURANÇA ---
     if (!FileExists("assets/rei.png")) {
         printf("Erro: assets/rei.png nao encontrado\n");
         CloseWindow();
@@ -82,12 +82,7 @@ int main() {
         CloseWindow();
         return 1;
     }
-    // ---------------------------------------------------
-    if (reiTextura.id == 0) {
-        printf("Erro: falha ao criar textura do rei\n");
-        CloseWindow();
-        return 1;
-    }
+    // ---------------------------------
 
     Vector2 posicaoRei = {
         (GetScreenWidth() - reiTextura.width) / 2,
@@ -105,8 +100,9 @@ int main() {
 
     InitEnemies();
     InitPlayer();
-    if(!verificarSeMapaExiste(arquivoMapaTowerDefense)){
-        criadorDeMapa(arquivoMapaTowerDefense,15, 15);
+
+    if (!verificarSeMapaExiste(arquivoMapaTowerDefense)) {
+        criadorDeMapa(arquivoMapaTowerDefense, 15, 15);
     }
 
     unsigned char *mapTower = ReadMap(arquivoMapaTowerDefense);
@@ -181,6 +177,7 @@ int main() {
             DrawEnemies();
             DrawTowers();
             DrawArchers();
+            DrawWizards(); // 🔮 novo
             DrawArrows();
             DrawText("Tower Defense - fase de inimigos", 10, 10, 20, WHITE);
             
@@ -195,6 +192,7 @@ int main() {
     UnloadTexture(logo);
     UnloadTexture(reiTextura);
     free(mapTower);
+
     UnloadPlayer();
     CloseWindow();
     return 0;
