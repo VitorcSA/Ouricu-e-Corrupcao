@@ -27,5 +27,6 @@ void AddCannon(Vector2 towerPos, float towerSize);
 void UpdateCannons(float dt);
 void DrawCannons(void);
 void UnloadCannons(void);
+void DrawCannonballs(void);
 
 #endif

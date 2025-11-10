@@ -182,6 +182,7 @@ int main() {
             DrawCannons();
             DrawFireballs();
             DrawArrows();
+            DrawCannonballs();
             DrawText("Tower Defense - fase de inimigos", 10, 10, 20, WHITE);
             HUD_Draw();
         }

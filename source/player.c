@@ -11,13 +11,12 @@
 #define MAX_CANNONS 50
 #define MAX_ARROWS 200
 #define MAX_FIREBALLS 200
+#define MAX_CANNONBALLS 200
 
 #define ATTACK_RANGE_ARCHER 225.0f
 #define ATTACK_RANGE_WIZARD 135.0f
 #define GRID_SIZE 64.0f
 #define ATTACK_RANGE_CANNON (GRID_SIZE * 5)
-#define ATTACK_INTERVAL_CANNON 0.5f
-#define CANNON_DAMAGE 40
 
 typedef struct {
     Vector2 pos;
@@ -48,10 +47,12 @@ typedef struct {
 
 typedef struct {
     Vector2 pos;
+    bool active;
     float size;
     bool isShooting;
     int frame;
     float frameTime;
+    float shotTimer;
 } Cannon;
 
 typedef struct {
@@ -72,12 +73,21 @@ typedef struct {
     int enemyIndex;
 } Fireball;
 
+typedef struct {
+    Vector2 pos;
+    Vector2 target;
+    bool active;
+    float speed;
+    int enemyIndex;
+} Cannonball;
+
 static Tower towers[MAX_TOWERS];
 static Archer archers[MAX_ARCHERS];
 static Shotwizard wizards[MAX_WIZARDS];
 static Cannon cannons[MAX_CANNONS];
 static Arrow arrows[MAX_ARROWS];
 static Fireball fireballs[MAX_FIREBALLS];
+static Cannonball cannonballs[MAX_CANNONBALLS];
 
 static int towerCount = 0;
 static int archerCount = 0;
@@ -93,6 +103,7 @@ static Texture2D idlewizardTexture;
 static Texture2D fireballTexture;
 static Texture2D cannonTextureIdle;
 static Texture2D cannonTextureShot;
+static Texture2D cannonballTexture;
 
 void InitPlayer()
 {
@@ -132,6 +143,10 @@ void InitPlayer()
     Image cannonShot = LoadImage("assets/inimigosAnimation/shotcannon.png");
     cannonTextureShot = LoadTextureFromImage(cannonShot);
     UnloadImage(cannonShot);
+
+    Image cannonball = LoadImage("assets/inimigosAnimation/cannonball.png");
+    cannonballTexture = LoadTextureFromImage(cannonball);
+    UnloadImage(cannonball);
 
     for (int i = 0; i < MAX_FIREBALLS; i++) {
         fireballs[i].active = false;
@@ -185,10 +200,11 @@ void AddCannon(Vector2 towerPos, float towerSize)
     cannons[cannonCount].size = 64.0f;
     cannons[cannonCount].pos.x = towerPos.x + 35;
     cannons[cannonCount].pos.y = towerPos.y - (towerSize / 2) + (cannons[cannonCount].size / 2);
-    cannons[cannonCount].isShooting = false;
+    cannons[cannonCount].active = true;
     cannons[cannonCount].frame = 0;
-    cannons[cannonCount].frameTime = 0.0f;
-
+    cannons[cannonCount].frameTime = 0;
+    cannons[cannonCount].shotTimer = 0;
+    cannons[cannonCount].isShooting = false;
     cannonCount++;
 }
 
@@ -217,6 +233,20 @@ void ShootFireball(Vector2 start, Vector2 target, int enemyIndex)
             fireballs[i].active = true;
             fireballs[i].frame = 0;
             fireballs[i].frameTime = 0;
+            break;
+        }
+    }
+}
+
+void ShootCannonball(Vector2 start, Vector2 target, int enemyIndex)
+{
+    for (int i = 0; i < MAX_CANNONBALLS; i++) {
+        if (!cannonballs[i].active) {
+            cannonballs[i].pos = start;
+            cannonballs[i].target = target;
+            cannonballs[i].speed = 600.0f;
+            cannonballs[i].enemyIndex = enemyIndex;
+            cannonballs[i].active = true;
             break;
         }
     }
@@ -324,51 +354,31 @@ void UpdatePlayer(void)
         }
     }
 
-for (int i = 0; i < cannonCount; i++)
-{
-    bool enemyNear = false;
-    int targetEnemy = -1;
-
-    // Procurar inimigo mais próximo a 5 grids
-    for (int e = 0; e < MAX_ENEMIES; e++)
-    {
-        if (!enemies[e].active) continue;
-        float dist = Vector2Distance(cannons[i].pos, enemies[e].pos);
-        if (dist <= ATTACK_RANGE_CANNON)
-        {
-            enemyNear = true;
-            targetEnemy = e;
-            break;
-        }
-    }
-
-    // Atualizar estado e animação
-    if (enemyNear)
-    {
-        cannons[i].isShooting = true;
-        cannons[i].frameTime += GetFrameTime();
-        if (cannons[i].frameTime >= 0.15f) // velocidade da animação
-        {
-            cannons[i].frame = (cannons[i].frame + 1) % 5; // 5 frames shot
+    for (int i = 0; i < cannonCount; i++) {
+        if (!cannons[i].active) continue;
+        cannons[i].frameTime += dt;
+        if (cannons[i].frameTime >= 0.1f) {
+            cannons[i].frame = (archers[i].frame + 1) % 5;
             cannons[i].frameTime = 0;
         }
 
-        // Aplicar dano direto a cada intervalo
-        static float shotTimer = 0;
-        shotTimer -= GetFrameTime();
-        if (shotTimer <= 0 && targetEnemy != -1)
-        {
-            enemies[targetEnemy].health -= CANNON_DAMAGE;
-            if (enemies[targetEnemy].health <= 0) enemies[targetEnemy].active = false;
-            shotTimer = ATTACK_INTERVAL_CANNON;
+        cannons[i].shotTimer -= dt;
+        if (cannons[i].shotTimer <= 0) {
+            bool foundTarget = false;
+            for (int e = 0; e < MAX_ENEMIES; e++) {
+                if (!enemies[e].active) continue;
+                float dist = Vector2Distance(cannons[i].pos, enemies[e].pos);
+                if (dist <= ATTACK_RANGE_CANNON) {
+                    cannons[i].isShooting = true;
+                    ShootCannonball(cannons[i].pos, enemies[e].pos, e);
+                    cannons[i].shotTimer = 1.0f;
+                    foundTarget = true;
+                    break;
+                }
+            }
+            if (!foundTarget) cannons[i].isShooting = false;
         }
     }
-    else
-    {
-        cannons[i].isShooting = false;
-        cannons[i].frame = 0; // idle
-    }
-}
 
     for (int i = 0; i < MAX_ARROWS; i++) {
         if (!arrows[i].active) continue;
@@ -402,6 +412,20 @@ for (int i = 0; i < cannonCount; i++)
                 if (enemies[e].health <= 0) enemies[e].active = false;
             }
             fireballs[i].active = false;
+        }
+    }
+
+    for (int i = 0; i < MAX_CANNONBALLS; i++) {
+        if (!cannonballs[i].active) continue;
+        Vector2 dir = Vector2Normalize(Vector2Subtract(cannonballs[i].target, cannonballs[i].pos));
+        cannonballs[i].pos = Vector2Add(cannonballs[i].pos, Vector2Scale(dir, cannonballs[i].speed * dt));
+        if (Vector2Distance(cannonballs[i].pos, cannonballs[i].target) < 5.0f) {
+            int e = cannonballs[i].enemyIndex;
+            if (e >= 0 && e < MAX_ENEMIES && enemies[e].active) {
+                enemies[e].health -= 40;
+                if (enemies[e].health <= 0) enemies[e].active = false;
+            }
+            cannonballs[i].active = false;
         }
     }
 }
@@ -460,17 +484,23 @@ void DrawWizards()
     }
 }
 
-void DrawCannons(void)
+void DrawCannons()
 {
-    for (int i = 0; i < cannonCount; i++)
-    {
-        Texture2D tex = cannons[i].isShooting ? cannonTextureShot : cannonTextureIdle;
-        int frameCount = cannons[i].isShooting ? 5 : 1;
-        int frameWidth = tex.width / frameCount;
+    int frameWidth = cannonTextureShot.width / 5;
+    int frameIdleWidth = cannonTextureIdle.width / 1;
 
-        Rectangle src = { frameWidth * cannons[i].frame, 0, frameWidth, (float)tex.height };
-        Rectangle dest = { cannons[i].pos.x - 32, cannons[i].pos.y - 32, 64, 64 };
-        DrawTexturePro(tex, src, dest, (Vector2){ cannons[i].size / 2, cannons[i].size / 2 }, 0, WHITE);
+    for (int i = 0; i < cannonCount; i++) {
+        if (!cannons[i].active) continue;
+        Rectangle src, dest;
+        if (cannons[i].isShooting) {
+            src = (Rectangle){ frameWidth * cannons[i].frame, 0, frameWidth, cannonTextureShot.height };
+            dest = (Rectangle){ cannons[i].pos.x - 30, cannons[i].pos.y - 32, frameWidth, cannonTextureShot.height };
+            DrawTexturePro(cannonTextureShot, src, dest, (Vector2){ frameWidth / 2, cannonTextureShot.height / 2 }, 0.0f, WHITE);
+        } else {
+            src = (Rectangle){ frameIdleWidth * cannons[i].frame, 0, frameIdleWidth, cannonTextureIdle.height };
+            dest = (Rectangle){ cannons[i].pos.x - 30, cannons[i].pos.y - 32, frameIdleWidth, cannonTextureIdle.height };
+            DrawTexturePro(cannonTextureIdle, src, dest, (Vector2){ frameIdleWidth / 2, cannonTextureIdle.height / 2 }, 0.0f, WHITE);
+        }
     }
 }
 
@@ -498,6 +528,19 @@ void DrawFireballs()
     }
 }
 
+void DrawCannonballs()
+{
+    for (int i = 0; i < MAX_CANNONBALLS; i++) {
+        if (!cannonballs[i].active) continue;
+        float dx = cannonballs[i].target.x - cannonballs[i].pos.x;
+        float dy = cannonballs[i].target.y - cannonballs[i].pos.y;
+        float angle = atan2f(dy, dx) * RAD2DEG;
+        Rectangle src = { 0, 0, (float)cannonballTexture.width, (float)cannonballTexture.height };
+        Rectangle dest = { cannonballs[i].pos.x, cannonballs[i].pos.y, (float)cannonballTexture.width, (float)cannonballTexture.height };
+        DrawTexturePro(cannonballTexture, src, dest, (Vector2){ cannonballTexture.width/2, cannonballTexture.height/2 }, angle, WHITE);
+    }
+}
+
 // ------------------------------------------------------
 // Reposicionamento e descarte
 // ------------------------------------------------------
@@ -518,6 +561,10 @@ void RecenterTowers(int newWidth, int newHeight)
         wizards[i].pos.x *= scaleX;
         wizards[i].pos.y *= scaleY;
     }
+    for (int i = 0; i < cannonCount; i++) {
+        cannons[i].pos.x *= scaleX;
+        cannons[i].pos.y *= scaleY;
+}
 }
 
 void UnloadPlayer()
@@ -531,4 +578,5 @@ void UnloadPlayer()
     UnloadTexture(fireballTexture);
     UnloadTexture(cannonTextureIdle);
     UnloadTexture(cannonTextureShot);
+    UnloadTexture(cannonballTexture);
 }
