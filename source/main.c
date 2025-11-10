@@ -83,6 +83,9 @@ int main() {
         return 1;
     }
 
+    int playerGold = 0;
+    GoldHUD goldHUD;
+
     Image rei = LoadImage("assets/rei.png");
     ImageResize(&rei, 200, 200);
     Texture2D reiTextura = LoadTextureFromImage(rei);
@@ -108,6 +111,7 @@ int main() {
 
     InitEnemies();
     InitPlayer();
+    InitGoldHUD(&goldHUD);
 
     if (!verificarSeMapaExiste(arquivoMapaTowerDefense)) {
         criadorDeMapa(arquivoMapaTowerDefense, 15, 15);
@@ -173,6 +177,7 @@ int main() {
             UpdateEnemies(dt, pathStart, pathEnd);
             ReposicionarInimigos(pathStart, pathEnd);
             UpdatePlayer();
+            UpdateGoldHUD(&goldHUD, playerGold);
 
             ClearBackground((Color){20, 20, 30, 255});
             DrawEnemies();
@@ -183,6 +188,7 @@ int main() {
             DrawFireballs();
             DrawArrows();
             DrawCannonballs();
+            DrawGoldHUD(&goldHUD);
             DrawText("Tower Defense - fase de inimigos", 10, 10, 20, WHITE);
             HUD_Draw();
         }

@@ -18,6 +18,8 @@
 #define GRID_SIZE 64.0f
 #define ATTACK_RANGE_CANNON (GRID_SIZE * 5)
 
+int playerGold = 0;
+
 typedef struct {
     Vector2 pos;
     Vector2 basePos;
@@ -389,6 +391,7 @@ void UpdatePlayer(void)
             if (e >= 0 && e < MAX_ENEMIES && enemies[e].active) {
                 enemies[e].health -= 10;
                 if (enemies[e].health <= 0) enemies[e].active = false;
+                playerGold += 15;
             }
             arrows[i].active = false;
         }
@@ -410,6 +413,7 @@ void UpdatePlayer(void)
             if (e >= 0 && e < MAX_ENEMIES && enemies[e].active) {
                 enemies[e].health -= 25;
                 if (enemies[e].health <= 0) enemies[e].active = false;
+                playerGold += 15;
             }
             fireballs[i].active = false;
         }
@@ -424,6 +428,7 @@ void UpdatePlayer(void)
             if (e >= 0 && e < MAX_ENEMIES && enemies[e].active) {
                 enemies[e].health -= 40;
                 if (enemies[e].health <= 0) enemies[e].active = false;
+                playerGold += 15;
             }
             cannonballs[i].active = false;
         }

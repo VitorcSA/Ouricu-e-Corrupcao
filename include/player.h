@@ -3,6 +3,8 @@
 
 #include <raylib.h>
 
+extern int playerGold;
+
 void InitPlayer(void);
 void UpdatePlayer(void);
 void DrawTowers(void);
