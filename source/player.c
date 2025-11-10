@@ -41,6 +41,7 @@ typedef struct {
     int frame;
     float frameTime;
     float shotTimer;
+    float size;
     bool isAttacking;
     bool isIdle;
 } Shotwizard;
@@ -71,8 +72,6 @@ typedef struct {
     int enemyIndex;
 } Fireball;
 
-// ------------------------------------------------------
-
 static Tower towers[MAX_TOWERS];
 static Archer archers[MAX_ARCHERS];
 static Shotwizard wizards[MAX_WIZARDS];
@@ -85,9 +84,6 @@ static int archerCount = 0;
 static int wizardCount = 0;
 static int cannonCount = 0;
 
-// ------------------------------------------------------
-// Texturas
-// ------------------------------------------------------
 static Texture2D torreTexture;
 static Texture2D archerTexture;
 static Texture2D archerIdeleTexture;
@@ -98,9 +94,6 @@ static Texture2D fireballTexture;
 static Texture2D cannonTextureIdle;
 static Texture2D cannonTextureShot;
 
-// ------------------------------------------------------
-// Inicialização
-// ------------------------------------------------------
 void InitPlayer()
 {
     Image torre = LoadImage("assets/torre_colocar.png");
@@ -140,7 +133,6 @@ void InitPlayer()
     cannonTextureShot = LoadTextureFromImage(cannonShot);
     UnloadImage(cannonShot);
 
-    // Inicializar arrays
     for (int i = 0; i < MAX_FIREBALLS; i++) {
         fireballs[i].active = false;
         fireballs[i].frame = 0;
@@ -149,9 +141,6 @@ void InitPlayer()
     }
 }
 
-// ------------------------------------------------------
-// Adicionar unidades
-// ------------------------------------------------------
 void AddTower(Vector2 pos)
 {
     if (towerCount >= MAX_TOWERS) return;
@@ -175,10 +164,11 @@ void AddArcher(Vector2 pos)
     archerCount++;
 }
 
-void AddWizard(Vector2 pos)
+void AddWizard(Vector2 towerPos, float towerSize)
 {
     if (wizardCount >= MAX_WIZARDS) return;
-    wizards[wizardCount].pos = pos;
+    wizards[wizardCount].pos.x = towerPos.x + 35;
+    wizards[wizardCount].pos.y = towerPos.y - (towerSize / 2) + (wizards[wizardCount].size / 2);
     wizards[wizardCount].active = true;
     wizards[wizardCount].frame = 0;
     wizards[wizardCount].frameTime = 0;
@@ -202,9 +192,6 @@ void AddCannon(Vector2 towerPos, float towerSize)
     cannonCount++;
 }
 
-// ------------------------------------------------------
-// Disparos
-// ------------------------------------------------------
 void ShootArrow(Vector2 start, Vector2 target, int enemyIndex)
 {
     for (int i = 0; i < MAX_ARROWS; i++) {
@@ -235,9 +222,6 @@ void ShootFireball(Vector2 start, Vector2 target, int enemyIndex)
     }
 }
 
-// ------------------------------------------------------
-// Atualização do Player
-// ------------------------------------------------------
 void UpdatePlayer(void)
 {
     float dt = GetFrameTime();
@@ -252,7 +236,7 @@ void UpdatePlayer(void)
             if (selected == UNIT_ARCHER) {
                 AddArcher((Vector2){towers[selTower].pos.x, towers[selTower].pos.y - 32});
             } else if (selected == UNIT_WIZARD) {
-                AddWizard((Vector2){towers[selTower].pos.x, towers[selTower].pos.y - 32});
+                AddWizard(towers[selTower].pos, towers[selTower].size);
             } else if (selected == UNIT_CANNON && selTower >= 0 && selTower < towerCount) {
                 AddCannon(towers[selTower].pos, towers[selTower].size);
             }

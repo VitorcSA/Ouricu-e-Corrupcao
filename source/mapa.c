@@ -68,7 +68,7 @@ void initTiles(){
 
 }
 
-Texture2D CheckTile(unsigned char tile) {
+Color CheckTile(unsigned char tile) {
     switch (tile) {
         case 0: return GREEN;
         case 1: return GRAY;

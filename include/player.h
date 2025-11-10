@@ -15,7 +15,7 @@ void DrawArchers(void);
 void UnloadArchers(void);
 void DrawArrows(void);
 void UnloadArrows(void);
-void AddWizard(Vector2 towerPos);
+void AddWizard(Vector2 towerPos, float towerSize);
 void DrawWizards(void);
 void InitFireballs(void);
 void ShootFireball(Vector2 start, Vector2 target, int enemyIndex);
