@@ -7,44 +7,18 @@ static Vector2 hudPos;
 static int selectedTower = -1;
 static UnitType chosenUnit = UNIT_NONE;
 static int hudWidth = 150;
-static int hudHeight = 150; // aumentado para caber mais botões
-
-// Texturas dos ícones
-static Texture2D archerIcon;
-static Texture2D wizardIcon;
-static bool iconsLoaded = false;
-
-void HUD_LoadIcons(void) {
-    if (!iconsLoaded) {
-        Image a = LoadImage("assets/ArcherIcon.png");
-        Image w = LoadImage("assets/Shotwizard.png");
-        archerIcon = LoadTextureFromImage(a);
-        wizardIcon = LoadTextureFromImage(w);
-        UnloadImage(a);
-        UnloadImage(w);
-        iconsLoaded = true;
-    }
-}
+static int hudHeight = 220; // 3 botões (archer, wizard, cannon)
 
 void HUD_ShowAt(Vector2 pos, int towerIndex) {
-    HUD_LoadIcons();
     hudVisible = true;
     hudPos = (Vector2){pos.x, pos.y - hudHeight - 10};
     selectedTower = towerIndex;
     chosenUnit = UNIT_NONE;
 }
 
-bool HUD_IsActive(void) {
-    return hudVisible;
-}
-
-int HUD_GetSelectedTower(void) {
-    return selectedTower;
-}
-
-UnitType HUD_GetSelectedUnit(void) {
-    return chosenUnit;
-}
+bool HUD_IsActive(void) { return hudVisible; }
+int HUD_GetSelectedTower(void) { return selectedTower; }
+UnitType HUD_GetSelectedUnit(void) { return chosenUnit; }
 
 void HUD_Update(void) {
     if (!hudVisible) return;
@@ -52,15 +26,19 @@ void HUD_Update(void) {
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
         Vector2 mouse = GetMousePosition();
 
-        Rectangle archerBtn = { hudPos.x, hudPos.y, hudWidth, hudHeight / 2 };
-        Rectangle wizardBtn = { hudPos.x, hudPos.y + hudHeight / 2, hudWidth, hudHeight / 2 };
+        int section = hudHeight / 3;
+        Rectangle archerBtn = { hudPos.x, hudPos.y, hudWidth, section };
+        Rectangle wizardBtn = { hudPos.x, hudPos.y + section, hudWidth, section };
+        Rectangle cannonBtn = { hudPos.x, hudPos.y + 2 * section, hudWidth, section };
 
         if (CheckCollisionPointRec(mouse, archerBtn)) {
             chosenUnit = UNIT_ARCHER;
             hudVisible = false;
-        }
-        else if (CheckCollisionPointRec(mouse, wizardBtn)) {
+        } else if (CheckCollisionPointRec(mouse, wizardBtn)) {
             chosenUnit = UNIT_WIZARD;
+            hudVisible = false;
+        } else if (CheckCollisionPointRec(mouse, cannonBtn)) {
+            chosenUnit = UNIT_CANNON;
             hudVisible = false;
         }
     }
@@ -69,25 +47,18 @@ void HUD_Update(void) {
 void HUD_Draw(void) {
     if (!hudVisible) return;
 
-    DrawRectangle((int)hudPos.x, (int)hudPos.y, hudWidth, hudHeight, Fade(LIGHTGRAY, 0.9f));
-    DrawRectangleLines((int)hudPos.x, (int)hudPos.y, hudWidth, hudHeight, DARKGRAY);
+    DrawRectangleRec((Rectangle){hudPos.x, hudPos.y, hudWidth, hudHeight}, Fade(LIGHTGRAY, 0.95f));
+    DrawRectangleLines(hudPos.x, hudPos.y, hudWidth, hudHeight, DARKGRAY);
 
-    DrawRectangleLines((int)hudPos.x, (int)hudPos.y, hudWidth, hudHeight / 2, DARKGRAY);
-    DrawRectangleLines((int)hudPos.x, (int)hudPos.y + hudHeight / 2, hudWidth, hudHeight / 2, DARKGRAY);
+    int section = hudHeight / 3;
+
+    DrawRectangleLines(hudPos.x, hudPos.y, hudWidth, section, DARKGRAY);
+    DrawRectangleLines(hudPos.x, hudPos.y + section, hudWidth, section, DARKGRAY);
+    DrawRectangleLines(hudPos.x, hudPos.y + 2 * section, hudWidth, section, DARKGRAY);
 
     DrawText("Archer", hudPos.x + 10, hudPos.y + 10, 20, BLACK);
-    DrawText("Wizard", hudPos.x + 10, hudPos.y + 10 + hudHeight / 2, 20, BLACK);
-
-    if (iconsLoaded) {
-        DrawTexturePro(archerIcon, 
-            (Rectangle){0, 0, archerIcon.width, archerIcon.height}, 
-            (Rectangle){hudPos.x + hudWidth - 45, hudPos.y + 10, 32, 32}, 
-            (Vector2){0, 0}, 0, WHITE);
-        DrawTexturePro(wizardIcon, 
-            (Rectangle){0, 0, wizardIcon.width / 8, wizardIcon.height}, // primeiro frame
-            (Rectangle){hudPos.x + hudWidth - 45, hudPos.y + 10 + hudHeight / 2, 32, 32}, 
-            (Vector2){0, 0}, 0, WHITE);
-    }
+    DrawText("Wizard", hudPos.x + 10, hudPos.y + section + 10, 20, BLACK);
+    DrawText("Cannon", hudPos.x + 10, hudPos.y + 2 * section + 10, 20, BLACK);
 }
 
 void desenharRetangulo(int alturaImagem, int posYSprite){

@@ -7,7 +7,8 @@
 typedef enum { 
     UNIT_NONE, 
     UNIT_ARCHER, 
-    UNIT_WIZARD
+    UNIT_WIZARD,
+    UNIT_CANNON
 } UnitType;
 
 void HUD_ShowAt(Vector2 pos, int towerIndex);
