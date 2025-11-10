@@ -38,7 +38,7 @@ void DrawTutorial(void) {
     const int fontSize = 24;
     int screenWidth = GetScreenWidth();
     int screenHeight = GetScreenHeight();
-    int y = screenHeight / 6; // ponto de partida vertical
+    int y = screenHeight / 6;
 
     DrawText("TUTORIAL", (screenWidth - MeasureText("TUTORIAL", 40)) / 2, y, 40, YELLOW);
     y += 70;
@@ -57,23 +57,19 @@ void DrawTutorial(void) {
 
     int numLines = sizeof(lines) / sizeof(lines[0]);
     for (int i = 0; i < numLines; i++) {
-        DrawText(
-            lines[i],
-            (screenWidth - MeasureText(lines[i], fontSize)) / 2,
-            y,
-            fontSize,
-            WHITE
-        );
+        DrawText(lines[i],
+                 (screenWidth - MeasureText(lines[i], fontSize)) / 2,
+                 y,
+                 fontSize,
+                 WHITE);
         y += 40;
     }
 
-    DrawText(
-        "Pressione [ENTER] para começar!",
-        (screenWidth - MeasureText("Pressione [ENTER] para começar!", 24)) / 2,
-        y + 40,
-        24,
-        GREEN
-    );
+    DrawText("Pressione [ENTER] para começar!",
+             (screenWidth - MeasureText("Pressione [ENTER] para começar!", 24)) / 2,
+             y + 40,
+             24,
+             GREEN);
 }
 
 int main() {
@@ -177,12 +173,14 @@ int main() {
             UpdateEnemies(dt, pathStart, pathEnd);
             ReposicionarInimigos(pathStart, pathEnd);
             UpdatePlayer();
+            UpdateFireballs(dt);
 
             ClearBackground((Color){20, 20, 30, 255});
             DrawEnemies();
             DrawTowers();
             DrawArchers();
             DrawWizards();
+            DrawFireballs();
             DrawArrows();
             DrawText("Tower Defense - fase de inimigos", 10, 10, 20, WHITE);
             HUD_Draw();

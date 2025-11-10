@@ -8,8 +8,6 @@ void UpdatePlayer(void);
 void DrawTowers(void);
 void RecenterTowers(int newWidth, int newHeight);
 void UnloadPlayer(void);
-
-// --- Arqueiro ---
 void InitArchers(void);
 void AddArcher(Vector2 pos);
 void UpdateArchers(float dt);
@@ -17,9 +15,12 @@ void DrawArchers(void);
 void UnloadArchers(void);
 void DrawArrows(void);
 void UnloadArrows(void);
-
-// --- Mago (Shot Wizard) ---
 void AddWizard(Vector2 towerPos);
 void DrawWizards(void);
+void InitFireballs(void);
+void ShootFireball(Vector2 start, Vector2 target, int enemyIndex);
+void UpdateFireballs(float dt);
+void DrawFireballs(void);
+void UnloadFireballs(void);
 
 #endif
