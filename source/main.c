@@ -173,13 +173,13 @@ int main() {
             UpdateEnemies(dt, pathStart, pathEnd);
             ReposicionarInimigos(pathStart, pathEnd);
             UpdatePlayer();
-            UpdateFireballs(dt);
 
             ClearBackground((Color){20, 20, 30, 255});
             DrawEnemies();
             DrawTowers();
             DrawArchers();
             DrawWizards();
+            DrawCannons();
             DrawFireballs();
             DrawArrows();
             DrawText("Tower Defense - fase de inimigos", 10, 10, 20, WHITE);
