@@ -16,7 +16,7 @@
 #define ATTACK_RANGE_WIZARD 135.0f
 #define GRID_SIZE 64.0f
 #define ATTACK_RANGE_CANNON (GRID_SIZE * 5)
-#define ATTACK_INTERVAL_CANNON 1.5f
+#define ATTACK_INTERVAL_CANNON 0.5f
 #define CANNON_DAMAGE 40
 
 typedef struct {
@@ -47,8 +47,10 @@ typedef struct {
 
 typedef struct {
     Vector2 pos;
-    bool active;
-    float shotTimer;
+    float size;
+    bool isShooting;
+    int frame;
+    float frameTime;
 } Cannon;
 
 typedef struct {
@@ -93,7 +95,8 @@ static Texture2D arrowTexture;
 static Texture2D wizardTexture;
 static Texture2D idlewizardTexture;
 static Texture2D fireballTexture;
-static Texture2D cannonTexture;
+static Texture2D cannonTextureIdle;
+static Texture2D cannonTextureShot;
 
 // ------------------------------------------------------
 // Inicialização
@@ -129,9 +132,13 @@ void InitPlayer()
     fireballTexture = LoadTextureFromImage(fireball);
     UnloadImage(fireball);
 
-    Image cannon = LoadImage("assets/inimigosAnimation/idlecannon.png");
-    cannonTexture = LoadTextureFromImage(cannon);
-    UnloadImage(cannon);
+    Image cannonIdle = LoadImage("assets/inimigosAnimation/idlecannon.png");
+    cannonTextureIdle = LoadTextureFromImage(cannonIdle);
+    UnloadImage(cannonIdle);
+
+    Image cannonShot = LoadImage("assets/inimigosAnimation/shotcannon.png");
+    cannonTextureShot = LoadTextureFromImage(cannonShot);
+    UnloadImage(cannonShot);
 
     // Inicializar arrays
     for (int i = 0; i < MAX_FIREBALLS; i++) {
@@ -181,12 +188,17 @@ void AddWizard(Vector2 pos)
     wizardCount++;
 }
 
-void AddCannon(Vector2 pos)
+void AddCannon(Vector2 towerPos, float towerSize)
 {
     if (cannonCount >= MAX_CANNONS) return;
-    cannons[cannonCount].pos = pos;
-    cannons[cannonCount].active = true;
-    cannons[cannonCount].shotTimer = 0;
+
+    cannons[cannonCount].size = 64.0f;
+    cannons[cannonCount].pos.x = towerPos.x + 35;
+    cannons[cannonCount].pos.y = towerPos.y - (towerSize / 2) + (cannons[cannonCount].size / 2);
+    cannons[cannonCount].isShooting = false;
+    cannons[cannonCount].frame = 0;
+    cannons[cannonCount].frameTime = 0.0f;
+
     cannonCount++;
 }
 
@@ -241,8 +253,8 @@ void UpdatePlayer(void)
                 AddArcher((Vector2){towers[selTower].pos.x, towers[selTower].pos.y - 32});
             } else if (selected == UNIT_WIZARD) {
                 AddWizard((Vector2){towers[selTower].pos.x, towers[selTower].pos.y - 32});
-            } else if (selected == UNIT_CANNON) {
-                AddCannon((Vector2){towers[selTower].pos.x, towers[selTower].pos.y - 32});
+            } else if (selected == UNIT_CANNON && selTower >= 0 && selTower < towerCount) {
+                AddCannon(towers[selTower].pos, towers[selTower].size);
             }
         }
         return;
@@ -328,26 +340,52 @@ void UpdatePlayer(void)
         }
     }
 
-    // --- Atualizar canhões ---
-    for (int i = 0; i < cannonCount; i++) {
-        if (!cannons[i].active) continue;
-        cannons[i].shotTimer -= dt;
-        if (cannons[i].shotTimer <= 0) {
-            for (int e = 0; e < MAX_ENEMIES; e++) {
-                if (!enemies[e].active) continue;
-                float dist = Vector2Distance(cannons[i].pos, enemies[e].pos);
-                if (dist <= ATTACK_RANGE_CANNON) {
-                    enemies[e].health -= CANNON_DAMAGE;
-                    if (enemies[e].health <= 0) enemies[e].active = false;
-                    cannons[i].shotTimer = ATTACK_INTERVAL_CANNON;
-                    break;
-                }
-            }
+for (int i = 0; i < cannonCount; i++)
+{
+    bool enemyNear = false;
+    int targetEnemy = -1;
+
+    // Procurar inimigo mais próximo a 5 grids
+    for (int e = 0; e < MAX_ENEMIES; e++)
+    {
+        if (!enemies[e].active) continue;
+        float dist = Vector2Distance(cannons[i].pos, enemies[e].pos);
+        if (dist <= ATTACK_RANGE_CANNON)
+        {
+            enemyNear = true;
+            targetEnemy = e;
+            break;
         }
     }
 
-    // --- Atualizar tiros ---
-    // (Arrows)
+    // Atualizar estado e animação
+    if (enemyNear)
+    {
+        cannons[i].isShooting = true;
+        cannons[i].frameTime += GetFrameTime();
+        if (cannons[i].frameTime >= 0.15f) // velocidade da animação
+        {
+            cannons[i].frame = (cannons[i].frame + 1) % 5; // 5 frames shot
+            cannons[i].frameTime = 0;
+        }
+
+        // Aplicar dano direto a cada intervalo
+        static float shotTimer = 0;
+        shotTimer -= GetFrameTime();
+        if (shotTimer <= 0 && targetEnemy != -1)
+        {
+            enemies[targetEnemy].health -= CANNON_DAMAGE;
+            if (enemies[targetEnemy].health <= 0) enemies[targetEnemy].active = false;
+            shotTimer = ATTACK_INTERVAL_CANNON;
+        }
+    }
+    else
+    {
+        cannons[i].isShooting = false;
+        cannons[i].frame = 0; // idle
+    }
+}
+
     for (int i = 0; i < MAX_ARROWS; i++) {
         if (!arrows[i].active) continue;
         Vector2 dir = Vector2Normalize(Vector2Subtract(arrows[i].target, arrows[i].pos));
@@ -438,11 +476,17 @@ void DrawWizards()
     }
 }
 
-void DrawCannons()
+void DrawCannons(void)
 {
-    for (int i = 0; i < cannonCount; i++) {
-        if (!cannons[i].active) continue;
-        DrawTexture(cannonTexture, cannons[i].pos.x - 32, cannons[i].pos.y - 32, WHITE);
+    for (int i = 0; i < cannonCount; i++)
+    {
+        Texture2D tex = cannons[i].isShooting ? cannonTextureShot : cannonTextureIdle;
+        int frameCount = cannons[i].isShooting ? 5 : 1;
+        int frameWidth = tex.width / frameCount;
+
+        Rectangle src = { frameWidth * cannons[i].frame, 0, frameWidth, (float)tex.height };
+        Rectangle dest = { cannons[i].pos.x - 32, cannons[i].pos.y - 32, 64, 64 };
+        DrawTexturePro(tex, src, dest, (Vector2){ cannons[i].size / 2, cannons[i].size / 2 }, 0, WHITE);
     }
 }
 
@@ -501,5 +545,6 @@ void UnloadPlayer()
     UnloadTexture(wizardTexture);
     UnloadTexture(idlewizardTexture);
     UnloadTexture(fireballTexture);
-    UnloadTexture(cannonTexture);
+    UnloadTexture(cannonTextureIdle);
+    UnloadTexture(cannonTextureShot);
 }

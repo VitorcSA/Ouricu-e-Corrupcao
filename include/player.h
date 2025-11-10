@@ -23,7 +23,7 @@ void UpdateFireballs(float dt);
 void DrawFireballs(void);
 void UnloadFireballs(void);
 void InitCannons(void);
-void AddCannon(Vector2 pos);
+void AddCannon(Vector2 towerPos, float towerSize);
 void UpdateCannons(float dt);
 void DrawCannons(void);
 void UnloadCannons(void);
