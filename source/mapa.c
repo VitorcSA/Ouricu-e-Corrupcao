@@ -4,6 +4,15 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+static Texture2D groundEnemyVertical;
+static Texture2D groundEnemyHorizontal;
+static Texture2D groundEnemyDireitaSuperior;
+static Texture2D groundEnemyDireitaInferior;
+static Texture2D groundEnemyEsquerdaSuperior;
+static Texture2D groundEnemyEsquerdaInferior;
+static Texture2D buildable;
+
+
 bool CheckFile(FILE *file){
     if(file){
         return true;
@@ -32,7 +41,34 @@ unsigned char *ReadMap(const char *fileName) {
     return NULL;
 }
 
-Color CheckTile(unsigned char tile) {
+void initTiles(){
+    Image imgroundEnemyDI = LoadImage("assets/torre_colocar.png");
+    groundEnemyDireitaInferior = LoadTextureFromImage(imgroundEnemyDI);
+    UnloadImage(imgroundEnemyDI);
+
+    Image imgroundEnemyDS = LoadImage("assets/torre_colocar.png");
+    groundEnemyDireitaSuperior = LoadTextureFromImage(imgroundEnemyDS);
+    UnloadImage(imgroundEnemyDS);
+
+    Image imgroundEnemyEI = LoadImage("assets/torre_colocar.png");
+    groundEnemyEsquerdaInferior = LoadTextureFromImage(imgroundEnemyEI);
+    UnloadImage(imgroundEnemyEI);
+
+    Image imgroundEnemyES = LoadImage("assets/torre_colocar.png");
+    groundEnemyEsquerdaSuperior = LoadTextureFromImage(imgroundEnemyES);
+    UnloadImage(imgroundEnemyES);
+
+    Image imgroundEnemyH = LoadImage("assets/torre_colocar.png");
+    groundEnemyHorizontal = LoadTextureFromImage(imgroundEnemyH);
+    UnloadImage(imgroundEnemyH);
+
+    Image imgroundEnemyV = LoadImage("assets/torre_colocar.png");
+    groundEnemyVertical = LoadTextureFromImage(imgroundEnemyV);
+    UnloadImage(imgroundEnemyV);
+
+}
+
+Texture2D CheckTile(unsigned char tile) {
     switch (tile) {
         case 0: return GREEN;
         case 1: return GRAY;
