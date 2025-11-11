@@ -29,6 +29,7 @@ typedef struct {
 
 typedef struct {
     Vector2 pos;
+    Vector2 basePos;
     bool active;
     int frame;
     float frameTime;
@@ -173,6 +174,8 @@ void AddArcher(Vector2 pos)
 {
     if (archerCount >= MAX_ARCHERS) return;
     archers[archerCount].pos = pos;
+    archers[towerCount].basePos = (Vector2){ pos.x / ((float)GetScreenWidth() / 1280.0f),
+                                            pos.y / ((float)GetScreenHeight() / 720.0f) };
     archers[archerCount].active = true;
     archers[archerCount].frame = 0;
     archers[archerCount].frameTime = 0;
@@ -559,8 +562,8 @@ void RecenterTowers(int newWidth, int newHeight)
         towers[i].size = 64 * scaleX;
     }
     for (int i = 0; i < archerCount; i++) {
-        archers[i].pos.x *= scaleX;
-        archers[i].pos.y *= scaleY;
+        archers[i].pos.x = archers[i].basePos.x * scaleX;
+        archers[i].pos.y = archers[i].basePos.y * scaleY;
     }
     for (int i = 0; i < wizardCount; i++) {
         wizards[i].pos.x *= scaleX;
