@@ -332,14 +332,16 @@ void UpdatePlayer(void)
             mousePos.y / cellHeight
         };
 
+        int gridX = (int)(mousePos.x / cellWidth);
+        int gridY = (int)(mousePos.y / cellHeight);
+
         Vector2 cellCenter = {
-        gridPos.x * cellWidth + cellWidth / 2.0f,
-        gridPos.y * cellHeight + cellHeight / 2.0f
+        gridX * cellWidth + (cellWidth * 0.5f) - 8,
+        gridY * cellHeight + (cellHeight * 0.5f) - 16
     };
 
-
         if (!IsTowerOnGrid(gridPos)) {
-            AddTower(mousePos);
+            AddTower(cellCenter);
         } else {
             printf("Já existe uma torre nesse grid!\n");
         }
@@ -520,8 +522,8 @@ void DrawTowers()
               0.0f, 1.0f, WHITE);
         }
     }
-    Vector2 gridPos = (Vector2){ floorf(mousePos.x / GRID_SIZE) * GRID_SIZE,
-                             floorf(mousePos.y / GRID_SIZE) * GRID_SIZE };
+    /*Vector2 gridPos = (Vector2){ floorf(mousePos.x / GRID_SIZE) * GRID_SIZE,
+                             floorf(mousePos.y / GRID_SIZE) * GRID_SIZE };*/
 }
 
 void DrawArchers()
