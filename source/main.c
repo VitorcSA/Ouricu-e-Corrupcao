@@ -161,7 +161,7 @@ int main() {
                      GetScreenHeight() / 2, 20, RAYWHITE);
             DrawText("[F11] alterna fullscreen", 10, 10, 20, GRAY);
             desenharRetangulo(reiTextura.height, posicaoRei.y);
-            desenharRei(reiTextura, posicaoRei.x, posicaoRei.y);
+            desenharRei(reiTextura, posicaoRei.x - 5, posicaoRei.y);
             if (IsKeyPressed(KEY_ENTER) || IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
                 jogoIniciado = true;
         }
