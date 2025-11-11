@@ -76,8 +76,11 @@ Texture2D CheckTile(unsigned char tile) {
     switch (tile) {
         case 0: return buildable;
         case 1: return groundEnemyHorizontal;
-        case 2: return groundEnemyDireitaSuperior;
-        case 3: return groundEnemyDireitaInferior;
+        case 2: return groundEnemyDireitaInferior;
+        case 3: return groundEnemyVertical;
+        case 4: return groundEnemyEsquerdaSuperior;
+        case 5: return groundEnemyDireitaSuperior;
+        case 6: return groundEnemyEsquerdaInferior;
         default: return buildable;
     }
 }
