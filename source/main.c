@@ -111,6 +111,7 @@ int main() {
 
     InitEnemies();
     InitPlayer();
+    initTiles();
     InitGoldHUD(&goldHUD);
 
     if (!verificarSeMapaExiste(arquivoMapaTowerDefense)) {
@@ -167,6 +168,7 @@ int main() {
 
         else {
             DrawMap(mapTower);
+            drawLinesMap();
             float dt = GetFrameTime();
             enemyTimer += dt;
             if (enemyTimer > 2.0f) {

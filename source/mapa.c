@@ -42,39 +42,43 @@ unsigned char *ReadMap(const char *fileName) {
 }
 
 void initTiles(){
-    Image imgroundEnemyDI = LoadImage("assets/torre_colocar.png");
+    Image imgroundEnemyDI = LoadImage("assets/mapa/groundEnemyDireitaInferior.png");
     groundEnemyDireitaInferior = LoadTextureFromImage(imgroundEnemyDI);
     UnloadImage(imgroundEnemyDI);
 
-    Image imgroundEnemyDS = LoadImage("assets/torre_colocar.png");
+    Image imgroundEnemyDS = LoadImage("assets/mapa/groundEnemyDireitaSuperior.png");
     groundEnemyDireitaSuperior = LoadTextureFromImage(imgroundEnemyDS);
     UnloadImage(imgroundEnemyDS);
 
-    Image imgroundEnemyEI = LoadImage("assets/torre_colocar.png");
+    Image imgroundEnemyEI = LoadImage("assets/mapa/groundEnemyEsquerdaInferior.png");
     groundEnemyEsquerdaInferior = LoadTextureFromImage(imgroundEnemyEI);
     UnloadImage(imgroundEnemyEI);
 
-    Image imgroundEnemyES = LoadImage("assets/torre_colocar.png");
+    Image imgroundEnemyES = LoadImage("assets/mapa/groundEnemyEsquerdaSuperior.png");
     groundEnemyEsquerdaSuperior = LoadTextureFromImage(imgroundEnemyES);
     UnloadImage(imgroundEnemyES);
 
-    Image imgroundEnemyH = LoadImage("assets/torre_colocar.png");
+    Image imgroundEnemyH = LoadImage("assets/mapa/groundEnemyHorizontal.png");
     groundEnemyHorizontal = LoadTextureFromImage(imgroundEnemyH);
     UnloadImage(imgroundEnemyH);
 
-    Image imgroundEnemyV = LoadImage("assets/torre_colocar.png");
+    Image imgroundEnemyV = LoadImage("assets/mapa/groundEnemyVertical.png");
     groundEnemyVertical = LoadTextureFromImage(imgroundEnemyV);
     UnloadImage(imgroundEnemyV);
 
+    Image imBuildable = LoadImage("assets/mapa/buildable1.png");
+    buildable = LoadTextureFromImage(imBuildable);
+    UnloadImage(imBuildable);
+
 }
 
-Color CheckTile(unsigned char tile) {
+Texture2D CheckTile(unsigned char tile) {
     switch (tile) {
-        case 0: return GREEN;
-        case 1: return GRAY;
-        case 2: return DARKGREEN;
-        case 3: return BLUE;
-        default: return BLACK;
+        case 0: return buildable;
+        case 1: return groundEnemyHorizontal;
+        case 2: return groundEnemyDireitaSuperior;
+        case 3: return groundEnemyDireitaInferior;
+        default: return buildable;
     }
 }
 
@@ -88,13 +92,35 @@ void DrawMap(unsigned char *self) {
 
     for (int y = 0; y < GRID_HEIGHT; y++) {
         for (int x = 0; x < GRID_WIDTH; x++) {
-            Rectangle cell = { x * cellWidth, y * cellHeight, cellWidth, cellHeight };
-
+            
             unsigned char tile = self[y * GRID_WIDTH + x];
-            Color color = CheckTile(tile);
 
-            DrawRectangleRec(cell, color);
-            DrawRectangleLinesEx(cell, 1.0f, BLACK); // Bordas finas
+            Texture2D texture = CheckTile(tile);
+
+            Rectangle dest = { x * cellWidth, y * cellHeight, cellWidth, cellHeight };
+            Rectangle source = { 0, 0, (float)texture.width, (float)texture.height };
+
+            Vector2 origin = { 0, 0 };
+
+            DrawTexturePro(texture, source, dest, origin, 0.0f, WHITE);
+    
+        }
+    }
+}
+
+void drawLinesMap(){
+    int screenWidth = GetScreenWidth();
+    int screenHeight = GetScreenHeight();
+
+    // Calcular tamanho das células para preencher a tela
+    float cellWidth = (float)screenWidth / GRID_WIDTH;
+    float cellHeight = (float)screenHeight / GRID_HEIGHT;
+
+    for (int y = 0; y < GRID_HEIGHT; y++) {
+        for (int x = 0; x < GRID_WIDTH; x++) {
+            Rectangle dest = { x * cellWidth, y * cellHeight, cellWidth, cellHeight };
+
+            DrawRectangleLines((int)dest.x, (int)dest.y, (int)dest.width, (int)dest.height, BLACK);
         }
     }
 }
