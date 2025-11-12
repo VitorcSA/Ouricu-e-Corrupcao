@@ -172,7 +172,7 @@ int main() {
             float dt = GetFrameTime();
             enemyTimer += dt;
             if (enemyTimer > 2.0f) {
-                SpawnEnemy(pathStart);
+                SpawnEnemies(pathStart);
                 enemyTimer = 0;
             }
 
