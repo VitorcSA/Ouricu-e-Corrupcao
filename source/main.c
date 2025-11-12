@@ -125,8 +125,8 @@ int main() {
     while (!WindowShouldClose()) {
         int screenWidth = GetScreenWidth();
         int screenHeight = GetScreenHeight();
-        float cellWidth = (float)screenWidth / 15;
-        float cellHeight = (float)screenHeight / 15;
+        float cellWidth = screenWidth / (float)COLS;
+        float cellHeight = screenHeight / (float)ROWS;
         if (IsWindowResized() || IsKeyPressed(KEY_F11)) {
             if (IsKeyPressed(KEY_F11)) {
                 borderless = !borderless;
@@ -150,7 +150,6 @@ int main() {
             ReposicionarInimigos(pathStart, pathEnd);
             RecenterTowers(GetScreenWidth(), GetScreenHeight());
         }
-
         BeginDrawing();
         ClearBackground(BLACK);
 
@@ -176,7 +175,7 @@ int main() {
             float dt = GetFrameTime();
             enemyTimer += dt;
             if (enemyTimer > 2.0f) {
-                SpawnEnemy(pathStart, mapTower);
+                SpawnEnemy(pathStart, mapTower, cellWidth, cellHeight);
                 enemyTimer = 0;
             }
 
@@ -188,6 +187,7 @@ int main() {
 
             ClearBackground((Color){20, 20, 30, 255});
             DrawEnemies();
+            DrawEnemies2();
             DrawTowers();
             DrawArchers();
             DrawWizards();
