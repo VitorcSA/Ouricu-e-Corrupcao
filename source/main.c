@@ -101,6 +101,7 @@
         const char *arquivoMapaTowerDefense = "assets/mapa/mapaTowerDefense";
 
         InitEnemies();
+        //InitOrcs();
         InitPlayer();
         initTiles();
         InitGoldHUD(&goldHUD);
@@ -197,11 +198,13 @@
             enemyTimer = 0;
         }
         UpdateEnemies(dt, pathStart, pathEnd);
+        //UpdateOrcs(dt, pathStart, pathEnd);
         ReposicionarInimigos(pathStart, pathEnd);
         UpdatePlayer();
         UpdateGoldHUD(&goldHUD, playerGold);
 
         DrawEnemies();
+        //DrawOrcs();
         DrawTowers();
         DrawArchers();
         DrawWizards();
