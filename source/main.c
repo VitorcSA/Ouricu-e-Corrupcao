@@ -109,20 +109,24 @@ int main() {
     const char *textoJogo = "Pressione [ENTER] para iniciar o jogo!";
     const char *arquivoMapaTowerDefense = "assets/mapa/mapaTowerDefense";
 
-    InitEnemies();
-    InitPlayer();
-    initTiles();
-    InitGoldHUD(&goldHUD);
-
     if (!verificarSeMapaExiste(arquivoMapaTowerDefense)) {
         criadorDeMapa(arquivoMapaTowerDefense, 15, 15);
     }
 
     unsigned char *mapTower = ReadMap(arquivoMapaTowerDefense);
 
+    InitEnemies(mapTower);
+    InitPlayer();
+    initTiles();
+    InitGoldHUD(&goldHUD);
+
     float enemyTimer = 0;
 
     while (!WindowShouldClose()) {
+        int screenWidth = GetScreenWidth();
+        int screenHeight = GetScreenHeight();
+        float cellWidth = (float)screenWidth / 15;
+        float cellHeight = (float)screenHeight / 15;
         if (IsWindowResized() || IsKeyPressed(KEY_F11)) {
             if (IsKeyPressed(KEY_F11)) {
                 borderless = !borderless;
@@ -172,11 +176,12 @@ int main() {
             float dt = GetFrameTime();
             enemyTimer += dt;
             if (enemyTimer > 2.0f) {
-                SpawnEnemy(pathStart);
+                SpawnEnemy(pathStart, mapTower);
                 enemyTimer = 0;
             }
 
             UpdateEnemies(dt, pathStart, pathEnd);
+            UpdateEnemy2(mapTower, cellWidth, cellHeight, dt);
             ReposicionarInimigos(pathStart, pathEnd);
             UpdatePlayer();
             UpdateGoldHUD(&goldHUD, playerGold);
