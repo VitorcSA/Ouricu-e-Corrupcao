@@ -234,8 +234,7 @@ int main() {
             DrawFireballs();
             DrawArrows();
             DrawCannonballs();
-            DrawGoldHUD(&goldHUD);
-            DrawText("Tower Defense - fase de inimigos", 10, 10, 20, WHITE);
+            DrawGoldHUDAt(&goldHUD);
             HUD_Draw();
         }
 

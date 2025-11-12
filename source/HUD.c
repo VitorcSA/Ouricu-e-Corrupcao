@@ -81,55 +81,51 @@ void UpdateGoldHUD(GoldHUD *hud, int playerGold)
     hud->gold = playerGold;
 }
 
-void DrawGoldHUD(GoldHUD *hud)
-{
-    DrawRectangleRec(hud->rect, (Color){200, 200, 200, 150});
-    DrawText(TextFormat("Gold: %d", playerGold), hud->rect.x + 10, hud->rect.y + 10, 20, GOLD);
-    DrawTexture(hud->coinTexture, hud->rect.x + 110, hud->rect.y + 8, WHITE);
-}
 void DrawGoldHUDAt(GoldHUD *hud) {
-    // Posição da HUD (canto superior esquerdo)
     float x = 20;
     float y = 20;
     float width = 220;
     float height = 60;
 
-    // Fundo da HUD
     DrawRectangleRounded((Rectangle){x, y, width, height}, 0.2f, 10, (Color){30, 30, 40, 180});
     DrawRectangleRoundedLines((Rectangle){x, y, width, height}, 0.2f, 10, Fade(GOLD, 0.6f));
 
-    // Texto e moeda
     const int fontSize = 24;
-
-    // Preparar número do ouro
+    const char *label = "Gold";
     char goldText[32];
     sprintf(goldText, "%d", hud->gold);
 
-    // Medidas para centralizar os três elementos ("Gold", número e moeda)
-    int goldLabelWidth = MeasureText("Gold", fontSize);
+    int goldLabelWidth = MeasureText(label, fontSize);
     int goldValueWidth = MeasureText(goldText, fontSize);
     int coinWidth = hud->coinTexture.width * 1.5f;
-    int spacing = 10; // espaçamento entre cada elemento
+    int spacing = 10;
 
-    // Calcular largura total da linha
-    float totalWidth = goldLabelWidth + spacing + goldValueWidth + spacing + coinWidth;
+    float totalWidth = coinWidth + spacing + goldLabelWidth + spacing + goldValueWidth;
+    if (totalWidth > width - 20) totalWidth = width - 20;
 
-    // Calcular posição inicial (para centralizar na HUD)
-    float startX = x + (width - totalWidth) / 2;
+    float startX = x + 15;
     float centerY = y + (height - fontSize) / 2 + 2;
 
-    // Desenhar o texto "Gold"
-    DrawText("Gold", startX, centerY, fontSize, YELLOW);
+    float coinX = startX;
+    float labelX = coinX + coinWidth + spacing;
+    float valueX = labelX + goldLabelWidth + spacing;
 
-    // Desenhar o valor
-    float valueX = startX + goldLabelWidth + spacing;
-    DrawText(goldText, valueX, centerY, fontSize, RAYWHITE);
+    DrawTextureEx(
+        hud->coinTexture,
+        (Vector2){coinX, y + (height - hud->coinTexture.height * 1.5f) / 2},
+        0.0f,
+        1.5f,
+        WHITE
+    );
+
+    DrawText(label, labelX, centerY, fontSize, YELLOW);
+    DrawText(TextFormat("%d", playerGold), valueX, centerY, fontSize, RAYWHITE);
 
     // Desenhar a moeda à direita
     if (hud->coinTexture.id > 0) {
         DrawTextureEx(
             hud->coinTexture,
-            (Vector2){valueX + goldValueWidth + spacing, y + (height - hud->coinTexture.height * 1.5f) / 2},
+            (Vector2){startX, y + (height - hud->coinTexture.height * 1.5f) / 2},
             0.0f,
             1.5f,
             WHITE
