@@ -8,31 +8,6 @@
 #include "mapa.h"
 #include "criadorMapa.h"
 
-Vector2 pathStart;
-Vector2 pathEnd;
-
-void AtualizarCaminho(Vector2 *start, Vector2 *end) {
-    float centroY = GetScreenHeight() / 2.0f;
-    float margem = GetScreenWidth() * 0.05f;
-    start->x = margem;
-    start->y = centroY;
-    end->x = GetScreenWidth() - margem;
-    end->y = centroY;
-}
-
-void ReposicionarInimigos(Vector2 start, Vector2 end) {
-    float largura = end.x - start.x;
-    float amplitude = 80.0f;
-    float freq = 4.0f * PI / largura;
-
-    for (int i = 0; i < MAX_ENEMIES; i++) {
-        if (enemies[i].active) {
-            float t = enemies[i].progress;
-            enemies[i].pos.x = start.x + largura * t;
-            enemies[i].pos.y = start.y + sinf((start.x + largura * t) * freq) * amplitude;
-        }
-    }
-}
 
 void DrawTutorial(void) {
     const int fontSize = 24;
@@ -100,7 +75,6 @@ int main() {
         (GetScreenHeight() - reiTextura.height)
     };
 
-    AtualizarCaminho(&pathStart, &pathEnd);
     TelaTitulo(titulo, fundo);
 
     static bool borderless = false;
@@ -115,7 +89,7 @@ int main() {
 
     unsigned char *mapTower = ReadMap(arquivoMapaTowerDefense);
 
-    InitEnemies(mapTower);
+    InitEnemies();
     InitPlayer();
     initTiles();
     InitGoldHUD(&goldHUD);
@@ -146,8 +120,7 @@ int main() {
 
             posicaoRei.x = (GetScreenWidth() - reiTextura.width) / 2;
             posicaoRei.y = (GetScreenHeight() - reiTextura.height);
-            AtualizarCaminho(&pathStart, &pathEnd);
-            ReposicionarInimigos(pathStart, pathEnd);
+        
             RecenterTowers(GetScreenWidth(), GetScreenHeight());
         }
         BeginDrawing();
@@ -175,18 +148,15 @@ int main() {
             float dt = GetFrameTime();
             enemyTimer += dt;
             if (enemyTimer > 2.0f) {
-                SpawnEnemy(pathStart, mapTower, cellWidth, cellHeight);
+                SpawnEnemy(mapTower, cellWidth, cellHeight);
                 enemyTimer = 0;
             }
 
-            UpdateEnemies(dt, pathStart, pathEnd);
             UpdateEnemy2(mapTower, cellWidth, cellHeight, dt);
-            ReposicionarInimigos(pathStart, pathEnd);
             UpdatePlayer();
             UpdateGoldHUD(&goldHUD, playerGold);
 
             ClearBackground((Color){20, 20, 30, 255});
-            DrawEnemies();
             DrawEnemies2();
             DrawTowers();
             DrawArchers();
