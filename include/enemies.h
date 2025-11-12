@@ -4,7 +4,7 @@
 #include "raylib.h"
 
 #define MAX_ENEMIES 50
-#define MAX_GOLEMS 50
+#define MAX_ORCS 50
 
 typedef struct {
     Vector2 pos;
@@ -24,20 +24,20 @@ typedef struct {
     float progress;
     int frame;
     float frameTime;
-} Golem;
+} Orc;
 
 extern Enemy enemies[MAX_ENEMIES];
-extern Golem golems[MAX_GOLEMS];
+extern Orc orcs[MAX_ORCS];
 
 void InitEnemies(void);
-void InitGolems(void);
+void InitOrcs(void);
 void SpawnEnemy(Vector2 pathStart);
-void SpawnGolems(Vector2 pathStart);
+void SpawnOrcs(Vector2 pathStart);
 void UpdateEnemies(float dt, Vector2 pathStart, Vector2 pathEnd);
-void UpdateGolems(float dt, Vector2 pathStart, Vector2 pathEnd);
+void UpdateOrcs(float dt, Vector2 pathStart, Vector2 pathEnd);
 void DrawEnemies(void);
-void DrawGolems(void);
+void DrawOrcs(void);
 void UnloadEnemies(void);
-void UnloadGolems(void);
+void UnloadOrcs(void);
 
 #endif

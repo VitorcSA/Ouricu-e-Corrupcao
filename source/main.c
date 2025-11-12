@@ -111,6 +111,7 @@
         const char *arquivoMapaTowerDefense = "assets/mapa/mapaTowerDefense";
 
         InitEnemies();
+        InitOrcs();
         InitPlayer();
         initTiles();
         InitGoldHUD(&goldHUD);
@@ -181,14 +182,83 @@
                 SpawnEnemy(pathStart);
                 enemyTimer = 0;
             }
+            if (tutorialAtivo) {
+                DrawTutorial();
+                if (IsKeyPressed(KEY_ENTER)) tutorialAtivo = false;
+            }
+            else if (!jogoIniciado) {
+                // -------------------------------------------------
+                // 1. CALCULA ALTURA DO FUNDO ATÉ A CABEÇA DO REI
+                // -------------------------------------------------
+                float hudHeight = 220.0f;  // HUD MAIOR (era 180 → 220)
+                float fundoHeight = GetScreenHeight() - hudHeight;
+
+                // Escala o reino.png para preencher até o topo da HUD
+                float scaleX = (float)GetScreenWidth() / reinoFundo.width;
+                float scaleY = fundoHeight / reinoFundo.height;
+                float scale = (scaleX > scaleY) ? scaleX : scaleY;
+
+                Rectangle source = {0, 0, (float)reinoFundo.width, (float)reinoFundo.height};
+                Rectangle dest = {
+                    (GetScreenWidth() - reinoFundo.width * scale) / 2.0f,
+                    (fundoHeight - reinoFundo.height * scale) / 2.0f,
+                    reinoFundo.width * scale,
+                    reinoFundo.height * scale
+                };
+
+                Vector2 origin = {0, 0};
+                DrawTexturePro(reinoFundo, source, dest, origin, 0.0f, WHITE);
+
+
+                DrawRectangle(0, (int)fundoHeight, GetScreenWidth(), (int)hudHeight, 
+                            (Color){45, 45, 55, 255});
+
+
+                DrawRectangleLines(0, (int)fundoHeight, GetScreenWidth(), (int)hudHeight, DARKGRAY);
+
+            
+                posicaoRei.x = (GetScreenWidth() - reiTextura.width) / 2.0f;
+                posicaoRei.y = fundoHeight + 8;  
+
+            
+                DrawTexture(reiTextura, posicaoRei.x + 4, posicaoRei.y + 4, 
+                            (Color){0, 0, 0, 80});
+
+            
+                DrawTexture(reiTextura, posicaoRei.x, posicaoRei.y, WHITE);
+
+                const char *texto = "Pressione [ENTER] para iniciar o jogo!";
+                int fontSize = 28;
+                int textWidth = MeasureText(texto, fontSize);
+                int textX = (GetScreenWidth() - textWidth) / 2;
+                int textY = (int)(fundoHeight / 2) - 50;
+                DrawRectangle(textX - 20, textY - 15, textWidth + 40, 50, 
+                            (Color){0, 0, 0, 160});
+                DrawText(texto, textX, textY, fontSize, YELLOW);
+
+                DrawText("[F11] alterna fullscreen", 20, 20, 20, LIGHTGRAY);
+                if (IsKeyPressed(KEY_ENTER) || IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+                    jogoIniciado = true;
+            }
+            else {
+                DrawMap(mapTower);
+                drawLinesMap();
+                float dt = GetFrameTime();
+                enemyTimer += dt;
+                if (enemyTimer > 2.0f) {
+                    SpawnEnemy(pathStart);
+                    enemyTimer = 0;
+                }
 
                 UpdateEnemies(dt, pathStart, pathEnd);
+                UpdateOrcs(dt, pathStart, pathEnd);
                 ReposicionarInimigos(pathStart, pathEnd);
                 UpdatePlayer();
                 UpdateGoldHUD(&goldHUD, playerGold);
 
                 ClearBackground((Color){20, 20, 30, 255});
                 DrawEnemies();
+                DrawOrcs();
                 DrawTowers();
                 DrawArchers();
                 DrawWizards();
@@ -200,7 +270,7 @@
                 DrawText("Tower Defense - fase de inimigos", 10, 10, 20, WHITE);
                 HUD_Draw();
             }
-
+        }
             EndDrawing();
         }
 
