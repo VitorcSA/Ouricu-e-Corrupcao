@@ -161,13 +161,10 @@
                 if (IsKeyPressed(KEY_ENTER)) tutorialAtivo = false;
             }
             else if (!jogoIniciado) {
-                // -------------------------------------------------
-                // 1. CALCULA ALTURA DO FUNDO ATÉ A CABEÇA DO REI
-                // -------------------------------------------------
-                float hudHeight = 220.0f;  // HUD MAIOR (era 180 → 220)
+                float hudHeight = 220.0f; 
                 float fundoHeight = GetScreenHeight() - hudHeight;
 
-                // Escala o reino.png para preencher até o topo da HUD
+
                 float scaleX = (float)GetScreenWidth() / reinoFundo.width;
                 float scaleY = fundoHeight / reinoFundo.height;
                 float scale = (scaleX > scaleY) ? scaleX : scaleY;
