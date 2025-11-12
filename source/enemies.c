@@ -68,7 +68,7 @@ void InitEnemies() {
         enemies[i].speed = 0;
         enemies[i].frame = 0;
         enemies[i].frameTime = 0;
-
+        enemies[i].health = 10;
     }
 }
 
@@ -86,6 +86,7 @@ void SpawnEnemy(unsigned char *map, float tileWidth, float tileHeight) {
             enemies[i].speed = 60;
             enemies[i].frame = 0;
             enemies[i].frameTime = 0;
+            enemies[i].health = 10;
             break;
         }
     }
