@@ -1,6 +1,7 @@
 #include <raylib.h>
 #include "HUD.h"
 #include "player.h"
+#include <stdio.h>
 
 static bool hudVisible = false;
 static Vector2 hudPos;
@@ -85,6 +86,55 @@ void DrawGoldHUD(GoldHUD *hud)
     DrawRectangleRec(hud->rect, (Color){200, 200, 200, 150});
     DrawText(TextFormat("Gold: %d", playerGold), hud->rect.x + 10, hud->rect.y + 10, 20, GOLD);
     DrawTexture(hud->coinTexture, hud->rect.x + 110, hud->rect.y + 8, WHITE);
+}
+void DrawGoldHUDAt(GoldHUD *hud) {
+    // Posição da HUD (canto superior esquerdo)
+    float x = 20;
+    float y = 20;
+    float width = 220;
+    float height = 60;
+
+    // Fundo da HUD
+    DrawRectangleRounded((Rectangle){x, y, width, height}, 0.2f, 10, (Color){30, 30, 40, 180});
+    DrawRectangleRoundedLines((Rectangle){x, y, width, height}, 0.2f, 10, Fade(GOLD, 0.6f));
+
+    // Texto e moeda
+    const int fontSize = 24;
+
+    // Preparar número do ouro
+    char goldText[32];
+    sprintf(goldText, "%d", hud->gold);
+
+    // Medidas para centralizar os três elementos ("Gold", número e moeda)
+    int goldLabelWidth = MeasureText("Gold", fontSize);
+    int goldValueWidth = MeasureText(goldText, fontSize);
+    int coinWidth = hud->coinTexture.width * 1.5f;
+    int spacing = 10; // espaçamento entre cada elemento
+
+    // Calcular largura total da linha
+    float totalWidth = goldLabelWidth + spacing + goldValueWidth + spacing + coinWidth;
+
+    // Calcular posição inicial (para centralizar na HUD)
+    float startX = x + (width - totalWidth) / 2;
+    float centerY = y + (height - fontSize) / 2 + 2;
+
+    // Desenhar o texto "Gold"
+    DrawText("Gold", startX, centerY, fontSize, YELLOW);
+
+    // Desenhar o valor
+    float valueX = startX + goldLabelWidth + spacing;
+    DrawText(goldText, valueX, centerY, fontSize, RAYWHITE);
+
+    // Desenhar a moeda à direita
+    if (hud->coinTexture.id > 0) {
+        DrawTextureEx(
+            hud->coinTexture,
+            (Vector2){valueX + goldValueWidth + spacing, y + (height - hud->coinTexture.height * 1.5f) / 2},
+            0.0f,
+            1.5f,
+            WHITE
+        );
+    }
 }
 
 void desenharRetangulo(int alturaImagem, int posYSprite){

@@ -44,12 +44,15 @@ void DrawTutorial(void) {
     y += 70;
 
     const char *lines[] = {
-        "Você é o rei e tem que defender seu reino de inimigos.",
-        "Use torres, barreiras e defensores para proteger seu povo.",
-        "Clique com o botão esquerdo para adicionar torres.",
-        "Clique com o botão direito para gerenciar defensores.",
-        "Lembre-se: equilíbrio é essencial — defesa e recursos!",
-        "GAME OVER se um dos lados for negligenciado!"
+    "Você é o rei e tem que defender seu reino de inimigos.",
+    "Para isso você usará torres, barreiras, e o mais importante: defensores.",
+    "Clique com o botão esquerdo em algum lugar no campo para adicionar uma torre.",
+    "Clique com o botão direito na torre para abrir o menu de defensores.",
+    "Escolha um defensor e posicione-o sobre a torre.",
+    "Com o tempo você vai desbloqueando novos defensores.",
+    "Cada defensor tem habilidades diferentes que serão explicadas ao desbloqueá-los.",
+    "Lembre-se: ao gastar muitos recursos apenas em defesa ou só em seu povo:",
+    "GAME OVER"
     };
 
     int numLines = sizeof(lines) / sizeof(lines[0]);
@@ -201,7 +204,7 @@ int main() {
                      btnJogar.x + (btnWidth - MeasureText("JOGAR", 30)) / 2,
                      btnJogar.y + 12, 30, WHITE);
 
-            DrawText("[F11] alterna fullscreen", 20, 20, 20, LIGHTGRAY);
+            DrawGoldHUDAt(&goldHUD);
 
             if ((hover && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) || IsKeyPressed(KEY_ENTER))
                 jogoIniciado = true;

@@ -20,6 +20,7 @@ typedef struct {
 void HUD_ShowAt(Vector2 pos, int towerIndex);
 void HUD_Update(void);
 void HUD_Draw(void);
+void DrawGoldHUDAt(GoldHUD *hud);
 UnitType HUD_GetSelectedUnit(void);
 bool HUD_IsActive(void);
 int HUD_GetSelectedTower(void);
