@@ -2,39 +2,76 @@
 #include "raylib.h"
 #include <stdlib.h>
 #include <math.h>
+#include <raymath.h>
+#include <stdio.h>
 
 Enemy enemies[MAX_ENEMIES];
 Orc orcs[MAX_ORCS];
 
 static Texture2D walkTexture;
 static Texture2D OrcTexture;
+static const int totalFrames = 8;
 static Rectangle frameRec;
 static float frameWidth, frameHeight;
 
-static float Lerp(float a, float b, float t) {
-    return a + t * (b - a);
+Vector2 FindStart(unsigned char *map) {
+    for (int x = 0; x < ROWS; x++) {
+        for (int y = 0; y < COLS; y++) {
+            if (map[y * COLS + x] != 0) {
+                return (Vector2){x, y};
+            }
+        }
+    }
+    return (Vector2){0,0};
 }
 
-static float Vector2Distance(Vector2 a, Vector2 b) {
-    float dx = b.x - a.x;
-    float dy = b.y - a.y;
-    return sqrtf(dx * dx + dy * dy);
+Vector2 GetNextTile(Vector2 current, Vector2 last, unsigned char *map) {
+    int y = (int)current.y;
+    int x = (int)current.x;
+
+    int lstY = (int)last.y;
+    int lstX = (int)last.x;
+
+    int directions[4][2] = {
+        {1, 0},   // direita
+        {0, -1}, // cima
+        {0, 1},  // baixo
+        {-1, 0} // esquerda
+    };
+
+    for (int i = 0; i < 4; i++) {
+        int ny = y + directions[i][1];
+        int nx = x + directions[i][0];
+
+        if (ny >= 0 && ny < ROWS && nx >= 0 && nx < COLS) {
+            if (map[ny * COLS + nx] != 0 && !(nx == (int)last.x && ny == (int)last.y)) {
+                return (Vector2){nx , ny };
+            }
+        }
+    }
+
+    // se não encontrar, retorna o próprio
+    return current;
 }
 
 void InitEnemies() {
     Image img = LoadImage("assets/Walk.png");
     walkTexture = LoadTextureFromImage(img);
     UnloadImage(img);
+    
 
-    frameWidth = (float)walkTexture.width / 8;
+    frameWidth = (float)walkTexture.width / totalFrames;
     frameHeight = (float)walkTexture.height;
-    frameRec = (Rectangle){0, 0, frameWidth, frameHeight};
 
     for (int i = 0; i < MAX_ENEMIES; i++) {
         enemies[i].active = false;
-        enemies[i].progress = 0;
+        enemies[i].pos = (Vector2){0, 0};
+        enemies[i].target = (Vector2){0, 0};
+        enemies[i].lastTarget = (Vector2){0, 0};
+        enemies[i].speed = 0;
         enemies[i].frame = 0;
         enemies[i].frameTime = 0;
+        enemies[i].health = 10;
     }
 }
 
@@ -55,13 +92,18 @@ void InitOrcs() {
     }
 }
 
-void SpawnEnemy(Vector2 start) {
+void SpawnEnemy(unsigned char *map, float tileWidth, float tileHeight) {
+    Vector2 startTile = FindStart(map);
+
     for (int i = 0; i < MAX_ENEMIES; i++) {
         if (!enemies[i].active) {
             enemies[i].active = true;
-            enemies[i].pos = start;
-            enemies[i].speed = 50;
-            enemies[i].progress = 0;
+            enemies[i].pos = startTile;
+            enemies[i].pixelPos = (Vector2){ startTile.x * tileWidth + tileWidth/2,
+                                              startTile.y * tileHeight + tileHeight/2 };
+            enemies[i].target = GetNextTile(startTile, startTile, map);
+            enemies[i].lastTarget = startTile;
+            enemies[i].speed = 60;
             enemies[i].frame = 0;
             enemies[i].frameTime = 0;
             enemies[i].health = 10;
@@ -85,54 +127,46 @@ void SpawnOrcs(Vector2 start) {
     }
 }
 
-void UpdateEnemies(float dt, Vector2 pathStart, Vector2 pathEnd) {
+void UpdateEnemy2(unsigned char *map, float tileWidth, float tileHeight, float delta) {
     for (int i = 0; i < MAX_ENEMIES; i++) {
         if (!enemies[i].active) continue;
 
-        enemies[i].progress += dt * (enemies[i].speed / Vector2Distance(pathStart, pathEnd));
-        if (enemies[i].progress >= 1.0f) {
-            enemies[i].active = false;
-            continue;
-        }
+        Vector2 targetPixel = {
+            enemies[i].target.x * tileWidth + tileWidth / 2,
+            enemies[i].target.y * tileHeight + tileHeight / 2
+        };
 
-        enemies[i].pos.x = Lerp(pathStart.x, pathEnd.x, enemies[i].progress);
-        enemies[i].pos.y = Lerp(pathStart.y, pathEnd.y, enemies[i].progress);
+        Vector2 dir = Vector2Subtract(targetPixel, enemies[i].pixelPos);
+        float dist = Vector2Length(dir);
 
-        enemies[i].frameTime += dt;
-        if (enemies[i].frameTime >= 0.1f) {
-            enemies[i].frameTime = 0;
-            enemies[i].frame = (enemies[i].frame + 1) % 8;
-        }
-    }
-}
+        // se ainda não chegou ao próximo tile
+        if (dist > 2.0f) {
+            dir = Vector2Normalize(dir);
+            enemies[i].pixelPos = Vector2Add(enemies[i].pixelPos, Vector2Scale(dir, enemies[i].speed * delta));
+        } else {
+            // chegou no tile alvo — atualiza o tile atual e busca o próximo
+            enemies[i].lastTarget = (Vector2)enemies[i].pos;;
+            enemies[i].pos = enemies[i].target;
+            Vector2 next = GetNextTile(enemies[i].pos, enemies[i].lastTarget, map);
 
-void UpdateOrcs(float dt, Vector2 pathStart, Vector2 pathEnd) {
-    for (int i = 0; i < MAX_ORCS; i++) {
-        if (!orcs[i].active) continue;
+            // se não há próximo, desativa o inimigo (chegou ao fim)
+            if (next.x == enemies[i].pos.x && next.y == enemies[i].pos.y) {
+                enemies[i].active = false;
+                continue;
+            }
 
-        orcs[i].progress += dt * (orcs[i].speed / Vector2Distance(pathStart, pathEnd));
-        if (orcs[i].progress >= 1.0f) {
-            orcs[i].active = false;
-            continue;
-        }
-
-        orcs[i].pos.x = Lerp(pathStart.x, pathEnd.x, orcs[i].progress);
-        orcs[i].pos.y = Lerp(pathStart.y, pathEnd.y, orcs[i].progress);
-
-        orcs[i].frameTime += dt;
-        if (orcs[i].frameTime >= 0.1f) {
-            orcs[i].frameTime = 0;
-            orcs[i].frame = (orcs[i].frame + 1) % 7;
+            enemies[i].target = next;
         }
     }
 }
 
-void DrawEnemies() {
+void DrawEnemies2() {
     for (int i = 0; i < MAX_ENEMIES; i++) {
         if (!enemies[i].active) continue;
 
         Rectangle src = { enemies[i].frame * frameWidth, 0, frameWidth, frameHeight };
-        Vector2 pos = { enemies[i].pos.x - frameWidth / 2, enemies[i].pos.y - frameHeight / 2 };
+        Vector2 pos = { enemies[i].pixelPos.x - frameWidth / 2,
+                        enemies[i].pixelPos.y - frameHeight / 2 };
         DrawTextureRec(walkTexture, src, pos, WHITE);
     }
 }

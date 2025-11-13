@@ -8,31 +8,6 @@
 #include "mapa.h"
 #include "criadorMapa.h"
 
-Vector2 pathStart;
-Vector2 pathEnd;
-
-void AtualizarCaminho(Vector2 *start, Vector2 *end) {
-    float centroY = GetScreenHeight() / 2.0f;
-    float margem = GetScreenWidth() * 0.05f;
-    start->x = margem;
-    start->y = centroY;
-    end->x = GetScreenWidth() - margem;
-    end->y = centroY;
-}
-
-void ReposicionarInimigos(Vector2 start, Vector2 end) {
-    float largura = end.x - start.x;
-    float amplitude = 80.0f;
-    float freq = 4.0f * PI / largura;
-
-    for (int i = 0; i < MAX_ENEMIES; i++) {
-        if (enemies[i].active) {
-            float t = enemies[i].progress;
-            enemies[i].pos.x = start.x + largura * t;
-            enemies[i].pos.y = start.y + sinf((start.x + largura * t) * freq) * amplitude;
-        }
-    }
-}
 
 void DrawTutorial(void) {
     const int fontSize = 24;
@@ -95,7 +70,6 @@ int main() {
         (GetScreenHeight() - reiTextura.height)
     };
 
-    AtualizarCaminho(&pathStart, &pathEnd);
     TelaTitulo(titulo, fundo);
 
     static bool borderless = false;
@@ -103,11 +77,6 @@ int main() {
     bool jogoIniciado = false;
 
     const char *arquivoMapaTowerDefense = "assets/mapa/mapaTowerDefense";
-
-    InitEnemies();
-    InitPlayer();
-    initTiles();
-    InitGoldHUD(&goldHUD);
 
     if (!verificarSeMapaExiste(arquivoMapaTowerDefense)) {
         criadorDeMapa(arquivoMapaTowerDefense, 15, 15);
@@ -120,9 +89,18 @@ int main() {
         return 1;
     }
 
+    InitEnemies();
+    InitPlayer();
+    initTiles();
+    InitGoldHUD(&goldHUD);
+
     float enemyTimer = 0;
 
     while (!WindowShouldClose()) {
+        int screenWidth = GetScreenWidth();
+        int screenHeight = GetScreenHeight();
+        float cellWidth = screenWidth / (float)COLS;
+        float cellHeight = screenHeight / (float)ROWS;
         if (IsWindowResized() || IsKeyPressed(KEY_F11)) {
             if (IsKeyPressed(KEY_F11)) {
                 borderless = !borderless;
@@ -142,11 +120,9 @@ int main() {
 
             posicaoRei.x = (GetScreenWidth() - reiTextura.width) / 2;
             posicaoRei.y = (GetScreenHeight() - reiTextura.height);
-            AtualizarCaminho(&pathStart, &pathEnd);
-            ReposicionarInimigos(pathStart, pathEnd);
+        
             RecenterTowers(GetScreenWidth(), GetScreenHeight());
         }
-
         BeginDrawing();
         ClearBackground((Color){20, 20, 30, 255});
 
@@ -217,16 +193,16 @@ int main() {
             enemyTimer += dt;
 
             if (enemyTimer > 2.0f) {
-                SpawnEnemy(pathStart);
+                SpawnEnemy(mapTower, cellWidth, cellHeight);
                 enemyTimer = 0;
             }
 
-            UpdateEnemies(dt, pathStart, pathEnd);
-            ReposicionarInimigos(pathStart, pathEnd);
+            UpdateEnemy2(mapTower, cellWidth, cellHeight, dt);
             UpdatePlayer();
             UpdateGoldHUD(&goldHUD, playerGold);
 
-            DrawEnemies();
+            ClearBackground((Color){20, 20, 30, 255});
+            DrawEnemies2();
             DrawTowers();
             DrawArchers();
             DrawWizards();

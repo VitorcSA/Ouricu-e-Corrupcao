@@ -4,14 +4,19 @@
 #include "raylib.h"
 
 #define MAX_ENEMIES 50
+#define ROWS 15
+#define COLS 15
 #define MAX_ORCS 50
 
+
 typedef struct {
-    Vector2 pos;
-    float speed;
-    float health;
+    Vector2 pos;        // posição atual em tiles
+    Vector2 pixelPos;   // posição real (em pixels)
+    Vector2 target;     // próximo tile
+    Vector2 lastTarget;
     int active;
-    float progress;
+    float health;
+    float speed;
     int frame;
     float frameTime;
 } Enemy;
@@ -31,11 +36,11 @@ extern Orc orcs[MAX_ORCS];
 
 void InitEnemies(void);
 void InitOrcs(void);
-void SpawnEnemy(Vector2 pathStart);
+void SpawnEnemy(unsigned char *map, float tileWidth, float tileHeight);
 void SpawnOrcs(Vector2 pathStart);
-void UpdateEnemies(float dt, Vector2 pathStart, Vector2 pathEnd);
+void UpdateEnemy2(unsigned char *map, float tileWidth, float tileHeight, float delta);
 void UpdateOrcs(float dt, Vector2 pathStart, Vector2 pathEnd);
-void DrawEnemies(void);
+void DrawEnemies2(void); 
 void DrawOrcs(void);
 void UnloadEnemies(void);
 void UnloadOrcs(void);

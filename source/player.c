@@ -380,10 +380,10 @@ void UpdatePlayer(void)
             // inimigos normais
             for (int e = 0; e < MAX_ENEMIES; e++) {
                 if (!enemies[e].active) continue;
-                float dist = Vector2Distance(archers[i].pos, enemies[e].pos);
+                float dist = Vector2Distance(archers[i].pos, enemies[e].pixelPos);
                 if (dist <= ATTACK_RANGE_ARCHER) {
                     archers[i].isShooting = true;
-                    ShootArrow(archers[i].pos, enemies[e].pos, e);
+                    ShootArrow(archers[i].pos, enemies[e].pixelPos, e);
                     archers[i].shotTimer = 1.0f;
                     foundTarget = true;
                     break;
@@ -421,7 +421,7 @@ void UpdatePlayer(void)
         bool foundNear = false;
         for (int e = 0; e < MAX_ENEMIES; e++) {
             if (!enemies[e].active) continue;
-            float dist = Vector2Distance(wizards[i].pos, enemies[e].pos);
+            float dist = Vector2Distance(wizards[i].pos, enemies[e].pixelPos);
             if (dist <= GRID_SIZE * 3) foundNear = true;
         }
         wizards[i].isIdle = !foundNear;
@@ -430,10 +430,10 @@ void UpdatePlayer(void)
             bool attack = false;
             for (int e = 0; e < MAX_ENEMIES; e++) {
                 if (!enemies[e].active) continue;
-                float dist = Vector2Distance(wizards[i].pos, enemies[e].pos);
+                float dist = Vector2Distance(wizards[i].pos, enemies[e].pixelPos);
                 if (dist <= ATTACK_RANGE_WIZARD) {
                     wizards[i].isAttacking = true;
-                    ShootFireball(wizards[i].pos, enemies[e].pos, e);
+                    ShootFireball(wizards[i].pos, enemies[e].pixelPos, e);
                     wizards[i].shotTimer = 1.2f;
                     attack = true;
                     break;
@@ -469,10 +469,10 @@ void UpdatePlayer(void)
             bool foundTarget = false;
             for (int e = 0; e < MAX_ENEMIES; e++) {
                 if (!enemies[e].active) continue;
-                float dist = Vector2Distance(cannons[i].pos, enemies[e].pos);
+                float dist = Vector2Distance(cannons[i].pos, enemies[e].pixelPos);
                 if (dist <= ATTACK_RANGE_CANNON) {
                     cannons[i].isShooting = true;
-                    ShootCannonball(cannons[i].pos, enemies[e].pos, e);
+                    ShootCannonball(cannons[i].pos, enemies[e].pixelPos, e);
                     cannons[i].shotTimer = 1.0f;
                     foundTarget = true;
                     break;
