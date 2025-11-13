@@ -204,12 +204,15 @@ int main() {
             ClearBackground((Color){20, 20, 30, 255});
             DrawEnemies2();
             DrawTowers();
-            DrawArchers();
-            DrawWizards();
-            DrawCannons();
-            DrawFireballs();
-            DrawArrows();
-            DrawCannonballs();
+
+            DrawPlayer(archers, archerIdeleTexture, archerTexture, archerCount, 14, 9);
+            DrawPlayer(wizards, idlewizardTexture, wizardTexture, wizardCount, 8, 7);
+            DrawPlayer(cannons, cannonTextureIdle, cannonTextureShot, cannonCount, 5, 1);
+        
+            drawProjects(arrows, arrowTexture, false, MAX_ARROWS,1);
+            drawProjects(cannonballs, cannonballTexture, false, MAX_CANNONBALLS,1);
+            drawProjects(fireballs, fireballTexture, true, MAX_FIREBALLS, 12);
+
             DrawGoldHUDAt(&goldHUD);
             HUD_Draw();
         }

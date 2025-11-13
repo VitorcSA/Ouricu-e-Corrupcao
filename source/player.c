@@ -6,112 +6,36 @@
 #include "HUD.h"
 #include <stdio.h>
 
-#define MAX_TOWERS 50
-#define MAX_ARCHERS 50
-#define MAX_WIZARDS 50
-#define MAX_CANNONS 50
-#define MAX_ARROWS 200
-#define MAX_FIREBALLS 200
-#define MAX_CANNONBALLS 200
-
 #define ATTACK_RANGE_ARCHER 225.0f
 #define ATTACK_RANGE_WIZARD 135.0f
 #define GRID_SIZE 64.0f
 #define ATTACK_RANGE_CANNON (GRID_SIZE * 5)
 
+Tower towers[MAX_TOWERS];
+
+Players archers[MAX_ARCHERS];
+Players wizards[MAX_WIZARDS];
+Players cannons[MAX_CANNONS];
+Projects arrows[MAX_ARROWS];
+Projects fireballs[MAX_FIREBALLS];
+Projects cannonballs[MAX_CANNONBALLS];
+
+Texture2D torreTexture;
+Texture2D archerTexture;
+Texture2D archerIdeleTexture;
+Texture2D arrowTexture;
+Texture2D wizardTexture;
+Texture2D idlewizardTexture;
+Texture2D fireballTexture;
+Texture2D cannonTextureIdle;
+Texture2D cannonTextureShot;
+Texture2D cannonballTexture;
+
 int playerGold = 0;
-
-typedef struct {
-    Vector2 pos;
-    Vector2 basePos;
-    float size;
-    bool active;
-    bool hasDefender;
-} Tower;
-
-typedef struct {
-    Vector2 pos;
-    Vector2 basePos;
-    bool active;
-    int frame;
-    float frameTime;
-    float shotTimer;
-    bool isShooting;
-} Archer;
-
-typedef struct {
-    Vector2 pos;
-    bool active;
-    int frame;
-    float frameTime;
-    float shotTimer;
-    float size;
-    bool isAttacking;
-    bool isIdle;
-} Shotwizard;
-
-typedef struct {
-    Vector2 pos;
-    bool active;
-    float size;
-    bool isShooting;
-    int frame;
-    float frameTime;
-    float shotTimer;
-} Cannon;
-
-typedef struct {
-    Vector2 pos;
-    Vector2 target;
-    bool active;
-    float speed;
-    int enemyIndex;
-    int orcIndex;
-} Arrow;
-
-typedef struct {
-    Vector2 pos;
-    Vector2 target;
-    bool active;
-    float speed;
-    int frame;
-    float frameTime;
-    int enemyIndex;
-    int orcIndex;
-} Fireball;
-
-typedef struct {
-    Vector2 pos;
-    Vector2 target;
-    bool active;
-    float speed;
-    int enemyIndex;
-    int orcIndex;
-} Cannonball;
-
-static Tower towers[MAX_TOWERS];
-static Archer archers[MAX_ARCHERS];
-static Shotwizard wizards[MAX_WIZARDS];
-static Cannon cannons[MAX_CANNONS];
-static Arrow arrows[MAX_ARROWS];
-static Fireball fireballs[MAX_FIREBALLS];
-static Cannonball cannonballs[MAX_CANNONBALLS];
-
-static int towerCount = 0;
-static int archerCount = 0;
-static int wizardCount = 0;
-static int cannonCount = 0;
-
-static Texture2D torreTexture;
-static Texture2D archerTexture;
-static Texture2D archerIdeleTexture;
-static Texture2D arrowTexture;
-static Texture2D wizardTexture;
-static Texture2D idlewizardTexture;
-static Texture2D fireballTexture;
-static Texture2D cannonTextureIdle;
-static Texture2D cannonTextureShot;
-static Texture2D cannonballTexture;
+int towerCount = 0;
+int archerCount = 0;
+int wizardCount = 0;
+int cannonCount = 0;
 
 void InitPlayer()
 {
@@ -155,13 +79,6 @@ void InitPlayer()
     Image cannonball = LoadImage("assets/inimigosAnimation/cannonball.png");
     cannonballTexture = LoadTextureFromImage(cannonball);
     UnloadImage(cannonball);
-
-    for (int i = 0; i < MAX_FIREBALLS; i++) {
-        fireballs[i].active = false;
-        fireballs[i].frame = 0;
-        fireballs[i].frameTime = 0;
-        fireballs[i].speed = 400.0f;
-    }
 }
 
 bool IsTowerOnGrid(Vector2 gridPos) {
@@ -196,11 +113,42 @@ void AddTower(Vector2 pos)
     towerCount++;
 }
 
+void AddPlayer(Players *player, Vector2 pos, int max, int *playerCount, float screenWidth, float screenHeight){
+    if (*playerCount >= max) return;
+    player[*playerCount].pos = pos;
+    player[*playerCount].basePos = (Vector2){ pos.x / (screenWidth/ 1280.0f),
+                                              pos.y / (screenHeight / 720.0f) };
+    player[*playerCount].active = true;
+    player[*playerCount].frame = 0;
+    player[*playerCount].frameTime = 0;
+    player[*playerCount].shotTimer = 0;
+    player[*playerCount].isShooting = false;
+    *playerCount += 1;
+}
+
+void shootProject(Projects *project, Vector2 start, Vector2 target, float speed, int enemyIndex, int max, bool hasFrames){
+    for (int i = 0; i < max; i++) {
+        if (!project[i].active) {
+            project[i].pos = start;
+            project[i].target = target;
+            project[i].speed = speed;
+            project[i].enemyIndex = enemyIndex;
+            project[i].active = true;
+
+            if(hasFrames){
+            project[i].frame = 0;
+            project[i].frameTime = 0;
+            }
+            break;
+        }
+    }
+}
+
 void AddArcher(Vector2 pos)
 {
     if (archerCount >= MAX_ARCHERS) return;
     archers[archerCount].pos = pos;
-    archers[towerCount].basePos = (Vector2){ pos.x / ((float)GetScreenWidth() / 1280.0f),
+    archers[archerCount].basePos = (Vector2){ pos.x / ((float)GetScreenWidth() / 1280.0f),
                                             pos.y / ((float)GetScreenHeight() / 720.0f) };
     archers[archerCount].active = true;
     archers[archerCount].frame = 0;
@@ -214,23 +162,20 @@ void AddWizard(Vector2 towerPos, float towerSize)
 {
     if (wizardCount >= MAX_WIZARDS) return;
     wizards[wizardCount].pos.x = towerPos.x + 35;
-    wizards[wizardCount].pos.y = towerPos.y - (towerSize / 2) + (wizards[wizardCount].size / 2);
+    //wizards[wizardCount].pos.y = towerPos.y - (towerSize / 2) + (wizards[wizardCount].size / 2);
     wizards[wizardCount].active = true;
     wizards[wizardCount].frame = 0;
     wizards[wizardCount].frameTime = 0;
     wizards[wizardCount].shotTimer = 0;
-    wizards[wizardCount].isAttacking = false;
-    wizards[wizardCount].isIdle = true;
+    wizards[wizardCount].isShooting = false;
     wizardCount++;
 }
 
 void AddCannon(Vector2 towerPos, float towerSize)
 {
     if (cannonCount >= MAX_CANNONS) return;
-
-    cannons[cannonCount].size = 64.0f;
     cannons[cannonCount].pos.x = towerPos.x + 35;
-    cannons[cannonCount].pos.y = towerPos.y - (towerSize / 2) + (cannons[cannonCount].size / 2);
+    //cannons[cannonCount].pos.y = towerPos.y - (towerSize / 2) + (cannons[cannonCount].size / 2);
     cannons[cannonCount].active = true;
     cannons[cannonCount].frame = 0;
     cannons[cannonCount].frameTime = 0;
@@ -297,17 +242,17 @@ void UpdatePlayer(void)
             if (!towers[selTower].hasDefender) { // impede mais de um defensor por torre
                 switch (selected) {
                     case UNIT_ARCHER:
-                        AddArcher((Vector2){towers[selTower].pos.x, towers[selTower].pos.y - 32});
+                        AddPlayer(archers, towers[selTower].pos, MAX_ARCHERS, &archerCount, (float)GetScreenWidth(), (float)GetScreenHeight());
                         towers[selTower].hasDefender = true;
                         break;
 
                     case UNIT_WIZARD:
-                        AddWizard(towers[selTower].pos, towers[selTower].size);
+                        AddPlayer(wizards, towers[selTower].pos, MAX_WIZARDS, &wizardCount, (float)GetScreenWidth(), (float)GetScreenHeight());
                         towers[selTower].hasDefender = true;
                         break;
 
                     case UNIT_CANNON:
-                        AddCannon(towers[selTower].pos, towers[selTower].size);
+                        AddPlayer(cannons, towers[selTower].pos, MAX_CANNONBALLS, &cannonCount, (float)GetScreenWidth(), (float)GetScreenHeight());
                         towers[selTower].hasDefender = true;
                         break;
 
@@ -383,7 +328,7 @@ void UpdatePlayer(void)
                 float dist = Vector2Distance(archers[i].pos, enemies[e].pixelPos);
                 if (dist <= ATTACK_RANGE_ARCHER) {
                     archers[i].isShooting = true;
-                    ShootArrow(archers[i].pos, enemies[e].pixelPos, e);
+                    shootProject(arrows, archers[i].pos, enemies[e].pixelPos, 400.0f, e, MAX_ARROWS, false);
                     archers[i].shotTimer = 1.0f;
                     foundTarget = true;
                     break;
@@ -397,7 +342,7 @@ void UpdatePlayer(void)
                     float dist = Vector2Distance(archers[i].pos, orcs[e].pos);
                     if (dist <= ATTACK_RANGE_ARCHER) {
                         archers[i].isShooting = true;
-                        ShootArrow(archers[i].pos, orcs[e].pos, e);
+                        shootProject(arrows, archers[i].pos, orcs[e].pos, 400.0f, e, MAX_ARROWS, false);
                         archers[i].shotTimer = 1.0f;
                         foundTarget = true;
                         break;
@@ -410,8 +355,9 @@ void UpdatePlayer(void)
     }
     for (int i = 0; i < wizardCount; i++) {
         if (!wizards[i].active) continue;
+
         wizards[i].frameTime += dt;
-        int totalFrames = wizards[i].isIdle ? 7 : 8;
+        int totalFrames = wizards[i].isShooting ? 7 : 8;
         if (wizards[i].frameTime >= 0.12f) {
             wizards[i].frame = (wizards[i].frame + 1) % totalFrames;
             wizards[i].frameTime = 0;
@@ -424,7 +370,7 @@ void UpdatePlayer(void)
             float dist = Vector2Distance(wizards[i].pos, enemies[e].pixelPos);
             if (dist <= GRID_SIZE * 3) foundNear = true;
         }
-        wizards[i].isIdle = !foundNear;
+        wizards[i].isShooting = !foundNear;
 
         if (wizards[i].shotTimer <= 0) {
             bool attack = false;
@@ -432,8 +378,8 @@ void UpdatePlayer(void)
                 if (!enemies[e].active) continue;
                 float dist = Vector2Distance(wizards[i].pos, enemies[e].pixelPos);
                 if (dist <= ATTACK_RANGE_WIZARD) {
-                    wizards[i].isAttacking = true;
-                    ShootFireball(wizards[i].pos, enemies[e].pixelPos, e);
+                    wizards[i].isShooting = true;
+                    shootProject(fireballs, wizards[i].pos, enemies[e].pixelPos, 400.0f, e, MAX_FIREBALLS, true);
                     wizards[i].shotTimer = 1.2f;
                     attack = true;
                     break;
@@ -443,15 +389,15 @@ void UpdatePlayer(void)
                 if (!orcs[e].active) continue;
                 float dist = Vector2Distance(wizards[i].pos, orcs[e].pos);
                 if (dist <= ATTACK_RANGE_WIZARD) {
-                    wizards[i].isAttacking = true;
-                    ShootFireball(wizards[i].pos, orcs[e].pos, e);
+                    wizards[i].isShooting = true;
+                    shootProject(fireballs, wizards[i].pos, orcs[e].pos, 400.0f, e, MAX_FIREBALLS, true);
                     wizards[i].shotTimer = 1.2f;
                     attack = true;
                     break;
                 }
             }
 
-            if (!attack) wizards[i].isAttacking = false;
+            if (!attack) wizards[i].isShooting = false;
         }
     }
 
@@ -472,7 +418,7 @@ void UpdatePlayer(void)
                 float dist = Vector2Distance(cannons[i].pos, enemies[e].pixelPos);
                 if (dist <= ATTACK_RANGE_CANNON) {
                     cannons[i].isShooting = true;
-                    ShootCannonball(cannons[i].pos, enemies[e].pixelPos, e);
+                    shootProject(cannonballs, cannons[i].pos, enemies[e].pixelPos, 600.0f, e, MAX_CANNONBALLS, false);
                     cannons[i].shotTimer = 1.0f;
                     foundTarget = true;
                     break;
@@ -483,7 +429,7 @@ void UpdatePlayer(void)
                 float dist = Vector2Distance(cannons[i].pos, orcs[e].pos);
                 if (dist <= ATTACK_RANGE_CANNON) {
                     cannons[i].isShooting = true;
-                    ShootCannonball(cannons[i].pos, orcs[e].pos, e);
+                    shootProject(cannonballs, cannons[i].pos, orcs[e].pos, 600.0f, e, MAX_CANNONBALLS, false);
                     cannons[i].shotTimer = 1.0f;
                     foundTarget = true;
                     break;
@@ -590,8 +536,24 @@ void DrawTowers() {
               0.0f, 1.0f, WHITE);
         }
     }
-    /*Vector2 gridPos = (Vector2){ floorf(mousePos.x / GRID_SIZE) * GRID_SIZE,
-                             floorf(mousePos.y / GRID_SIZE) * GRID_SIZE };*/
+}
+void DrawPlayer(Players *player, Texture2D playerIdleTexture, Texture2D playerShootingTexture, int playerCount, int quantFrameShot, int quantFrameIdle){
+    int frameWidth = playerShootingTexture.width / quantFrameShot;
+    int frameIdleWidth = playerIdleTexture.width / quantFrameIdle;
+
+    for (int i = 0; i < playerCount; i++) {
+        if (!player[i].active) continue;
+        Rectangle src, dest;
+        if (player[i].isShooting) {
+            src = (Rectangle){ frameWidth * player[i].frame, 0, frameWidth, playerShootingTexture.height };
+            dest = (Rectangle){ player[i].pos.x, player[i].pos.y - 32, frameWidth, playerShootingTexture.height };
+            DrawTexturePro(playerShootingTexture, src, dest, (Vector2){ frameWidth / 2, playerShootingTexture.height / 2 }, 0.0f, WHITE);
+        } else {
+            src = (Rectangle){ frameIdleWidth * player[i].frame, 0, frameIdleWidth, playerIdleTexture.height };
+            dest = (Rectangle){ player[i].pos.x, player[i].pos.y - 32, frameIdleWidth, playerIdleTexture.height };
+            DrawTexturePro(playerIdleTexture, src, dest, (Vector2){ frameIdleWidth / 2, playerIdleTexture.height / 2 }, 0.0f, WHITE);
+        }
+    }
 }
 
 void DrawArchers()
@@ -622,7 +584,7 @@ void DrawWizards()
     for (int i = 0; i < wizardCount; i++) {
         if (!wizards[i].active) continue;
         Rectangle src, dest;
-        if (wizards[i].isIdle) {
+        if (!wizards[i].isShooting) {
             src = (Rectangle){ frameWidthIdle * wizards[i].frame, 0, frameWidthIdle, idlewizardTexture.height };
             dest = (Rectangle){ wizards[i].pos.x, wizards[i].pos.y - 32, frameWidthIdle, idlewizardTexture.height };
             DrawTexturePro(idlewizardTexture, src, dest, (Vector2){ frameWidthIdle / 2, idlewizardTexture.height / 2 }, 0.0f, WHITE);
@@ -650,6 +612,41 @@ void DrawCannons()
             src = (Rectangle){ frameIdleWidth * cannons[i].frame, 0, frameIdleWidth, cannonTextureIdle.height };
             dest = (Rectangle){ cannons[i].pos.x - 30, cannons[i].pos.y - 32, frameIdleWidth, cannonTextureIdle.height };
             DrawTexturePro(cannonTextureIdle, src, dest, (Vector2){ frameIdleWidth / 2, cannonTextureIdle.height / 2 }, 0.0f, WHITE);
+        }
+    }
+}
+
+void drawProjects(Projects *project, Texture2D projectTexture, bool hasFrames, int max, int quantFrames){
+    for (int i = 0; i < max; i++) {
+        if (!project[i].active) continue;
+
+        if(!hasFrames){
+            float dx = project[i].target.x - project[i].pos.x;
+            float dy = project[i].target.y - project[i].pos.y;
+
+            float angle = atan2f(dy, dx) * RAD2DEG;
+            
+            Rectangle src = { 0, 0, (float)projectTexture.width, (float)projectTexture.height };
+            Rectangle dest = { project[i].pos.x, project[i].pos.y, (float)projectTexture.width, (float)projectTexture.height };
+
+            DrawTexturePro( projectTexture, 
+                            src, 
+                            dest, 
+                            (Vector2){ projectTexture.width/2, projectTexture.height/2 }, 
+                            angle, 
+                            WHITE );
+        }else{
+            int frameWidth = projectTexture.width / quantFrames;
+
+            Rectangle src = { frameWidth * project[i].frame, 0, frameWidth, projectTexture.height };
+            Rectangle dest = { project[i].pos.x, project[i].pos.y, frameWidth, projectTexture.height };
+
+            DrawTexturePro( projectTexture, 
+                            src, 
+                            dest, 
+                            (Vector2){ frameWidth/2, projectTexture.height/2 }, 
+                            0.0f, 
+                            WHITE );
         }
     }
 }
@@ -694,6 +691,13 @@ void DrawCannonballs()
 // ------------------------------------------------------
 // Reposicionamento e descarte
 // ------------------------------------------------------
+void recenterPlayers(Players *player, int playerCount, int scaleX, int scaleY ){
+    for (int i = 0; i < playerCount; i++) {
+        player[i].pos.x = player[i].basePos.x * scaleX;
+        player[i].pos.y = player[i].basePos.y * scaleY;
+    }
+}
+
 void RecenterTowers(int newWidth, int newHeight)
 {
     float scaleX = (float)newWidth / 1280.0f;
@@ -703,19 +707,13 @@ void RecenterTowers(int newWidth, int newHeight)
         towers[i].pos.y = towers[i].basePos.y * scaleY;
         towers[i].size = 64 * scaleX;
     }
-    for (int i = 0; i < archerCount; i++) {
-        archers[i].pos.x = archers[i].basePos.x * scaleX;
-        archers[i].pos.y = archers[i].basePos.y * scaleY;
-    }
-    for (int i = 0; i < wizardCount; i++) {
-        wizards[i].pos.x *= scaleX;
-        wizards[i].pos.y *= scaleY;
-    }
-    for (int i = 0; i < cannonCount; i++) {
-        cannons[i].pos.x *= scaleX;
-        cannons[i].pos.y *= scaleY;
+
+    recenterPlayers(archers, archerCount, scaleX, scaleY);
+    recenterPlayers(cannons, cannonCount, scaleX, scaleY);
+    recenterPlayers(wizards, wizardCount, scaleX, scaleY);
+    
 }
-}
+
 
 void UnloadPlayer()
 {
