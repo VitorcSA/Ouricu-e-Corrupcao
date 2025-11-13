@@ -530,10 +530,12 @@ void DrawTowers() {
     Vector2 mousePos = GetMousePosition();
     for (int i = 0; i < towerCount; i++) {
         if (towers[i].active) {
-            DrawTextureEx(torreTexture,
-              (Vector2){towers[i].pos.x - towers[i].size / 2,
-                        towers[i].pos.y - towers[i].size / 2},
-              0.0f, 1.0f, WHITE);
+            DrawTextureEx(  torreTexture,
+                (Vector2){  towers[i].pos.x - towers[i].size / 2,
+                            towers[i].pos.y - towers[i].size / 2},
+                            0.0f, 
+                            1.0f, 
+                            WHITE );
         }
     }
 }
@@ -702,6 +704,7 @@ void RecenterTowers(int newWidth, int newHeight)
 {
     float scaleX = (float)newWidth / 1280.0f;
     float scaleY = (float)newHeight / 720.0f;
+
     for (int i = 0; i < towerCount; i++) {
         towers[i].pos.x = towers[i].basePos.x * scaleX;
         towers[i].pos.y = towers[i].basePos.y * scaleY;
