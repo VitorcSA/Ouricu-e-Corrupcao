@@ -293,10 +293,35 @@ if (hovCan && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
     }
 }
 
+Rectangle btnBuyTower = {
+    (screenWidth - bw) / 2,
+    by + 270,
+    bw,
+    bh
+};
+bool hovTor = CheckCollisionPointRec(mouseBuy, btnBuyTower);
+
+DrawRectangleRec(btnBuyTower, hovTor ? (Color){70,70,70,255} : (Color){100,100,100,255});
+DrawRectangleLinesEx(btnBuyTower, 2, BLACK);
+
+DrawText("Comprar Torre", btnBuyTower.x + 10, btnBuyTower.y + 10, 22, WHITE);
+DrawText(TextFormat("Preço: %d", towerPrice), btnBuyTower.x + 10, btnBuyTower.y + 35, 20, YELLOW);
+
+// Compra
+if (hovTor && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+    if (playerGold >= towerPrice) {
+        playerGold -= towerPrice;
+        towerCount++;
+    }
+}
+
 // Mostrar estoque atual
 DrawText(TextFormat("Arqueiros: %d", ownedArchers), bx + 320, by + 10, 20, WHITE);
 DrawText(TextFormat("Magos: %d", ownedWizards),   bx + 320, by + 100, 20, WHITE);
 DrawText(TextFormat("Canhões: %d", ownedCannons), bx + 320, by + 190, 20, WHITE);
+DrawText(TextFormat("Torres: %d", ownedTowers), btnBuyTower.x + 85, btnBuyTower.y + btnBuyTower.height + 10, 20, WHITE);
+
+
 
 if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(mouseBuy, btnBuyArcher)) {
     BuyArcher();
@@ -310,6 +335,9 @@ if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(mouseBuy, 
     BuyCannon();
 }
 
+if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(mouseBuy, btnBuyTower)) {
+    BuyTower();
+}
     Rectangle btnVoltar = { 40, 40, 160, 50 };
     Vector2 mouse = GetMousePosition();
     bool hover = CheckCollisionPointRec(mouse, btnVoltar);

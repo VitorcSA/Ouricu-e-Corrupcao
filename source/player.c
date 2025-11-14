@@ -39,6 +39,9 @@ int cannonCount = 0;
 int ownedArchers = 1;
 int ownedWizards = 1;
 int ownedCannons = 1;
+int ownedTowers = 1;
+int towerPrice = 100;
+
 
 void InitPlayer()
 {
@@ -105,13 +108,18 @@ bool IsTowerOnGrid(Vector2 gridPos) {
 
 void AddTower(Vector2 pos)
 {
-    if (towerCount >= MAX_TOWERS) return;
+    if (ownedTowers <= 0) return;   // só isso precisa
+
     towers[towerCount].pos = pos;
-    towers[towerCount].basePos = (Vector2){ pos.x / ((float)GetScreenWidth() / 1280.0f),
-                                            pos.y / ((float)GetScreenHeight() / 720.0f) };
+    towers[towerCount].basePos = (Vector2){
+        pos.x / ((float)GetScreenWidth() / 1280.0f),
+        pos.y / ((float)GetScreenHeight() / 720.0f)
+    };
     towers[towerCount].size = 64;
     towers[towerCount].active = true;
-    towerCount++;
+
+    towerCount++;   // aumenta o número total no mapa
+    ownedTowers--;  // diminui do inventário
 }
 
 void AddPlayer(Players *player, Vector2 pos, int max, int *playerCount, float screenWidth, float screenHeight){
@@ -481,6 +489,14 @@ void BuyCannon() {
     if (playerGold >= price) {
         playerGold -= price;
         ownedCannons++;
+    }
+}
+
+void BuyTower() {
+    int price = 100;
+    if (playerGold >= price) {
+        playerGold -= price;
+        ownedTowers++;
     }
 }
 

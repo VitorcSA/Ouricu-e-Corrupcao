@@ -79,6 +79,8 @@ extern int cannonCount;
 extern int ownedArchers;
 extern int ownedWizards;
 extern int ownedCannons;
+extern int ownedTowers;
+extern int towerPrice;
 
 extern Tower tower[MAX_TOWERS];
 extern Players archers[MAX_ARCHERS];
@@ -116,6 +118,7 @@ void shotProject(Projects *project, Vector2 start, Vector2 target, float speed, 
 void BuyArcher();
 void BuyWizard();
 void BuyCannon();
+void BuyTower();
 
 void UnloadPlayer(void);
 
