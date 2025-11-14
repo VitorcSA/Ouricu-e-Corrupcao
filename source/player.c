@@ -242,17 +242,17 @@ void UpdatePlayer(void)
             if (!towers[selTower].hasDefender) { // impede mais de um defensor por torre
                 switch (selected) {
                     case UNIT_ARCHER:
-                        AddPlayer(archers, towers[selTower].pos, MAX_ARCHERS, &archerCount, (float)GetScreenWidth(), (float)GetScreenHeight());
+                        AddPlayer(archers, (Vector2){ towers[selTower].pos.x, towers[selTower].pos.y - 32 }, MAX_ARCHERS, &archerCount, (float)GetScreenWidth(), (float)GetScreenHeight());
                         towers[selTower].hasDefender = true;
                         break;
 
                     case UNIT_WIZARD:
-                        AddPlayer(wizards, towers[selTower].pos, MAX_WIZARDS, &wizardCount, (float)GetScreenWidth(), (float)GetScreenHeight());
+                        AddPlayer(wizards, (Vector2){ towers[selTower].pos.x + 20, towers[selTower].pos.y - 45 }, MAX_WIZARDS, &wizardCount, (float)GetScreenWidth(), (float)GetScreenHeight());
                         towers[selTower].hasDefender = true;
                         break;
 
                     case UNIT_CANNON:
-                        AddPlayer(cannons, towers[selTower].pos, MAX_CANNONBALLS, &cannonCount, (float)GetScreenWidth(), (float)GetScreenHeight());
+                        AddPlayer(cannons, (Vector2){ towers[selTower].pos.x, towers[selTower].pos.y - 8 }, MAX_CANNONBALLS, &cannonCount, (float)GetScreenWidth(), (float)GetScreenHeight());
                         towers[selTower].hasDefender = true;
                         break;
 

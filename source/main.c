@@ -184,6 +184,37 @@ int main() {
 
             if ((hover && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) || IsKeyPressed(KEY_ENTER))
                 jogoIniciado = true;
+
+            float bw = 180;
+            float bh = 60;
+
+            Rectangle botao = {
+            GetScreenWidth() - bw - 20,
+            20,
+            bw,
+            bh
+        };
+
+            Vector2 mouse = GetMousePosition();
+            bool mouseSobre = CheckCollisionPointRec(mouse, botao);
+
+            Color corBotao = mouseSobre ? 
+            (Color){40, 40, 50, 200} :
+            (Color){20, 20, 30, 180};
+
+            Color corBorda = (Color){255, 255, 255, 120};
+
+            DrawRectangleRounded(botao, 0.2f, 8, corBotao);
+            DrawRectangleRoundedLines(botao, 0.2f, 8, corBorda);
+
+            const char *textoBotao = "Loja";
+            int fontSizeBotao = 22;
+            int textoLargura = MeasureText(textoBotao, fontSizeBotao);
+
+            int textoX = botao.x + (botao.width - textoLargura) / 2;
+            int textoY = botao.y + (botao.height - fontSizeBotao) / 2 + 2;
+
+            DrawText(textoBotao, textoX, textoY, fontSizeBotao, WHITE);
         }
 
         else {
