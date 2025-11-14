@@ -184,7 +184,7 @@ int main() {
 
             DrawGoldHUDAt(&goldHUD);
 
-            if ((hover && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) || IsKeyPressed(KEY_ENTER))
+            if (hover && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
                 jogoIniciado = true;
 
             float bw = 180;
@@ -272,7 +272,7 @@ int main() {
         DrawRectangleRec(btnRei, hov2 ? DARKGRAY : GRAY);
         DrawRectangleLinesEx(btnRei, 2, WHITE);
         DrawText("Voltar ao Rei",
-                 btnRei.x + (btnRei.width - MeasureText("Voltar ao Rei", 26)) / 2,
+                 btnRei.x + (btnRei.width - MeasureText("Voltar ao reino", 26)) / 2,
                  btnRei.y + 12, 26, WHITE);
 
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
