@@ -44,6 +44,7 @@ void DrawTutorial(void) {
 int main() {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(1280, 720, "Poder e Corrupcao");
+    SetExitKey(KEY_NULL);
     SetTargetFPS(60);
 
     if (!FileExists("assets/rei.png")) {
@@ -75,6 +76,7 @@ int main() {
     static bool borderless = false;
     bool tutorialAtivo = true;
     bool jogoIniciado = false;
+    bool pauseMenu = false;
 
     const char *arquivoMapaTowerDefense = "assets/mapa/mapaTowerDefense";
 
@@ -218,6 +220,73 @@ int main() {
         }
 
         else {
+
+    // -------- PAUSE: alternar quando aperta ESC --------
+    if (IsKeyPressed(KEY_ESCAPE)) {
+        pauseMenu = !pauseMenu;
+    }
+
+    // -------- DESENHAR MENU DE PAUSA --------
+    if (pauseMenu) {
+
+        DrawMap(mapTower);
+        drawLinesMap();
+        DrawEnemies2();
+        DrawTowers();
+        DrawPlayer(archers, archerIdeleTexture, archerTexture, archerCount, ARCHER_QT_FRAMES_SHOOT, ARCHER_QT_FRAMES_IDLE);
+        DrawPlayer(wizards, idlewizardTexture, wizardTexture, wizardCount, WIZARD_QT_FRAMES_SHOOT, WIZARD_QT_FRAMES_IDLE);
+        DrawPlayer(cannons, cannonTextureIdle, cannonTextureShot, cannonCount, CANNON_QT_FRAMES_SHOOT, CANNON_QT_FRAMES_IDLE);
+        drawProjects(arrows, arrowTexture, false, MAX_ARROWS, ARROW_QT_FRAMES);
+        drawProjects(cannonballs, cannonballTexture, false, MAX_CANNONBALLS, CANNONBALL_QT_FRAMES);
+        drawProjects(fireballs, fireballTexture, true, MAX_FIREBALLS, FIREBALL_QT_FRAMES);
+        DrawGoldHUDAt(&goldHUD);
+        HUD_Draw();
+
+        DrawRectangle(0, 0, screenWidth, screenHeight, (Color){0,0,0,180});
+
+        int mw = 380;
+        int mh = 260;
+        int mx = (screenWidth - mw) / 2;
+        int my = (screenHeight - mh) / 2;
+
+        DrawRectangle(mx, my, mw, mh, (Color){30,30,40,240});
+        DrawRectangleLines(mx, my, mw, mh, GOLD);
+
+        DrawText("PAUSADO", mx + (mw - MeasureText("PAUSADO", 32)) / 2,
+                 my + 20, 32, WHITE);
+
+        Rectangle btnContinuar = { mx + 40, my + 90, mw - 80, 50 };
+        Rectangle btnRei       = { mx + 40, my + 160, mw - 80, 50 };
+
+        Vector2 mouse = GetMousePosition();
+
+        bool hov1 = CheckCollisionPointRec(mouse, btnContinuar);
+        bool hov2 = CheckCollisionPointRec(mouse, btnRei);
+
+        DrawRectangleRec(btnContinuar, hov1 ? DARKGRAY : GRAY);
+        DrawRectangleLinesEx(btnContinuar, 2, WHITE);
+        DrawText("Continuar",
+                 btnContinuar.x + (btnContinuar.width - MeasureText("Continuar", 26)) / 2,
+                 btnContinuar.y + 12, 26, WHITE);
+
+        DrawRectangleRec(btnRei, hov2 ? DARKGRAY : GRAY);
+        DrawRectangleLinesEx(btnRei, 2, WHITE);
+        DrawText("Voltar ao Rei",
+                 btnRei.x + (btnRei.width - MeasureText("Voltar ao Rei", 26)) / 2,
+                 btnRei.y + 12, 26, WHITE);
+
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+            if (hov1) pauseMenu = false;
+            if (hov2) {
+                jogoIniciado = false;
+                pauseMenu = false;
+            }
+        }
+
+        EndDrawing();
+        continue;
+    }
+
             DrawMap(mapTower);
             drawLinesMap();
             float dt = GetFrameTime();
