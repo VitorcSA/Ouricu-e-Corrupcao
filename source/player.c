@@ -84,8 +84,8 @@ void InitPlayer()
 bool IsTowerOnGrid(Vector2 gridPos) {
     int screenWidth = GetScreenWidth();
     int screenHeight = GetScreenHeight();
-    float cellWidth = (float)screenWidth / 15;
-    float cellHeight = (float)screenHeight / 15;
+    float cellWidth = (float)screenWidth / COLS;
+    float cellHeight = (float)screenHeight / ROWS;
 
     // Verifica se já existe torre na mesma célula (x,y)
     for (int i = 0; i < MAX_TOWERS; i++) {
@@ -100,7 +100,6 @@ bool IsTowerOnGrid(Vector2 gridPos) {
     }
     return false;
 }
-
 
 void AddTower(Vector2 pos)
 {
@@ -139,90 +138,6 @@ void shootProject(Projects *project, Vector2 start, Vector2 target, float speed,
             project[i].frame = 0;
             project[i].frameTime = 0;
             }
-            break;
-        }
-    }
-}
-
-void AddArcher(Vector2 pos)
-{
-    if (archerCount >= MAX_ARCHERS) return;
-    archers[archerCount].pos = pos;
-    archers[archerCount].basePos = (Vector2){ pos.x / ((float)GetScreenWidth() / 1280.0f),
-                                            pos.y / ((float)GetScreenHeight() / 720.0f) };
-    archers[archerCount].active = true;
-    archers[archerCount].frame = 0;
-    archers[archerCount].frameTime = 0;
-    archers[archerCount].shotTimer = 0;
-    archers[archerCount].isShooting = false;
-    archerCount++;
-}
-
-void AddWizard(Vector2 towerPos, float towerSize)
-{
-    if (wizardCount >= MAX_WIZARDS) return;
-    wizards[wizardCount].pos.x = towerPos.x + 35;
-    //wizards[wizardCount].pos.y = towerPos.y - (towerSize / 2) + (wizards[wizardCount].size / 2);
-    wizards[wizardCount].active = true;
-    wizards[wizardCount].frame = 0;
-    wizards[wizardCount].frameTime = 0;
-    wizards[wizardCount].shotTimer = 0;
-    wizards[wizardCount].isShooting = false;
-    wizardCount++;
-}
-
-void AddCannon(Vector2 towerPos, float towerSize)
-{
-    if (cannonCount >= MAX_CANNONS) return;
-    cannons[cannonCount].pos.x = towerPos.x + 35;
-    //cannons[cannonCount].pos.y = towerPos.y - (towerSize / 2) + (cannons[cannonCount].size / 2);
-    cannons[cannonCount].active = true;
-    cannons[cannonCount].frame = 0;
-    cannons[cannonCount].frameTime = 0;
-    cannons[cannonCount].shotTimer = 0;
-    cannons[cannonCount].isShooting = false;
-    cannonCount++;
-}
-
-void ShootArrow(Vector2 start, Vector2 target, int enemyIndex)
-{
-    for (int i = 0; i < MAX_ARROWS; i++) {
-        if (!arrows[i].active) {
-            arrows[i].pos = start;
-            arrows[i].target = target;
-            arrows[i].speed = 600.0f;
-            arrows[i].enemyIndex = enemyIndex;
-            arrows[i].active = true;
-            break;
-        }
-    }
-}
-
-void ShootFireball(Vector2 start, Vector2 target, int enemyIndex)
-{
-    for (int i = 0; i < MAX_FIREBALLS; i++) {
-        if (!fireballs[i].active) {
-            fireballs[i].pos = start;
-            fireballs[i].target = target;
-            fireballs[i].speed = 400.0f;
-            fireballs[i].enemyIndex = enemyIndex;
-            fireballs[i].active = true;
-            fireballs[i].frame = 0;
-            fireballs[i].frameTime = 0;
-            break;
-        }
-    }
-}
-
-void ShootCannonball(Vector2 start, Vector2 target, int enemyIndex)
-{
-    for (int i = 0; i < MAX_CANNONBALLS; i++) {
-        if (!cannonballs[i].active) {
-            cannonballs[i].pos = start;
-            cannonballs[i].target = target;
-            cannonballs[i].speed = 600.0f;
-            cannonballs[i].enemyIndex = enemyIndex;
-            cannonballs[i].active = true;
             break;
         }
     }
@@ -272,8 +187,8 @@ void UpdatePlayer(void)
 
         int screenWidth = GetScreenWidth();
         int screenHeight = GetScreenHeight();
-        float cellWidth = (float)screenWidth / 15;
-        float cellHeight = (float)screenHeight / 15;
+        float cellWidth = (float)screenWidth / COLS;
+        float cellHeight = (float)screenHeight / ROWS;
 
         Vector2 gridPos = {
             mousePos.x / cellWidth,
@@ -313,7 +228,7 @@ void UpdatePlayer(void)
         // animação
         archers[i].frameTime += dt;
         if (archers[i].frameTime >= 0.1f) {
-            archers[i].frame = (archers[i].frame + 1) % 14;
+            archers[i].frame = (archers[i].frame + 1) % ARCHER_QT_FRAMES_SHOOT;
             archers[i].frameTime = 0;
         }
 
@@ -523,6 +438,7 @@ void UpdatePlayer(void)
         }
     }
 }
+
 // ------------------------------------------------------
 // Desenho
 // ------------------------------------------------------
@@ -554,66 +470,6 @@ void DrawPlayer(Players *player, Texture2D playerIdleTexture, Texture2D playerSh
             src = (Rectangle){ frameIdleWidth * player[i].frame, 0, frameIdleWidth, playerIdleTexture.height };
             dest = (Rectangle){ player[i].pos.x, player[i].pos.y - 32, frameIdleWidth, playerIdleTexture.height };
             DrawTexturePro(playerIdleTexture, src, dest, (Vector2){ frameIdleWidth / 2, playerIdleTexture.height / 2 }, 0.0f, WHITE);
-        }
-    }
-}
-
-void DrawArchers()
-{
-    int frameWidth = archerTexture.width / 14;
-    int frameIdleWidth = archerIdeleTexture.width / 9;
-
-    for (int i = 0; i < archerCount; i++) {
-        if (!archers[i].active) continue;
-        Rectangle src, dest;
-        if (archers[i].isShooting) {
-            src = (Rectangle){ frameWidth * archers[i].frame, 0, frameWidth, archerTexture.height };
-            dest = (Rectangle){ archers[i].pos.x, archers[i].pos.y - 32, frameWidth, archerTexture.height };
-            DrawTexturePro(archerTexture, src, dest, (Vector2){ frameWidth / 2, archerTexture.height / 2 }, 0.0f, WHITE);
-        } else {
-            src = (Rectangle){ frameIdleWidth * archers[i].frame, 0, frameIdleWidth, archerIdeleTexture.height };
-            dest = (Rectangle){ archers[i].pos.x, archers[i].pos.y - 32, frameIdleWidth, archerIdeleTexture.height };
-            DrawTexturePro(archerIdeleTexture, src, dest, (Vector2){ frameIdleWidth / 2, archerIdeleTexture.height / 2 }, 0.0f, WHITE);
-        }
-    }
-}
-
-void DrawWizards()
-{
-    int frameWidthShot = wizardTexture.width / 8;
-    int frameWidthIdle = idlewizardTexture.width / 7;
-
-    for (int i = 0; i < wizardCount; i++) {
-        if (!wizards[i].active) continue;
-        Rectangle src, dest;
-        if (!wizards[i].isShooting) {
-            src = (Rectangle){ frameWidthIdle * wizards[i].frame, 0, frameWidthIdle, idlewizardTexture.height };
-            dest = (Rectangle){ wizards[i].pos.x, wizards[i].pos.y - 32, frameWidthIdle, idlewizardTexture.height };
-            DrawTexturePro(idlewizardTexture, src, dest, (Vector2){ frameWidthIdle / 2, idlewizardTexture.height / 2 }, 0.0f, WHITE);
-        } else {
-            src = (Rectangle){ frameWidthShot * wizards[i].frame, 0, frameWidthShot, wizardTexture.height };
-            dest = (Rectangle){ wizards[i].pos.x, wizards[i].pos.y - 32, frameWidthShot, wizardTexture.height };
-            DrawTexturePro(wizardTexture, src, dest, (Vector2){ frameWidthShot / 2, wizardTexture.height / 2 }, 0.0f, WHITE);
-        }
-    }
-}
-
-void DrawCannons()
-{
-    int frameWidth = cannonTextureShot.width / 5;
-    int frameIdleWidth = cannonTextureIdle.width / 1;
-
-    for (int i = 0; i < cannonCount; i++) {
-        if (!cannons[i].active) continue;
-        Rectangle src, dest;
-        if (cannons[i].isShooting) {
-            src = (Rectangle){ frameWidth * cannons[i].frame, 0, frameWidth, cannonTextureShot.height };
-            dest = (Rectangle){ cannons[i].pos.x - 30, cannons[i].pos.y - 32, frameWidth, cannonTextureShot.height };
-            DrawTexturePro(cannonTextureShot, src, dest, (Vector2){ frameWidth / 2, cannonTextureShot.height / 2 }, 0.0f, WHITE);
-        } else {
-            src = (Rectangle){ frameIdleWidth * cannons[i].frame, 0, frameIdleWidth, cannonTextureIdle.height };
-            dest = (Rectangle){ cannons[i].pos.x - 30, cannons[i].pos.y - 32, frameIdleWidth, cannonTextureIdle.height };
-            DrawTexturePro(cannonTextureIdle, src, dest, (Vector2){ frameIdleWidth / 2, cannonTextureIdle.height / 2 }, 0.0f, WHITE);
         }
     }
 }
@@ -650,43 +506,6 @@ void drawProjects(Projects *project, Texture2D projectTexture, bool hasFrames, i
                             0.0f, 
                             WHITE );
         }
-    }
-}
-
-void DrawArrows()
-{
-    for (int i = 0; i < MAX_ARROWS; i++) {
-        if (!arrows[i].active) continue;
-        float dx = arrows[i].target.x - arrows[i].pos.x;
-        float dy = arrows[i].target.y - arrows[i].pos.y;
-        float angle = atan2f(dy, dx) * RAD2DEG;
-        Rectangle src = { 0, 0, (float)arrowTexture.width, (float)arrowTexture.height };
-        Rectangle dest = { arrows[i].pos.x, arrows[i].pos.y, (float)arrowTexture.width, (float)arrowTexture.height };
-        DrawTexturePro(arrowTexture, src, dest, (Vector2){ arrowTexture.width/2, arrowTexture.height/2 }, angle, WHITE);
-    }
-}
-
-void DrawFireballs()
-{
-    for (int i = 0; i < MAX_FIREBALLS; i++) {
-        if (!fireballs[i].active) continue;
-        int frameWidth = fireballTexture.width / 12;
-        Rectangle src = { frameWidth * fireballs[i].frame, 0, frameWidth, fireballTexture.height };
-        DrawTexturePro(fireballTexture, src, (Rectangle){ fireballs[i].pos.x, fireballs[i].pos.y, frameWidth, fireballTexture.height }, 
-            (Vector2){ frameWidth/2, fireballTexture.height/2 }, 0.0f, WHITE);
-    }
-}
-
-void DrawCannonballs()
-{
-    for (int i = 0; i < MAX_CANNONBALLS; i++) {
-        if (!cannonballs[i].active) continue;
-        float dx = cannonballs[i].target.x - cannonballs[i].pos.x;
-        float dy = cannonballs[i].target.y - cannonballs[i].pos.y;
-        float angle = atan2f(dy, dx) * RAD2DEG;
-        Rectangle src = { 0, 0, (float)cannonballTexture.width, (float)cannonballTexture.height };
-        Rectangle dest = { cannonballs[i].pos.x, cannonballs[i].pos.y, (float)cannonballTexture.width, (float)cannonballTexture.height };
-        DrawTexturePro(cannonballTexture, src, dest, (Vector2){ cannonballTexture.width/2, cannonballTexture.height/2 }, angle, WHITE);
     }
 }
 
