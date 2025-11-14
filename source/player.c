@@ -524,7 +524,10 @@ void drawProjects(Projects *project, Texture2D projectTexture, bool hasFrames, i
 // ------------------------------------------------------
 // Reposicionamento e descarte
 // ------------------------------------------------------
-void recenterPlayers(Players *player, int playerCount, int scaleX, int scaleY ){
+void recenterPlayers(Players *player, int playerCount, int newWidth, int newHeight ){
+    float scaleX = (float)newWidth / 1280.0f;
+    float scaleY = (float)newHeight / 720.0f;
+    
     for (int i = 0; i < playerCount; i++) {
         player[i].pos.x = player[i].basePos.x * scaleX;
         player[i].pos.y = player[i].basePos.y * scaleY;
@@ -542,9 +545,9 @@ void RecenterTowers(int newWidth, int newHeight)
         towers[i].size = 64 * scaleX;
     }
 
-    recenterPlayers(archers, archerCount, scaleX, scaleY);
-    recenterPlayers(cannons, cannonCount, scaleX, scaleY);
-    recenterPlayers(wizards, wizardCount, scaleX, scaleY);
+    recenterPlayers(archers, archerCount, newWidth, newHeight);
+    recenterPlayers(cannons, cannonCount, newWidth, newHeight);
+    recenterPlayers(wizards, wizardCount, newWidth, newHeight);
     
 }
 

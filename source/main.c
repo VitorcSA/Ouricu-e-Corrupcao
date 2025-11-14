@@ -8,7 +8,6 @@
 #include "mapa.h"
 #include "criadorMapa.h"
 
-
 void DrawTutorial(void) {
     const int fontSize = 24;
     int screenWidth = GetScreenWidth();
@@ -100,10 +99,7 @@ int main() {
     float enemyTimer = 0;
 
     while (!WindowShouldClose()) {
-        int screenWidth = GetScreenWidth();
-        int screenHeight = GetScreenHeight();
-        float cellWidth = screenWidth / (float)COLS;
-        float cellHeight = screenHeight / (float)ROWS;
+
         if (IsWindowResized() || IsKeyPressed(KEY_F11)) {
             if (IsKeyPressed(KEY_F11)) {
                 borderless = !borderless;
@@ -121,19 +117,30 @@ int main() {
                 }
             }
 
-            posicaoRei.x = (GetScreenWidth() - reiTextura.width) / 2;
-            posicaoRei.y = (GetScreenHeight() - reiTextura.height);
+            int screenWidth = GetScreenWidth();
+            int screenHeight = GetScreenHeight();
+            float cellWidth = (float)screenWidth / (float)COLS;
+            float cellHeight = (float)screenHeight / (float)ROWS;
+
+            posicaoRei.x = (screenWidth - reiTextura.width) / 2;
+            posicaoRei.y = (screenHeight - reiTextura.height);
         
-            RecenterTowers(GetScreenWidth(), GetScreenHeight());
+            RecenterTowers(cellWidth, cellHeight);
         }
+
+        int screenWidth = GetScreenWidth();
+        int screenHeight = GetScreenHeight();
+        float cellWidth = (float)screenWidth / (float)COLS;
+        float cellHeight = (float)screenHeight / (float)ROWS;
+
         BeginDrawing();
         ClearBackground((Color){20, 20, 30, 255});
 
         if (tutorialAtivo) {
             DrawTutorial();
             DrawText("Clique ou pressione ENTER para continuar",
-                     (GetScreenWidth() - MeasureText("Clique ou pressione ENTER para continuar", 24)) / 2,
-                     GetScreenHeight() - 80, 24, LIGHTGRAY);
+                     (screenWidth - MeasureText("Clique ou pressione ENTER para continuar", 24)) / 2,
+                      screenHeight - 80, 24, LIGHTGRAY);
 
             if (IsKeyPressed(KEY_ENTER) || IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
                 tutorialAtivo = false;
@@ -141,33 +148,34 @@ int main() {
 
         else if (!jogoIniciado) {
             float hudHeight = 220.0f;
-            float fundoHeight = GetScreenHeight() - hudHeight;
-            float scaleX = (float)GetScreenWidth() / reinoFundo.width;
+            float fundoHeight = screenHeight - hudHeight;
+            float scaleX = (float)screenWidth / reinoFundo.width;
             float scaleY = fundoHeight / reinoFundo.height;
             float scale = (scaleX > scaleY) ? scaleX : scaleY;
 
             Rectangle source = {0, 0, (float)reinoFundo.width, (float)reinoFundo.height};
             Rectangle dest = {
-                (GetScreenWidth() - reinoFundo.width * scale) / 2.0f,
+                (screenWidth - reinoFundo.width * scale) / 2.0f,
                 (fundoHeight - reinoFundo.height * scale) / 2.0f,
                 reinoFundo.width * scale,
                 reinoFundo.height * scale
             };
+
             Vector2 origin = {0, 0};
             DrawTexturePro(reinoFundo, source, dest, origin, 0.0f, WHITE);
 
-            DrawRectangle(0, (int)fundoHeight, GetScreenWidth(), (int)hudHeight,
+            DrawRectangle(0, (int)fundoHeight, screenWidth, (int)hudHeight,
                           (Color){45, 45, 55, 255});
-            DrawRectangleLines(0, (int)fundoHeight, GetScreenWidth(), (int)hudHeight, DARKGRAY);
+            DrawRectangleLines(0, (int)fundoHeight, screenWidth, (int)hudHeight, DARKGRAY);
 
-            posicaoRei.x = (GetScreenWidth() - reiTextura.width) / 2.0f;
+            posicaoRei.x = (screenWidth - reiTextura.width) / 2.0f;
             posicaoRei.y = fundoHeight + 8;
             DrawTexture(reiTextura, posicaoRei.x + 4, posicaoRei.y + 4, (Color){0, 0, 0, 80});
             DrawTexture(reiTextura, posicaoRei.x, posicaoRei.y, WHITE);
             int btnWidth = 220;
             int btnHeight = 60;
             Rectangle btnJogar = {
-                (GetScreenWidth() - btnWidth) / 2,
+                (screenWidth - btnWidth) / 2,
                 fundoHeight - 120,
                 btnWidth,
                 btnHeight
@@ -193,7 +201,7 @@ int main() {
             float bh = 60;
 
             Rectangle botaoLoja = {
-            GetScreenWidth() - bw - 20,
+            screenWidth - bw - 20,
             20,
             bw,
             bh
@@ -244,7 +252,7 @@ int main() {
         lojaAtiva = false;
     }
 }
-        else {
+    else {
 
     // -------- PAUSE: alternar quando aperta ESC --------
     if (IsKeyPressed(KEY_ESCAPE)) {
@@ -323,7 +331,7 @@ int main() {
             }
 
             UpdateEnemy2(mapTower, cellWidth, cellHeight, dt);
-            UpdatePlayer();
+            UpdatePlayer(cellWidth, cellHeight, screenWidth, screenHeight);
             UpdateGoldHUD(&goldHUD, playerGold);
 
             ClearBackground((Color){20, 20, 30, 255});
