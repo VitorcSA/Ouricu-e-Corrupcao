@@ -295,7 +295,7 @@ if (hovCan && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
 
 Rectangle btnBuyTower = {
     (screenWidth - bw) / 2,
-    by + 270,
+    by + 390,
     bw,
     bh
 };
@@ -319,7 +319,7 @@ if (hovTor && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
 DrawText(TextFormat("Arqueiros: %d", ownedArchers), bx + 320, by + 10, 20, WHITE);
 DrawText(TextFormat("Magos: %d", ownedWizards),   bx + 320, by + 100, 20, WHITE);
 DrawText(TextFormat("Canhões: %d", ownedCannons), bx + 320, by + 190, 20, WHITE);
-DrawText(TextFormat("Torres: %d", ownedTowers), btnBuyTower.x + 85, btnBuyTower.y + btnBuyTower.height + 10, 20, WHITE);
+DrawText(TextFormat("Torres: %d", ownedTowers), btnBuyTower.x + 85, btnBuyTower.y + 20 + btnBuyTower.height + 10, 20, WHITE);
 
 
 
