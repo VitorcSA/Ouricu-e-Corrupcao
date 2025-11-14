@@ -44,9 +44,9 @@ typedef struct
 {
     Vector2 pos;
     Vector2 basePos;
-    int frame;
-    float frameTime;
     float shotTimer;
+    float frameTime;
+    int frame;
     bool isShooting;
     bool active;
 }Players;
@@ -55,12 +55,13 @@ typedef struct
 {
     Vector2 pos;
     Vector2 target;
-    bool active;
+    float size;
     float speed;
-    int frame;
     float frameTime;
+    int frame;
     int enemyIndex;
     int orcIndex;
+    bool active;
 }Projects;
 
 typedef struct {

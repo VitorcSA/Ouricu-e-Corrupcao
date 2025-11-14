@@ -101,13 +101,19 @@ bool IsTowerOnGrid(Vector2 gridPos) {
     return false;
 }
 
-void AddTower(Vector2 pos)
+void AddTower(Vector2 pos, int screenWidth, int screenHeight)
 {
     if (towerCount >= MAX_TOWERS) return;
+
+    float cellWidth  = (float)screenWidth / (float)COLS;
+    float cellHeight = (float)screenHeight / (float)ROWS;
+
     towers[towerCount].pos = pos;
     towers[towerCount].basePos = (Vector2){ pos.x / ((float)GetScreenWidth() / 1280.0f),
                                             pos.y / ((float)GetScreenHeight() / 720.0f) };
-    towers[towerCount].size = 64;
+
+    float s = (cellWidth < cellHeight) ? cellWidth : cellHeight;
+    towers[towerCount].size = s * 0.9f;
     towers[towerCount].active = true;
     towerCount++;
 }
@@ -204,7 +210,7 @@ void UpdatePlayer(void)
         };
 
         if (!IsTowerOnGrid(gridPos)) {
-            AddTower(cellCenter);
+            AddTower(cellCenter, screenWidth, screenHeight);
         } else {
             printf("Já existe uma torre nesse grid!\n");
         }
@@ -455,16 +461,20 @@ void UpdatePlayer(void)
 // Desenho
 // ------------------------------------------------------
 void DrawTowers() {
-    Vector2 mousePos = GetMousePosition();
     for (int i = 0; i < towerCount; i++) {
-        if (towers[i].active) {
-            DrawTextureEx(  torreTexture,
-                (Vector2){  towers[i].pos.x - towers[i].size / 2,
-                            towers[i].pos.y - towers[i].size / 2},
-                            0.0f, 
-                            1.0f, 
-                            WHITE );
-        }
+        if (!towers[i].active) continue;
+
+        Rectangle src = { 0.0f, 0.0f, (float)torreTexture.width, (float)torreTexture.height };
+        Rectangle dest = {
+            towers[i].pos.x - towers[i].size / 2,
+            towers[i].pos.y - towers[i].size / 2,
+            towers[i].size,
+            towers[i].size
+        };
+        Vector2 origin = { 0, 0 };
+        DrawTexturePro(torreTexture, src, dest, origin, 0.0f, WHITE);
+
+        
     }
 }
 void DrawPlayer(Players *player, Texture2D playerIdleTexture, Texture2D playerShootingTexture, int playerCount, int quantFrameShot, int quantFrameIdle){
@@ -539,10 +549,15 @@ void RecenterTowers(int newWidth, int newHeight)
     float scaleX = (float)newWidth / 1280.0f;
     float scaleY = (float)newHeight / 720.0f;
 
+    float cellWidth = newWidth / (float)COLS;
+    float cellHeight = newHeight / (float)ROWS;
+
     for (int i = 0; i < towerCount; i++) {
         towers[i].pos.x = towers[i].basePos.x * scaleX;
         towers[i].pos.y = towers[i].basePos.y * scaleY;
-        towers[i].size = 64 * scaleX;
+        float s = (cellWidth < cellHeight) ? cellWidth : cellHeight;
+        towers[i].size = s * 0.9f; // 90% da célula, por exemplo
+
     }
 
     recenterPlayers(archers, archerCount, newWidth, newHeight);
