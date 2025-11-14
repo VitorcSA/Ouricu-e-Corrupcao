@@ -77,6 +77,7 @@ int main() {
     bool tutorialAtivo = true;
     bool jogoIniciado = false;
     bool pauseMenu = false;
+    bool lojaAtiva = false;
 
     const char *arquivoMapaTowerDefense = "assets/mapa/mapaTowerDefense";
 
@@ -187,38 +188,62 @@ int main() {
             if (hover && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
                 jogoIniciado = true;
 
+            // ---------------- BOTÃO LOJA (CANTO SUPERIOR DIREITO) ----------------
             float bw = 180;
             float bh = 60;
 
-            Rectangle botao = {
+            Rectangle botaoLoja = {
             GetScreenWidth() - bw - 20,
             20,
             bw,
             bh
-        };
+};
 
-            Vector2 mouse = GetMousePosition();
-            bool mouseSobre = CheckCollisionPointRec(mouse, botao);
+    Vector2 mouseLoja = GetMousePosition();
+    bool mouseSobreLoja = CheckCollisionPointRec(mouseLoja, botaoLoja);
 
-            Color corBotao = mouseSobre ? 
-            (Color){40, 40, 50, 200} :
-            (Color){20, 20, 30, 180};
+    Color corBotaoLoja = mouseSobreLoja ?
+        (Color){40, 40, 50, 200} :
+        (Color){20, 20, 30, 180};
 
-            Color corBorda = (Color){255, 255, 255, 120};
+    Color corBordaLoja = (Color){255, 255, 255, 120};
 
-            DrawRectangleRounded(botao, 0.2f, 8, corBotao);
-            DrawRectangleRoundedLines(botao, 0.2f, 8, corBorda);
+    DrawRectangleRounded(botaoLoja, 0.2f, 8, corBotaoLoja);
+    DrawRectangleRoundedLines(botaoLoja, 0.2f, 8, corBordaLoja);
 
-            const char *textoBotao = "Loja";
-            int fontSizeBotao = 22;
-            int textoLargura = MeasureText(textoBotao, fontSizeBotao);
+    const char *textoBotaoLoja = "Loja";
+    int fontSizeLoja = 22;
+    int textoLarguraLoja = MeasureText(textoBotaoLoja, fontSizeLoja);
 
-            int textoX = botao.x + (botao.width - textoLargura) / 2;
-            int textoY = botao.y + (botao.height - fontSizeBotao) / 2 + 2;
+    int textoXLoja = botaoLoja.x + (botaoLoja.width - textoLarguraLoja) / 2;
+    int textoYLoja = botaoLoja.y + (botaoLoja.height - fontSizeLoja) / 2 + 2;
 
-            DrawText(textoBotao, textoX, textoY, fontSizeBotao, WHITE);
-        }
+    DrawText(textoBotaoLoja, textoXLoja, textoYLoja, fontSizeLoja, WHITE);
 
+// AGORA FUNCIONA: abre loja imediatamente!
+    if (mouseSobreLoja && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+        lojaAtiva = true;
+
+        else if (lojaAtiva) {
+
+    DrawRectangle(0, 0, screenWidth, screenHeight, (Color){25,25,35,255});
+    DrawText("LOJA", (screenWidth - MeasureText("LOJA", 40)) / 2, 40, 40, YELLOW);
+
+    Rectangle btnVoltar = { 40, 40, 160, 50 };
+    Vector2 mouse = GetMousePosition();
+    bool hover = CheckCollisionPointRec(mouse, btnVoltar);
+
+    DrawRectangleRec(btnVoltar, hover ? DARKGRAY : GRAY);
+    DrawRectangleLinesEx(btnVoltar, 2, WHITE);
+
+    DrawText("Voltar",
+         btnVoltar.x + (btnVoltar.width - MeasureText("Voltar", 26)) / 2,
+         btnVoltar.y + 12, 26, WHITE);
+
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && hover)
+        lojaAtiva = false;
+    }
+}
         else {
 
     // -------- PAUSE: alternar quando aperta ESC --------
@@ -271,7 +296,7 @@ int main() {
 
         DrawRectangleRec(btnRei, hov2 ? DARKGRAY : GRAY);
         DrawRectangleLinesEx(btnRei, 2, WHITE);
-        DrawText("Voltar ao Rei",
+        DrawText("Voltar ao Reino",
                  btnRei.x + (btnRei.width - MeasureText("Voltar ao reino", 26)) / 2,
                  btnRei.y + 12, 26, WHITE);
 
