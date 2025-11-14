@@ -76,6 +76,9 @@ extern int towerCount;
 extern int archerCount;
 extern int wizardCount;
 extern int cannonCount;
+extern int ownedArchers;
+extern int ownedWizards;
+extern int ownedCannons;
 
 extern Tower tower[MAX_TOWERS];
 extern Players archers[MAX_ARCHERS];
@@ -109,6 +112,10 @@ void DrawPlayer(Players *player, Texture2D playerIdleTexture, Texture2D playerSh
 
 void AddPlayer(Players *player, Vector2 pos, int max, int *playerCount, float screenWidth, float screenHeight);
 void shotProject(Projects *project, Vector2 start, Vector2 target, float speed, int enemyIndex, int max, bool hasFrames);
+
+void BuyArcher();
+void BuyWizard();
+void BuyCannon();
 
 void UnloadPlayer(void);
 

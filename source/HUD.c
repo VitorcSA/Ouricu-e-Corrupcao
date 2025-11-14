@@ -65,8 +65,8 @@ void HUD_Draw(void) {
 void InitGoldHUD(GoldHUD *hud)
 {
     hud->gold = 0;
-    hud->rect.width = 140;  // ajustar se necessário
-    hud->rect.height = 40;  // altura suficiente para o texto
+    hud->rect.width = 140;
+    hud->rect.height = 40;
     hud->rect.x = GetScreenWidth() - hud->rect.width - 10;
     hud->rect.y = GetScreenHeight() - hud->rect.height - 10;
 
@@ -121,7 +121,6 @@ void DrawGoldHUDAt(GoldHUD *hud) {
     DrawText(label, labelX, centerY, fontSize, YELLOW);
     DrawText(TextFormat("%d", playerGold), valueX, centerY, fontSize, RAYWHITE);
 
-    // Desenhar a moeda à direita
     if (hud->coinTexture.id > 0) {
         DrawTextureEx(
             hud->coinTexture,

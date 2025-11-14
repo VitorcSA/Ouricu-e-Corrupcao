@@ -8,7 +8,6 @@
 #include "mapa.h"
 #include "criadorMapa.h"
 
-
 void DrawTutorial(void) {
     const int fontSize = 24;
     int screenWidth = GetScreenWidth();
@@ -20,7 +19,7 @@ void DrawTutorial(void) {
 
     const char *lines[] = {
     "Você é o rei e tem que defender seu reino de inimigos.",
-    "Para isso você usará torres, barreiras, e o mais importante: defensores.",
+    "Para isso você usará torres e defensores.",
     "Clique com o botão esquerdo em algum lugar no campo para adicionar uma torre.",
     "Clique com o botão direito na torre para abrir o menu de defensores.",
     "Escolha um defensor e posicione-o sobre a torre.",
@@ -188,7 +187,6 @@ int main() {
             if (hover && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
                 jogoIniciado = true;
 
-            // ---------------- BOTÃO LOJA (CANTO SUPERIOR DIREITO) ----------------
             float bw = 180;
             float bh = 60;
 
@@ -220,7 +218,6 @@ int main() {
 
     DrawText(textoBotaoLoja, textoXLoja, textoYLoja, fontSizeLoja, WHITE);
 
-// AGORA FUNCIONA: abre loja imediatamente!
     if (mouseSobreLoja && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
         lojaAtiva = true;
 
@@ -228,6 +225,90 @@ int main() {
 
     DrawRectangle(0, 0, screenWidth, screenHeight, (Color){25,25,35,255});
     DrawText("LOJA", (screenWidth - MeasureText("LOJA", 40)) / 2, 40, 40, YELLOW);
+
+    // -------- BOTÕES DE COMPRA DOS DEFENSORES --------
+
+// Preços
+int priceArcher = 50;
+int priceWizard = 75;
+int priceCannon = 120;
+
+// Posições base
+int bx = 100;
+int by = 150;
+int bw = 260;
+int bh = 60;
+
+Vector2 mouseBuy = GetMousePosition();
+
+// --- Botão Arqueiro ---
+Rectangle btnBuyArcher = { bx, by, bw, bh };
+bool hovAr = CheckCollisionPointRec(mouseBuy, btnBuyArcher);
+
+DrawRectangleRec(btnBuyArcher, hovAr ? DARKGREEN : GREEN);
+DrawRectangleLinesEx(btnBuyArcher, 2, BLACK);
+
+DrawText("Comprar Arqueiro", btnBuyArcher.x + 10, btnBuyArcher.y + 10, 22, WHITE);
+DrawText(TextFormat("Preço: %d", priceArcher), btnBuyArcher.x + 10, btnBuyArcher.y + 35, 20, YELLOW);
+
+// Clicar
+if (hovAr && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+    if (playerGold >= priceArcher) {
+        playerGold -= priceArcher;
+        archerCount++;
+    }
+}
+
+// --- Botão Mago ---
+Rectangle btnBuyWizard = { bx, by + 90, bw, bh };
+bool hovWiz = CheckCollisionPointRec(mouseBuy, btnBuyWizard);
+
+DrawRectangleRec(btnBuyWizard, hovWiz ? DARKBLUE : BLUE);
+DrawRectangleLinesEx(btnBuyWizard, 2, BLACK);
+
+DrawText("Comprar Mago", btnBuyWizard.x + 10, btnBuyWizard.y + 10, 22, WHITE);
+DrawText(TextFormat("Preço: %d", priceWizard), btnBuyWizard.x + 10, btnBuyWizard.y + 35, 20, YELLOW);
+
+if (hovWiz && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+    if (playerGold >= priceWizard) {
+        playerGold -= priceWizard;
+        wizardCount++;
+    }
+}
+
+// --- Botão Canhão ---
+Rectangle btnBuyCannon = { bx, by + 180, bw, bh };
+bool hovCan = CheckCollisionPointRec(mouseBuy, btnBuyCannon);
+
+DrawRectangleRec(btnBuyCannon, hovCan ? DARKGRAY : GRAY);
+DrawRectangleLinesEx(btnBuyCannon, 2, BLACK);
+
+DrawText("Comprar Canhão", btnBuyCannon.x + 10, btnBuyCannon.y + 10, 22, WHITE);
+DrawText(TextFormat("Preço: %d", priceCannon), btnBuyCannon.x + 10, btnBuyCannon.y + 35, 20, YELLOW);
+
+if (hovCan && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+    if (playerGold >= priceCannon) {
+        playerGold -= priceCannon;
+        cannonCount++;
+    }
+}
+
+// Mostrar estoque atual
+DrawText(TextFormat("Arqueiros: %d", ownedArchers), bx + 320, by + 10, 20, WHITE);
+DrawText(TextFormat("Magos: %d", ownedWizards),   bx + 320, by + 100, 20, WHITE);
+DrawText(TextFormat("Canhões: %d", ownedCannons), bx + 320, by + 190, 20, WHITE);
+
+if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(mouseBuy, btnBuyArcher)) {
+    BuyArcher();
+}
+
+if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(mouseBuy, btnBuyWizard)) {
+    BuyWizard();
+}
+
+if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(mouseBuy, btnBuyCannon)) {
+    BuyCannon();
+}
 
     Rectangle btnVoltar = { 40, 40, 160, 50 };
     Vector2 mouse = GetMousePosition();
@@ -246,12 +327,10 @@ int main() {
 }
         else {
 
-    // -------- PAUSE: alternar quando aperta ESC --------
     if (IsKeyPressed(KEY_ESCAPE)) {
         pauseMenu = !pauseMenu;
     }
 
-    // -------- DESENHAR MENU DE PAUSA --------
     if (pauseMenu) {
 
         DrawMap(mapTower);
