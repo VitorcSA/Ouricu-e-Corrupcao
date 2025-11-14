@@ -9,8 +9,6 @@
 #define ROWS 15
 #define COLS 15
 
-#define ARCHER_QT_FRAMES_SHOOT 14
-
 typedef struct {
     Vector2 pos;        // posição atual em tiles
     Vector2 pixelPos;   // posição real (em pixels)

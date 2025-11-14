@@ -2,13 +2,43 @@
 #define PLAYER_H
 
 #include <raylib.h>
+
 #define MAX_TOWERS 50
+
 #define MAX_ARCHERS 50
 #define MAX_WIZARDS 50
 #define MAX_CANNONS 50
+
 #define MAX_ARROWS 200
 #define MAX_FIREBALLS 200
 #define MAX_CANNONBALLS 200
+
+#define ARCHER_QT_FRAMES_SHOOT 14
+#define WIZARD_QT_FRAMES_SHOOT 8
+#define CANNON_QT_FRAMES_SHOOT 5
+
+#define ARROW_QT_FRAMES 1
+#define FIREBALL_QT_FRAMES 12
+#define CANNONBALL_QT_FRAMES 1
+
+#define ARCHER_QT_FRAMES_IDLE 9
+#define WIZARD_QT_FRAMES_IDLE 7
+#define CANNON_QT_FRAMES_IDLE 1
+
+#define ARROW_SPEED 400.0f
+#define FIREBALL_SPEED 400.0f
+#define CANNONBALL_SPEED 600.0f
+
+#define ARCHER_SHOT_TIME 1.0f
+#define WIZARD_SHOT_TIME 1.2f
+#define CANNON_SHOT_TIME 1.0f
+
+#define ARROW_DAMAGE 10
+#define FIREBALL_DAMAGE 15
+#define CANNONBALL_DAMAGE 20
+
+#define GOLD_FOR_ENEMY 15
+#define GOLD_FOR_ORC 50
 
 typedef struct 
 {
@@ -71,32 +101,15 @@ extern Texture2D cannonballTexture;
 
 void InitPlayer(void);
 void UpdatePlayer(void);
+
 void DrawTowers(void);
 void RecenterTowers(int newWidth, int newHeight);
-void AddPlayer(Players *player, Vector2 pos, int max, int *playerCount, float screenWidth, float screenHeight);
-void shotProject(Projects *project, Vector2 start, Vector2 target, float speed, int enemyIndex, int max, bool hasFrames);
-void UnloadPlayer(void);
-void InitArchers(void);
-void AddArcher(Vector2 pos);
-void UpdateArchers(float dt);
 void drawProjects(Projects *project, Texture2D projectTexture, bool hasFrames, int max, int quantFrames);
 void DrawPlayer(Players *player, Texture2D playerIdleTexture, Texture2D playerShootingTexture, int playerCount, int quantFrameShot, int quantFrameIdle);
-void DrawArchers(void);
-void UnloadArchers(void);
-void DrawArrows(void);
-void UnloadArrows(void);
-void AddWizard(Vector2 towerPos, float towerSize);
-void DrawWizards(void);
-void InitFireballs(void);
-void ShootFireball(Vector2 start, Vector2 target, int enemyIndex);
-void UpdateFireballs(float dt);
-void DrawFireballs(void);
-void UnloadFireballs(void);
-void InitCannons(void);
-void AddCannon(Vector2 towerPos, float towerSize);
-void UpdateCannons(float dt);
-void DrawCannons(void);
-void UnloadCannons(void);
-void DrawCannonballs(void);
+
+void AddPlayer(Players *player, Vector2 pos, int max, int *playerCount, float screenWidth, float screenHeight);
+void shotProject(Projects *project, Vector2 start, Vector2 target, float speed, int enemyIndex, int max, bool hasFrames);
+
+void UnloadPlayer(void);
 
 #endif

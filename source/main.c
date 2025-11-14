@@ -236,13 +236,13 @@ int main() {
             DrawEnemies2();
             DrawTowers();
 
-            DrawPlayer(archers, archerIdeleTexture, archerTexture, archerCount, 14, 9);
-            DrawPlayer(wizards, idlewizardTexture, wizardTexture, wizardCount, 8, 7);
-            DrawPlayer(cannons, cannonTextureIdle, cannonTextureShot, cannonCount, 5, 1);
+            DrawPlayer(archers, archerIdeleTexture, archerTexture, archerCount, ARCHER_QT_FRAMES_SHOOT, ARCHER_QT_FRAMES_IDLE);
+            DrawPlayer(wizards, idlewizardTexture, wizardTexture, wizardCount, WIZARD_QT_FRAMES_SHOOT, WIZARD_QT_FRAMES_IDLE);
+            DrawPlayer(cannons, cannonTextureIdle, cannonTextureShot, cannonCount, CANNON_QT_FRAMES_SHOOT, CANNON_QT_FRAMES_IDLE);
         
-            drawProjects(arrows, arrowTexture, false, MAX_ARROWS,1);
-            drawProjects(cannonballs, cannonballTexture, false, MAX_CANNONBALLS,1);
-            drawProjects(fireballs, fireballTexture, true, MAX_FIREBALLS, 12);
+            drawProjects(arrows, arrowTexture, false, MAX_ARROWS, ARROW_QT_FRAMES);
+            drawProjects(cannonballs, cannonballTexture, false, MAX_CANNONBALLS, CANNONBALL_QT_FRAMES);
+            drawProjects(fireballs, fireballTexture, true, MAX_FIREBALLS, FIREBALL_QT_FRAMES);
 
             DrawGoldHUDAt(&goldHUD);
             HUD_Draw();
