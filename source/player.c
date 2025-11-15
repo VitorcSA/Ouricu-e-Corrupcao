@@ -127,7 +127,7 @@ void AddPlayer(Players *player, Vector2 pos, int max, int *playerCount, int scre
     player[*playerCount].basePos = (Vector2){ pos.x / ((float)screenWidth/ 1280.0f),
                                               pos.y / ((float)screenHeight / 720.0f) };
     float s = (cellWidth < cellHeight) ? cellWidth : cellHeight;
-    player[*playerCount].size = s * 0.9f;
+    player[*playerCount].size = s / 64.0f;
     player[*playerCount].active = true;
     player[*playerCount].frame = 0;
     player[*playerCount].frameTime = 0;
@@ -484,30 +484,13 @@ void DrawTowers() {
 }
 
 void DrawPlayer(Players *player, Texture2D playerIdleTexture, Texture2D playerShootingTexture, int playerCount, int quantFrameShot, int quantFrameIdle){
-    int frameWidth = playerShootingTexture.width / quantFrameShot;
-    int frameIdleWidth = playerIdleTexture.width / quantFrameIdle;
-
-    for (int i = 0; i < playerCount; i++) {
-        if (!player[i].active) continue;
-        Rectangle src, dest;
-        if (player[i].isShooting) {
-            src = (Rectangle){ frameWidth * player[i].frame, 0, frameWidth, playerShootingTexture.height };
-            dest = (Rectangle){ player[i].pos.x, player[i].pos.y - 32, player[i].size, player[i].size };
-            DrawTexturePro(playerShootingTexture, src, dest, (Vector2){ frameWidth / 2, playerShootingTexture.height / 2 }, 0.0f, WHITE);
-        } else {
-            src = (Rectangle){ frameIdleWidth * player[i].frame, 0, frameIdleWidth, playerIdleTexture.height };
-            dest = (Rectangle){ player[i].pos.x, player[i].pos.y - 32, frameIdleWidth, playerIdleTexture.height };
-            DrawTexturePro(playerIdleTexture, src, dest, (Vector2){ frameIdleWidth / 2, playerIdleTexture.height / 2 }, 0.0f, WHITE);
-        }
-    }
-    float cellW = GetScreenWidth()  / (float)COLS;
-    float cellH = GetScreenHeight() / (float)ROWS;
-    float scale = fmin(cellW, cellH) / 64.0f;   // 64 = tamanho base do sprite
-    for (int i = 0; i < playerCount; i++) {
+    for(int i = 0; i < playerCount; i++){
         if (!player[i].active) continue;
 
         Texture2D tex;
+        Rectangle src, dest;
         int frames;
+
         if (player[i].isShooting) {
             tex = playerShootingTexture;
             frames = quantFrameShot;
@@ -519,28 +502,31 @@ void DrawPlayer(Players *player, Texture2D playerIdleTexture, Texture2D playerSh
         int frameWidth  = tex.width  / frames;
         int frameHeight = tex.height;
 
-        Rectangle src = {
-            frameWidth * player[i].frame,
-            0,
-            frameWidth,
-            frameHeight
-        };
+        float w = frameWidth  * player[i].size;
+        float h = frameHeight * player[i].size;
 
-        float w = frameWidth  * scale;
-        float h = frameHeight * scale;
+        src = (Rectangle){  frameWidth * player[i].frame, 
+                            0, 
+                            frameWidth, 
+                            tex.height };
 
-        // --- DEST no centro: NÃO altera player[i].pos ---
-        Rectangle dest = {
-            player[i].pos.x,    // centro
-            player[i].pos.y-32,    // centro
-            w,
-            h
-        };
-
+        dest = (Rectangle){ player[i].pos.x, 
+                            player[i].pos.y - 32, 
+                            w, 
+                            h };
+        
         Vector2 origin = { w / 2, h / 2 };  // mantém centro fixo
 
-        DrawTexturePro(tex, src, dest, origin, 0, WHITE);
+        DrawTexturePro( tex, 
+                        src, 
+                        dest, 
+                        origin, 
+                        0.0f, 
+                        WHITE);
+       
     }
+
+   
     
 }
 
@@ -585,10 +571,15 @@ void drawProjects(Projects *project, Texture2D projectTexture, bool hasFrames, i
 void recenterPlayers(Players *player, int playerCount, int newWidth, int newHeight ){
     float scaleX = (float)newWidth / 1280.0f;
     float scaleY = (float)newHeight / 720.0f;
+
+    float cellWidth = newWidth / (float)COLS;
+    float cellHeight = newHeight / (float)ROWS;
     
     for (int i = 0; i < playerCount; i++) {
         player[i].pos.x = player[i].basePos.x * scaleX;
         player[i].pos.y = player[i].basePos.y * scaleY;
+        float s = (cellWidth < cellHeight) ? cellWidth : cellHeight;
+        player[i].size = s / 64.0f;
     }
 }
 
