@@ -109,8 +109,8 @@ void AddTower(Vector2 pos, int screenWidth, int screenHeight)
     float cellHeight = (float)screenHeight / (float)ROWS;
 
     towers[towerCount].pos = pos;
-    towers[towerCount].basePos = (Vector2){ pos.x / ((float)screenWidth / 1280.0f),
-                                            pos.y / ((float)screenHeight / 720.0f) };
+    towers[towerCount].basePos = (Vector2){ pos.x / ((float)screenWidth ),
+                                            pos.y / ((float)screenHeight ) };
 
     float s = (cellWidth < cellHeight) ? cellWidth : cellHeight;
     towers[towerCount].size = s * 0.9f;
@@ -124,8 +124,8 @@ void AddPlayer(Players *player, Vector2 pos, int max, int *playerCount, int scre
     float cellWidth  = (float)screenWidth / (float)COLS;
     float cellHeight = (float)screenHeight / (float)ROWS;
 
-    player[*playerCount].basePos = (Vector2){ pos.x / ((float)screenWidth/ 1280.0f),
-                                              pos.y / ((float)screenHeight / 720.0f) };
+    player[*playerCount].basePos = (Vector2){ pos.x / ((float)screenWidth),
+                                              pos.y / ((float)screenHeight) };
     float s = (cellWidth < cellHeight) ? cellWidth : cellHeight;
     player[*playerCount].size = s / 64.0f;
     player[*playerCount].active = true;
@@ -178,7 +178,7 @@ void UpdatePlayer(void)
                         break;
 
                     case UNIT_CANNON:
-                        AddPlayer(cannons, (Vector2){ towers[selTower].pos.x, towers[selTower].pos.y - 6 }, MAX_CANNONBALLS, &cannonCount, GetScreenWidth(), GetScreenHeight());
+                        AddPlayer(cannons, (Vector2){ towers[selTower].pos.x, towers[selTower].pos.y - 15 }, MAX_CANNONBALLS, &cannonCount, GetScreenWidth(), GetScreenHeight());
                         towers[selTower].hasDefender = true;
                         break;
 
@@ -505,13 +505,15 @@ void DrawPlayer(Players *player, Texture2D playerIdleTexture, Texture2D playerSh
         float w = frameWidth  * player[i].size;
         float h = frameHeight * player[i].size;
 
+        float offset = h / 6.0f;
+
         src = (Rectangle){  frameWidth * player[i].frame, 
                             0, 
                             frameWidth, 
                             tex.height };
 
         dest = (Rectangle){ player[i].pos.x, 
-                            player[i].pos.y - 32, 
+                            player[i].pos.y - offset, 
                             w, 
                             h };
         
@@ -522,12 +524,8 @@ void DrawPlayer(Players *player, Texture2D playerIdleTexture, Texture2D playerSh
                         dest, 
                         origin, 
                         0.0f, 
-                        WHITE);
-       
+                        WHITE);  
     }
-
-   
-    
 }
 
 void drawProjects(Projects *project, Texture2D projectTexture, bool hasFrames, int max, int quantFrames){
@@ -569,8 +567,8 @@ void drawProjects(Projects *project, Texture2D projectTexture, bool hasFrames, i
 // Reposicionamento e descarte
 // ------------------------------------------------------
 void recenterPlayers(Players *player, int playerCount, int newWidth, int newHeight ){
-    float scaleX = (float)newWidth / 1280.0f;
-    float scaleY = (float)newHeight / 720.0f;
+    float scaleX = (float)newWidth;
+    float scaleY = (float)newHeight;
 
     float cellWidth = newWidth / (float)COLS;
     float cellHeight = newHeight / (float)ROWS;
@@ -585,8 +583,8 @@ void recenterPlayers(Players *player, int playerCount, int newWidth, int newHeig
 
 void RecenterTowers(int newWidth, int newHeight)
 {
-    float scaleX = (float)newWidth / 1280.0f;
-    float scaleY = (float)newHeight / 720.0f;
+    float scaleX = (float)newWidth ;
+    float scaleY = (float)newHeight ;
 
     float cellWidth = newWidth / (float)COLS;
     float cellHeight = newHeight / (float)ROWS;
