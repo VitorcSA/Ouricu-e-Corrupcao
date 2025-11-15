@@ -44,6 +44,7 @@ typedef struct
 {
     Vector2 pos;
     Vector2 basePos;
+    float size;
     float shotTimer;
     float frameTime;
     int frame;
@@ -108,7 +109,7 @@ void RecenterTowers(int newWidth, int newHeight);
 void drawProjects(Projects *project, Texture2D projectTexture, bool hasFrames, int max, int quantFrames);
 void DrawPlayer(Players *player, Texture2D playerIdleTexture, Texture2D playerShootingTexture, int playerCount, int quantFrameShot, int quantFrameIdle);
 
-void AddPlayer(Players *player, Vector2 pos, int max, int *playerCount, float screenWidth, float screenHeight);
+void AddPlayer(Players *player, Vector2 pos, int max, int *playerCount, int screenWidth, int screenHeight);
 void shotProject(Projects *project, Vector2 start, Vector2 target, float speed, int enemyIndex, int max, bool hasFrames);
 
 void UnloadPlayer(void);

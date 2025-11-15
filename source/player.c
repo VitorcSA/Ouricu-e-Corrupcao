@@ -109,8 +109,8 @@ void AddTower(Vector2 pos, int screenWidth, int screenHeight)
     float cellHeight = (float)screenHeight / (float)ROWS;
 
     towers[towerCount].pos = pos;
-    towers[towerCount].basePos = (Vector2){ pos.x / ((float)GetScreenWidth() / 1280.0f),
-                                            pos.y / ((float)GetScreenHeight() / 720.0f) };
+    towers[towerCount].basePos = (Vector2){ pos.x / ((float)screenWidth / 1280.0f),
+                                            pos.y / ((float)screenHeight / 720.0f) };
 
     float s = (cellWidth < cellHeight) ? cellWidth : cellHeight;
     towers[towerCount].size = s * 0.9f;
@@ -118,11 +118,16 @@ void AddTower(Vector2 pos, int screenWidth, int screenHeight)
     towerCount++;
 }
 
-void AddPlayer(Players *player, Vector2 pos, int max, int *playerCount, float screenWidth, float screenHeight){
+void AddPlayer(Players *player, Vector2 pos, int max, int *playerCount, int screenWidth, int screenHeight){
     if (*playerCount >= max) return;
     player[*playerCount].pos = pos;
-    player[*playerCount].basePos = (Vector2){ pos.x / (screenWidth/ 1280.0f),
-                                              pos.y / (screenHeight / 720.0f) };
+    float cellWidth  = (float)screenWidth / (float)COLS;
+    float cellHeight = (float)screenHeight / (float)ROWS;
+
+    player[*playerCount].basePos = (Vector2){ pos.x / ((float)screenWidth/ 1280.0f),
+                                              pos.y / ((float)screenHeight / 720.0f) };
+    float s = (cellWidth < cellHeight) ? cellWidth : cellHeight;
+    player[*playerCount].size = s * 0.9f;
     player[*playerCount].active = true;
     player[*playerCount].frame = 0;
     player[*playerCount].frameTime = 0;
@@ -163,17 +168,17 @@ void UpdatePlayer(void)
             if (!towers[selTower].hasDefender) { // impede mais de um defensor por torre
                 switch (selected) {
                     case UNIT_ARCHER:
-                        AddPlayer(archers, (Vector2){ towers[selTower].pos.x + 5, towers[selTower].pos.y - 47 }, MAX_ARCHERS, &archerCount, (float)GetScreenWidth(), (float)GetScreenHeight());
+                        AddPlayer(archers, (Vector2){ towers[selTower].pos.x + 5, towers[selTower].pos.y - 47 }, MAX_ARCHERS, &archerCount, GetScreenWidth(), GetScreenHeight());
                         towers[selTower].hasDefender = true;
                         break;
 
                     case UNIT_WIZARD:
-                        AddPlayer(wizards, (Vector2){ towers[selTower].pos.x + 20, towers[selTower].pos.y - 45 }, MAX_WIZARDS, &wizardCount, (float)GetScreenWidth(), (float)GetScreenHeight());
+                        AddPlayer(wizards, (Vector2){ towers[selTower].pos.x + 20, towers[selTower].pos.y - 45 }, MAX_WIZARDS, &wizardCount, GetScreenWidth(), GetScreenHeight());
                         towers[selTower].hasDefender = true;
                         break;
 
                     case UNIT_CANNON:
-                        AddPlayer(cannons, (Vector2){ towers[selTower].pos.x, towers[selTower].pos.y - 6 }, MAX_CANNONBALLS, &cannonCount, (float)GetScreenWidth(), (float)GetScreenHeight());
+                        AddPlayer(cannons, (Vector2){ towers[selTower].pos.x, towers[selTower].pos.y - 6 }, MAX_CANNONBALLS, &cannonCount, GetScreenWidth(), GetScreenHeight());
                         towers[selTower].hasDefender = true;
                         break;
 
@@ -477,6 +482,7 @@ void DrawTowers() {
         
     }
 }
+
 void DrawPlayer(Players *player, Texture2D playerIdleTexture, Texture2D playerShootingTexture, int playerCount, int quantFrameShot, int quantFrameIdle){
     int frameWidth = playerShootingTexture.width / quantFrameShot;
     int frameIdleWidth = playerIdleTexture.width / quantFrameIdle;
@@ -486,7 +492,7 @@ void DrawPlayer(Players *player, Texture2D playerIdleTexture, Texture2D playerSh
         Rectangle src, dest;
         if (player[i].isShooting) {
             src = (Rectangle){ frameWidth * player[i].frame, 0, frameWidth, playerShootingTexture.height };
-            dest = (Rectangle){ player[i].pos.x, player[i].pos.y - 32, frameWidth, playerShootingTexture.height };
+            dest = (Rectangle){ player[i].pos.x, player[i].pos.y - 32, player[i].size, player[i].size };
             DrawTexturePro(playerShootingTexture, src, dest, (Vector2){ frameWidth / 2, playerShootingTexture.height / 2 }, 0.0f, WHITE);
         } else {
             src = (Rectangle){ frameIdleWidth * player[i].frame, 0, frameIdleWidth, playerIdleTexture.height };
@@ -494,6 +500,48 @@ void DrawPlayer(Players *player, Texture2D playerIdleTexture, Texture2D playerSh
             DrawTexturePro(playerIdleTexture, src, dest, (Vector2){ frameIdleWidth / 2, playerIdleTexture.height / 2 }, 0.0f, WHITE);
         }
     }
+    float cellW = GetScreenWidth()  / (float)COLS;
+    float cellH = GetScreenHeight() / (float)ROWS;
+    float scale = fmin(cellW, cellH) / 64.0f;   // 64 = tamanho base do sprite
+    for (int i = 0; i < playerCount; i++) {
+        if (!player[i].active) continue;
+
+        Texture2D tex;
+        int frames;
+        if (player[i].isShooting) {
+            tex = playerShootingTexture;
+            frames = quantFrameShot;
+        } else {
+            tex = playerIdleTexture;
+            frames = quantFrameIdle;
+        }
+
+        int frameWidth  = tex.width  / frames;
+        int frameHeight = tex.height;
+
+        Rectangle src = {
+            frameWidth * player[i].frame,
+            0,
+            frameWidth,
+            frameHeight
+        };
+
+        float w = frameWidth  * scale;
+        float h = frameHeight * scale;
+
+        // --- DEST no centro: NÃO altera player[i].pos ---
+        Rectangle dest = {
+            player[i].pos.x,    // centro
+            player[i].pos.y-32,    // centro
+            w,
+            h
+        };
+
+        Vector2 origin = { w / 2, h / 2 };  // mantém centro fixo
+
+        DrawTexturePro(tex, src, dest, origin, 0, WHITE);
+    }
+    
 }
 
 void drawProjects(Projects *project, Texture2D projectTexture, bool hasFrames, int max, int quantFrames){

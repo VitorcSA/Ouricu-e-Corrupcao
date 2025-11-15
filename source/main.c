@@ -104,6 +104,7 @@ int main() {
         int screenHeight = GetScreenHeight();
         float cellWidth = screenWidth / (float)COLS;
         float cellHeight = screenHeight / (float)ROWS;
+        
         if (IsWindowResized() || IsKeyPressed(KEY_F11)) {
             if (IsKeyPressed(KEY_F11)) {
                 borderless = !borderless;
