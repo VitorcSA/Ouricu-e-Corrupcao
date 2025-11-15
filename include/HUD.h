@@ -31,5 +31,8 @@ void DrawGoldHUD(GoldHUD *hud);
 
 void desenharRetangulo (int alturaImagem, int posYSprite);
 void desenharRei(Texture2D reiTextura, int largura, int altura);
+void DrawDefenderHUD(Texture2D torreImg, Texture2D archerImg, Texture2D wizardImg, Texture2D cannonImg,
+                     int ownedTowers, int ownedArchers, int ownedWizards, int ownedCannons,
+                     Vector2 reiPos, float fundoHeight);
 
 #endif

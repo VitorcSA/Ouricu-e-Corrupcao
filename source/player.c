@@ -85,6 +85,11 @@ void InitPlayer()
     Image cannonball = LoadImage("assets/inimigosAnimation/cannonball.png");
     cannonballTexture = LoadTextureFromImage(cannonball);
     UnloadImage(cannonball);
+
+    Texture2D imagetower   = LoadTexture("assets/fototorre.png");
+    Texture2D imgArcher  = LoadTexture("assets/fotoarqueiro.png");
+    Texture2D imgWizard    = LoadTexture("assets/fotomago.png");
+    Texture2D imgCannon  = LoadTexture("assets/fotocanhão.png");
 }
 
 bool IsTowerOnGrid(Vector2 gridPos) {

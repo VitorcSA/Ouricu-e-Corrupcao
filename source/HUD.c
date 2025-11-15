@@ -143,3 +143,73 @@ void desenharRetangulo(int alturaImagem, int posYSprite){
 void desenharRei(Texture2D reiTextura, int posx, int posy){
     DrawTexture(reiTextura, posx, posy, WHITE);
 }
+
+void DrawDefenderHUD(Texture2D torreImg, Texture2D archerImg, Texture2D wizardImg, Texture2D cannonImg,
+                     int ownedTowers, int ownedArchers, int ownedWizards, int ownedCannons,
+                     Vector2 reiPos, float fundoHeight)
+{
+    int screenW = GetScreenWidth();
+
+    int containerW = 360;     // um pouco mais largo
+    int containerH = 220;     // 🔥 agora da MESMA altura do retângulo cinza
+    int padding = 20;
+
+    // HUD fica à esquerda do rei, dentro do retângulo cinza inferior
+    int x = (int)(reiPos.x - containerW - 25);
+    if (x < 10) x = 10;
+
+    int y = (int)fundoHeight;   // começa exatamente no topo do retângulo cinza
+
+    Rectangle containerRect = { (float)x, (float)y, (float)containerW, (float)containerH };
+
+    // Fundo do HUD
+    DrawRectangleRounded(containerRect, 0.10f, 6, (Color){35, 35, 45, 230});
+    DrawRectangleRoundedLines(containerRect, 0.10f, 6, (Color){200, 200, 200, 70});
+
+    // Cada item ocupa 1/4 da largura
+    int cols = 4;
+    float slotW = (containerW - padding * 2) / (float)cols;
+    float slotH = containerH - padding * 2;
+
+    float imgSize = 64;   // tamanho fixo 64×64
+
+    Texture2D imgs[4] = { torreImg, archerImg, wizardImg, cannonImg };
+    int counts[4] = { ownedTowers, ownedArchers, ownedWizards, ownedCannons };
+
+    for (int i = 0; i < 4; i++) {
+
+        float slotX = x + padding + i * slotW;
+        float slotY = y + padding;
+
+        float cx = slotX + slotW * 0.5f;
+        float cy = slotY + slotH * 0.5f;
+
+        Texture2D tex = imgs[i];
+
+        // Desenhar textura centralizada no espaço
+        Rectangle src = { 0, 0, (float)tex.width, (float)tex.height };
+        Rectangle dst = {
+            cx - imgSize / 2,
+            cy - imgSize / 2,
+            imgSize,
+            imgSize
+        };
+        DrawTexturePro(tex, src, dst, (Vector2){0,0}, 0.0f, WHITE);
+
+        // Badge superior com contador
+        int badgeW = 32;
+        int badgeH = 22;
+        int badgeX = (int)(slotX + slotW - badgeW - 6);
+        int badgeY = (int)(slotY + 6);
+
+        DrawRectangle(badgeX, badgeY, badgeW, badgeH, (Color){20, 20, 30, 220});
+        DrawRectangleLines(badgeX, badgeY, badgeW, badgeH, (Color){200,200,200,120});
+
+        char buf[16];
+        sprintf(buf, "%d", counts[i]);
+
+        int fs = 14;
+        int tw = MeasureText(buf, fs);
+        DrawText(buf, badgeX + (badgeW - tw) / 2, badgeY + (badgeH - fs) / 2, fs, WHITE);
+    }
+}

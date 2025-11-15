@@ -64,6 +64,11 @@ int main() {
     Texture2D titulo = LoadTexture("assets/titulo.png");
     Texture2D logo = LoadTexture("assets/logo.png");
     Texture2D reinoFundo = LoadTexture("assets/reino.png");
+    Texture2D torreImg    = LoadTexture("assets/fotoTorre.png");
+    Texture2D archerImg   = LoadTexture("assets/fotoArqueiro.png");
+    Texture2D wizardImg   = LoadTexture("assets/fotoMago.png");
+    Texture2D cannonImg   = LoadTexture("assets/fotoCanhao.png");
+
 
     Vector2 posicaoRei = {
         (GetScreenWidth() - reiTextura.width) / 2,
@@ -163,6 +168,9 @@ int main() {
             posicaoRei.y = fundoHeight + 8;
             DrawTexture(reiTextura, posicaoRei.x + 4, posicaoRei.y + 4, (Color){0, 0, 0, 80});
             DrawTexture(reiTextura, posicaoRei.x, posicaoRei.y, WHITE);
+            DrawDefenderHUD(torreImg, archerImg, wizardImg, cannonImg,
+                ownedTowers, ownedArchers, ownedWizards, ownedCannons,
+                posicaoRei, fundoHeight);
             int btnWidth = 220;
             int btnHeight = 60;
             Rectangle btnJogar = {
@@ -171,7 +179,6 @@ int main() {
                 btnWidth,
                 btnHeight
             };
-
 
             Vector2 mousePos = GetMousePosition();
             bool hover = CheckCollisionPointRec(mousePos, btnJogar);
@@ -458,6 +465,11 @@ if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(mouseBuy, 
     UnloadTexture(reinoFundo);
     UnloadTexture(reiTextura);
     free(mapTower);
+    UnloadTexture(torreImg);
+    UnloadTexture(archerImg);
+    UnloadTexture(wizardImg);
+    UnloadTexture(cannonImg);
+
     UnloadPlayer();
     CloseWindow();
     return 0;
