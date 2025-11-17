@@ -10,6 +10,10 @@ static UnitType chosenUnit = UNIT_NONE;
 static int hudWidth = 150;
 static int hudHeight = 220;
 
+float barsaude = 1.0f;
+float barcomida = 0.5f;
+float barinfra = 0.25f;
+
 void HUD_ShowAt(Vector2 pos, int towerIndex) {
     hudVisible = true;
     hudPos = (Vector2){pos.x, pos.y - hudHeight - 10};
@@ -229,4 +233,48 @@ void DrawDefenderHUD(Texture2D torreImg, Texture2D archerImg, Texture2D wizardIm
         int tw = MeasureText(buf, fs);
         DrawText(buf, badgeX + (badgeW - tw) / 2, badgeY + (badgeH - fs) / 2, fs, WHITE);
     }
+}
+
+void DrawHorizontalBar(float x, float y, float width, float height, float value)
+{
+    if (value < 0) value = 0;
+    if (value > 1) value = 1;
+
+    Color col = (value > 0.66f) ? GREEN :
+                (value > 0.33f) ? YELLOW :
+                                  RED;
+
+    // fundo da barra
+    DrawRectangle(x, y, width, height, (Color){25,25,35,200});
+
+    // preenchimento
+    float filledWidth = width * value;
+    DrawRectangle(x, y, filledWidth, height, col);
+}
+
+void DrawSideHUDBig(float v1, float v2, float v3)
+{
+    float barWidth  = 140;
+    float barHeight = 24;
+    float spacing   = 15;
+
+    // tamanho da HUD
+    float hudWidth  = barWidth * 3 + spacing * 2 + 40;
+    float hudHeight = barHeight + 40;
+
+    // canto inferior direito
+    float hudX = GetScreenWidth()  - hudWidth  - 20;
+    float hudY = GetScreenHeight() - hudHeight - 20;
+
+    // HUD de fundo (sem bordas)
+    DrawRectangle(hudX, hudY, hudWidth, hudHeight, (Color){15,15,20,200});
+
+    // posição inicial das barras
+    float startX = hudX + 20;
+    float startY = hudY + (hudHeight - barHeight)/2;
+
+    // três barras lado a lado
+    DrawHorizontalBar(startX, startY, barWidth, barHeight, v1);
+    DrawHorizontalBar(startX + barWidth + spacing, startY, barWidth, barHeight, v2);
+    DrawHorizontalBar(startX + 2*(barWidth + spacing), startY, barWidth, barHeight, v3);
 }

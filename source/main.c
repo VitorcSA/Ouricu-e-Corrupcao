@@ -166,6 +166,7 @@ int main() {
             posicaoRei.y = fundoHeight + 8;
             DrawTexture(reiTextura, posicaoRei.x + 4, posicaoRei.y + 4, (Color){0, 0, 0, 80});
             DrawTexture(reiTextura, posicaoRei.x, posicaoRei.y, WHITE);
+            DrawSideHUDBig(barsaude, barcomida, barinfra);
             DrawDefenderHUD(torreImg, archerImg, wizardImg, cannonImg,
                 ownedTowers, ownedArchers, ownedWizards, ownedCannons,
                 posicaoRei, fundoHeight);
