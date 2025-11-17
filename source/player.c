@@ -127,7 +127,7 @@ void AddPlayer(Players *player, Vector2 pos, int max, int *playerCount, int scre
     player[*playerCount].basePos = (Vector2){ pos.x / ((float)screenWidth),
                                               pos.y / ((float)screenHeight) };
     float s = (cellWidth < cellHeight) ? cellWidth : cellHeight;
-    player[*playerCount].size = s / 64.0f;
+    player[*playerCount].size = s * 0.01562f;
     player[*playerCount].active = true;
     player[*playerCount].frame = 0;
     player[*playerCount].frameTime = 0;
@@ -577,7 +577,7 @@ void recenterPlayers(Players *player, int playerCount, int newWidth, int newHeig
         player[i].pos.x = player[i].basePos.x * scaleX;
         player[i].pos.y = player[i].basePos.y * scaleY;
         float s = (cellWidth < cellHeight) ? cellWidth : cellHeight;
-        player[i].size = s / 64.0f;
+        player[i].size = s * 0.01562f;
     }
 }
 

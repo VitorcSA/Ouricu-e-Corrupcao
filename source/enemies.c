@@ -10,7 +10,6 @@ Orc orcs[MAX_ORCS];
 
 static Texture2D walkTexture;
 static Texture2D OrcTexture;
-static const int totalFrames = 8;
 static Rectangle frameRec;
 static float frameWidth, frameHeight;
 
@@ -60,8 +59,13 @@ void InitEnemies() {
     UnloadImage(img);
     
 
-    frameWidth = (float)walkTexture.width / totalFrames;
+    frameWidth = (float)walkTexture.width / ENEMY_QT_FRAMES;
     frameHeight = (float)walkTexture.height;
+
+    float cellWidth  = (float)GetScreenWidth() / (float)COLS;
+    float cellHeight = (float)GetScreenHeight() / (float)ROWS;
+
+    float s = (cellWidth < cellHeight) ? cellWidth : cellHeight;
 
     for (int i = 0; i < MAX_ENEMIES; i++) {
         enemies[i].active = false;
@@ -72,6 +76,7 @@ void InitEnemies() {
         enemies[i].frame = 0;
         enemies[i].frameTime = 0;
         enemies[i].health = 10;
+        enemies[i].size = s / 64.0f;
     }
 }
 

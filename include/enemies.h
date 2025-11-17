@@ -9,16 +9,19 @@
 #define ROWS 15
 #define COLS 15
 
+#define ENEMY_QT_FRAMES 8
+
 typedef struct {
     Vector2 pos;        // posição atual em tiles
     Vector2 pixelPos;   // posição real (em pixels)
     Vector2 target;     // próximo tile
     Vector2 lastTarget;
-    int active;
     float health;
     float speed;
-    int frame;
+    float size;
     float frameTime;
+    int frame;
+    int active;
 } Enemy;
 
 typedef struct {
