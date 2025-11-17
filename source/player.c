@@ -16,6 +16,7 @@ Tower towers[MAX_TOWERS];
 Players archers[MAX_ARCHERS];
 Players wizards[MAX_WIZARDS];
 Players cannons[MAX_CANNONS];
+
 Projects arrows[MAX_ARROWS];
 Projects fireballs[MAX_FIREBALLS];
 Projects cannonballs[MAX_CANNONBALLS];
@@ -572,11 +573,11 @@ void recenterPlayers(Players *player, int playerCount, int newWidth, int newHeig
 
     float cellWidth = newWidth / (float)COLS;
     float cellHeight = newHeight / (float)ROWS;
+    float s = (cellWidth < cellHeight) ? cellWidth : cellHeight;
     
     for (int i = 0; i < playerCount; i++) {
         player[i].pos.x = player[i].basePos.x * scaleX;
         player[i].pos.y = player[i].basePos.y * scaleY;
-        float s = (cellWidth < cellHeight) ? cellWidth : cellHeight;
         player[i].size = s * 0.01562f;
     }
 }

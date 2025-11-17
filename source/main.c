@@ -92,7 +92,8 @@ int main() {
         return 1;
     }
 
-    InitEnemies();
+    InitEnemiesTexture();
+    InitEnemy(enemies, MAX_NORMAL_ENEMIES_HEALTH, MAX_ENEMIES);
     InitPlayer();
     initTiles();
     InitGoldHUD(&goldHUD);
@@ -126,6 +127,7 @@ int main() {
             posicaoRei.y = (GetScreenHeight() - reiTextura.height);
         
             RecenterTowers(GetScreenWidth(), GetScreenHeight());
+            recenterEnemies(GetScreenWidth(), GetScreenHeight());
         }
         BeginDrawing();
         ClearBackground((Color){20, 20, 30, 255});
@@ -257,7 +259,7 @@ int main() {
 
         DrawMap(mapTower);
         drawLinesMap();
-        DrawEnemies2();
+        DrawEnemies2(enemies, walkTexture, MAX_ENEMIES);
         DrawTowers();
         DrawPlayer(archers, archerIdeleTexture, archerTexture, archerCount, ARCHER_QT_FRAMES_SHOOT, ARCHER_QT_FRAMES_IDLE);
         DrawPlayer(wizards, idlewizardTexture, wizardTexture, wizardCount, WIZARD_QT_FRAMES_SHOOT, WIZARD_QT_FRAMES_IDLE);
@@ -319,16 +321,16 @@ int main() {
             enemyTimer += dt;
 
             if (enemyTimer > 2.0f) {
-                SpawnEnemy(mapTower, cellWidth, cellHeight);
+                SpawnEnemy(enemies, mapTower, cellWidth, cellHeight);
                 enemyTimer = 0;
             }
 
-            UpdateEnemy2(mapTower, cellWidth, cellHeight, dt);
+            UpdateEnemy2(enemies, mapTower, cellWidth, cellHeight, dt);
             UpdatePlayer();
             UpdateGoldHUD(&goldHUD, playerGold);
 
             ClearBackground((Color){20, 20, 30, 255});
-            DrawEnemies2();
+            DrawEnemies2(enemies, walkTexture, MAX_ENEMIES);
             DrawTowers();
 
             DrawPlayer(archers, archerIdeleTexture, archerTexture, archerCount, ARCHER_QT_FRAMES_SHOOT, ARCHER_QT_FRAMES_IDLE);

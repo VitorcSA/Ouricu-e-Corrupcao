@@ -11,6 +11,8 @@
 
 #define ENEMY_QT_FRAMES 8
 
+#define MAX_NORMAL_ENEMIES_HEALTH 10.0f
+
 typedef struct {
     Vector2 pos;        // posição atual em tiles
     Vector2 pixelPos;   // posição real (em pixels)
@@ -24,28 +26,20 @@ typedef struct {
     int active;
 } Enemy;
 
-typedef struct {
-    Vector2 pos;
-    float speed;
-    float health;
-    int active;
-    float progress;
-    int frame;
-    float frameTime;
-} Orc;
+extern Texture2D walkTexture;
 
 extern Enemy enemies[MAX_ENEMIES];
-extern Orc orcs[MAX_ORCS];
+extern Enemy orcs[MAX_ORCS];
 
+void DrawEnemies2(Enemy *enemy, Texture2D enemyTexture, int maxEnemies);
 void InitEnemies(void);
-void InitOrcs(void);
-void SpawnEnemy(unsigned char *map, float tileWidth, float tileHeight);
+void InitEnemiesTexture(void);
+void InitEnemy(Enemy *enemy, float health, int maxEnemys);
+void recenterEnemies(int newWidth, int newHeight);
+void SpawnEnemy(Enemy *enemy, unsigned char *map, float tileWidth, float tileHeight);
 void SpawnOrcs(Vector2 pathStart);
-void UpdateEnemy2(unsigned char *map, float tileWidth, float tileHeight, float delta);
+void UpdateEnemy2(Enemy *enemy, unsigned char *map, float tileWidth, float tileHeight, float delta);
 void UpdateOrcs(float dt, Vector2 pathStart, Vector2 pathEnd);
-void DrawEnemies2(void); 
-void DrawOrcs(void);
 void UnloadEnemies(void);
-void UnloadOrcs(void);
 
 #endif
