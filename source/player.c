@@ -37,11 +37,12 @@ int archerCount = 0;
 int wizardCount = 0;
 int cannonCount = 0;
 int ownedArchers = 1;
-int ownedWizards = 1;
-int ownedCannons = 1;
+int ownedWizards = 0;
+int ownedCannons = 0;
 int ownedTowers = 1;
-int towerPrice = 100;
 
+bool wizardUnlocked = false;
+bool cannonUnlocked = false;
 
 void InitPlayer()
 {
@@ -113,7 +114,7 @@ bool IsTowerOnGrid(Vector2 gridPos) {
 
 void AddTower(Vector2 pos)
 {
-    if (ownedTowers <= 0) return;   // só isso precisa
+    if (ownedTowers <= 0) return;
 
     towers[towerCount].pos = pos;
     towers[towerCount].basePos = (Vector2){
@@ -123,8 +124,8 @@ void AddTower(Vector2 pos)
     towers[towerCount].size = 64;
     towers[towerCount].active = true;
 
-    towerCount++;   // aumenta o número total no mapa
-    ownedTowers--;  // diminui do inventário
+    towerCount++;
+    ownedTowers--;
 }
 
 void AddPlayer(Players *player, Vector2 pos, int max, int *playerCount, float screenWidth, float screenHeight){
@@ -168,12 +169,11 @@ void UpdatePlayer(void)
         int selTower = HUD_GetSelectedTower();
 
         if (selTower >= 0 && selTower < towerCount && towers[selTower].active) {
-            if (!towers[selTower].hasDefender) { // impede mais de um defensor por torre
+            if (!towers[selTower].hasDefender) {
                 switch (selected) {
 
     case UNIT_ARCHER:
         if (ownedArchers > 0) {
-            ownedArchers--;
             AddPlayer(archers, (Vector2){ towers[selTower].pos.x + 5, towers[selTower].pos.y - 47 },
                       MAX_ARCHERS, &archerCount,
                       (float)GetScreenWidth(), (float)GetScreenHeight());
@@ -183,25 +183,26 @@ void UpdatePlayer(void)
         }
         break;
 
-    case UNIT_WIZARD:
-        if (ownedWizards > 0) {
-            ownedWizards--;
+        case UNIT_WIZARD:
+        // Se desbloqueado permanentemente, permite sempre colocar
+        if (wizardUnlocked || ownedWizards > 0) {
             AddPlayer(wizards, (Vector2){ towers[selTower].pos.x + 20, towers[selTower].pos.y - 45 },
                       MAX_WIZARDS, &wizardCount,
                       (float)GetScreenWidth(), (float)GetScreenHeight());
             towers[selTower].hasDefender = true;
+            if (!wizardUnlocked) ownedWizards--;
         } else {
             printf("Você não tem magos suficientes!\n");
         }
         break;
 
     case UNIT_CANNON:
-        if (ownedCannons > 0) {
-            ownedCannons--;
+        if (cannonUnlocked || ownedCannons > 0) {
             AddPlayer(cannons, (Vector2){ towers[selTower].pos.x, towers[selTower].pos.y - 6 },
                       MAX_CANNONS, &cannonCount,
                       (float)GetScreenWidth(), (float)GetScreenHeight());
             towers[selTower].hasDefender = true;
+            if (!cannonUnlocked) ownedCannons--;
         } else {
             printf("Você não tem canhões suficientes!\n");
         }
@@ -482,23 +483,40 @@ void BuyArcher() {
 }
 
 void BuyWizard() {
-    int price = 75;
+    int price = 5;
+    if (!wizardUnlocked) {
+        if (playerGold >= price) {
+            playerGold -= price;
+            wizardUnlocked = true;
+            ownedWizards++;
+        }
+        return;
+    }
+
     if (playerGold >= price) {
         playerGold -= price;
-        ownedWizards++;
     }
 }
 
 void BuyCannon() {
-    int price = 120;
+    int price = 10;
+    if (!cannonUnlocked) {
+        if (playerGold >= price) {
+            playerGold -= price;
+            cannonUnlocked = true;
+            ownedCannons++;
+        }
+        return;
+    }
+
     if (playerGold >= price) {
         playerGold -= price;
-        ownedCannons++;
     }
 }
 
+
 void BuyTower() {
-    int price = 100;
+    int price = 15;
     if (playerGold >= price) {
         playerGold -= price;
         ownedTowers++;

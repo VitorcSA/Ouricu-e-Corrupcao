@@ -33,15 +33,22 @@ void HUD_Update(void) {
         Rectangle cannonBtn = { hudPos.x, hudPos.y + 2 * section, hudWidth, section };
 
         if (CheckCollisionPointRec(mouse, archerBtn)) {
-            chosenUnit = UNIT_ARCHER;
-            hudVisible = false;
-        } else if (CheckCollisionPointRec(mouse, wizardBtn)) {
-            chosenUnit = UNIT_WIZARD;
-            hudVisible = false;
-        } else if (CheckCollisionPointRec(mouse, cannonBtn)) {
-            chosenUnit = UNIT_CANNON;
-            hudVisible = false;
-        }
+                chosenUnit = UNIT_ARCHER;
+                hudVisible = false;
+    }
+
+        if (CheckCollisionPointRec(mouse, wizardBtn)) {
+            if (wizardUnlocked) {     // <--- coloque aqui
+                chosenUnit = UNIT_WIZARD;
+                hudVisible = false;
+    }
+}
+        else if (CheckCollisionPointRec(mouse, cannonBtn)) {
+            if (cannonUnlocked) {
+                chosenUnit = UNIT_CANNON;
+                hudVisible = false;
+    }
+}
     }
 }
 
@@ -58,8 +65,18 @@ void HUD_Draw(void) {
     DrawRectangleLines(hudPos.x, hudPos.y + 2 * section, hudWidth, section, DARKGRAY);
 
     DrawText("Archer", hudPos.x + 10, hudPos.y + 10, 20, BLACK);
+    // Wizard
+if (wizardUnlocked)
     DrawText("Wizard", hudPos.x + 10, hudPos.y + section + 10, 20, BLACK);
-    DrawText("Cannon", hudPos.x + 10, hudPos.y + 2 * section + 10, 20, BLACK);
+else
+    DrawText("Wizard (Bloqueado)", hudPos.x + 10, hudPos.y + section + 10, 20, RED);
+
+// Cannon
+if (cannonUnlocked)
+    DrawText("Cannon", hudPos.x + 10, hudPos.y + 2*section + 10, 20, BLACK);
+else
+    DrawText("Cannon (Bloqueado)", hudPos.x + 10, hudPos.y + 2*section + 10, 20, RED);
+
 }
 
 void InitGoldHUD(GoldHUD *hud)

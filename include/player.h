@@ -82,6 +82,9 @@ extern int ownedCannons;
 extern int ownedTowers;
 extern int towerPrice;
 
+extern bool wizardUnlocked;
+extern bool cannonUnlocked;
+
 extern Tower tower[MAX_TOWERS];
 extern Players archers[MAX_ARCHERS];
 extern Players wizards[MAX_WIZARDS];

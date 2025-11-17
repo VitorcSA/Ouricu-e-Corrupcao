@@ -51,8 +51,6 @@ int main() {
         CloseWindow();
         return 1;
     }
-
-    int playerGold = 0;
     GoldHUD goldHUD;
 
     Image rei = LoadImage("assets/rei.png");
@@ -236,9 +234,10 @@ int main() {
     // -------- BOTÕES DE COMPRA DOS DEFENSORES --------
 
 // Preços
-int priceArcher = 50;
-int priceWizard = 75;
-int priceCannon = 120;
+int priceArcher = 0;
+int priceWizard = 5;
+int priceCannon = 10;
+int priceTower = 15;
 
 // Posições base
 int bx = 100;
@@ -248,15 +247,13 @@ int bh = 60;
 
 Vector2 mouseBuy = GetMousePosition();
 
-// --- Botão Arqueiro ---
-Rectangle btnBuyArcher = { bx, by, bw, bh };
+Rectangle btnBuyArcher = { bx, by, bw + 30, bh };
 bool hovAr = CheckCollisionPointRec(mouseBuy, btnBuyArcher);
 
 DrawRectangleRec(btnBuyArcher, hovAr ? DARKGREEN : GREEN);
 DrawRectangleLinesEx(btnBuyArcher, 2, BLACK);
 
-DrawText("Comprar Arqueiro", btnBuyArcher.x + 10, btnBuyArcher.y + 10, 22, WHITE);
-DrawText(TextFormat("Preço: %d", priceArcher), btnBuyArcher.x + 10, btnBuyArcher.y + 35, 20, YELLOW);
+DrawText("Arqueiro (Desbloqueado)", btnBuyArcher.x + 10, btnBuyArcher.y + 10, 22, WHITE);
 
 // Clicar
 if (hovAr && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
@@ -266,39 +263,48 @@ if (hovAr && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
     }
 }
 
-// --- Botão Mago ---
-Rectangle btnBuyWizard = { bx, by + 90, bw, bh };
+Rectangle btnBuyWizard = { bx, by + 90, bw + 30, bh };
 bool hovWiz = CheckCollisionPointRec(mouseBuy, btnBuyWizard);
 
 DrawRectangleRec(btnBuyWizard, hovWiz ? DARKBLUE : BLUE);
 DrawRectangleLinesEx(btnBuyWizard, 2, BLACK);
 
-DrawText("Comprar Mago", btnBuyWizard.x + 10, btnBuyWizard.y + 10, 22, WHITE);
-DrawText(TextFormat("Preço: %d", priceWizard), btnBuyWizard.x + 10, btnBuyWizard.y + 35, 20, YELLOW);
+if (!wizardUnlocked) {
+    DrawText("Mago (Bloqueado)", btnBuyWizard.x + 10, btnBuyWizard.y + 10, 22, WHITE);
+    DrawText(TextFormat("Preço: %d", priceWizard), btnBuyWizard.x + 10, btnBuyWizard.y + 35, 20, YELLOW);
 
-if (hovWiz && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-    if (playerGold >= priceWizard) {
-        playerGold -= priceWizard;
-        wizardCount++;
+    if (hovWiz && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        if (playerGold >= priceWizard) {
+            playerGold -= priceWizard;
+            wizardUnlocked = true;   // <--- DESBLOQUEIA
+        }
     }
+
+} else {
+    DrawText("Mago (Desbloqueado)", btnBuyWizard.x + 10, btnBuyWizard.y + 10, 22, WHITE);
 }
 
-// --- Botão Canhão ---
-Rectangle btnBuyCannon = { bx, by + 180, bw, bh };
+Rectangle btnBuyCannon = { bx, by + 180, bw + 30, bh };
 bool hovCan = CheckCollisionPointRec(mouseBuy, btnBuyCannon);
 
 DrawRectangleRec(btnBuyCannon, hovCan ? DARKGRAY : GRAY);
 DrawRectangleLinesEx(btnBuyCannon, 2, BLACK);
 
-DrawText("Comprar Canhão", btnBuyCannon.x + 10, btnBuyCannon.y + 10, 22, WHITE);
-DrawText(TextFormat("Preço: %d", priceCannon), btnBuyCannon.x + 10, btnBuyCannon.y + 35, 20, YELLOW);
+if (!cannonUnlocked) {
+    DrawText("Canhão (Bloqueado)", btnBuyCannon.x + 10, btnBuyCannon.y + 10, 22, WHITE);
+    DrawText(TextFormat("Preço: %d", priceCannon), btnBuyCannon.x + 10, btnBuyCannon.y + 35, 20, YELLOW);
 
-if (hovCan && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-    if (playerGold >= priceCannon) {
-        playerGold -= priceCannon;
-        cannonCount++;
+    if (hovCan && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        if (playerGold >= priceCannon) {
+            playerGold -= priceCannon;
+            cannonUnlocked = true;    // <--- DESBLOQUEIA
+        }
     }
+
+} else {
+    DrawText("Canhão (Desbloqueado)", btnBuyCannon.x + 10, btnBuyCannon.y + 10, 22, WHITE);
 }
+
 
 Rectangle btnBuyTower = {
     (screenWidth - bw) / 2,
@@ -312,39 +318,18 @@ DrawRectangleRec(btnBuyTower, hovTor ? (Color){70,70,70,255} : (Color){100,100,1
 DrawRectangleLinesEx(btnBuyTower, 2, BLACK);
 
 DrawText("Comprar Torre", btnBuyTower.x + 10, btnBuyTower.y + 10, 22, WHITE);
-DrawText(TextFormat("Preço: %d", towerPrice), btnBuyTower.x + 10, btnBuyTower.y + 35, 20, YELLOW);
+DrawText(TextFormat("Preço: %d", priceTower), btnBuyTower.x + 10, btnBuyTower.y + 35, 20, YELLOW);
 
 // Compra
 if (hovTor && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-    if (playerGold >= towerPrice) {
-        playerGold -= towerPrice;
-        towerCount++;
+    if (playerGold >= priceTower) {
+        playerGold -= priceTower;
+        ownedTowers++;
     }
 }
 
-// Mostrar estoque atual
-DrawText(TextFormat("Arqueiros: %d", ownedArchers), bx + 320, by + 10, 20, WHITE);
-DrawText(TextFormat("Magos: %d", ownedWizards),   bx + 320, by + 100, 20, WHITE);
-DrawText(TextFormat("Canhões: %d", ownedCannons), bx + 320, by + 190, 20, WHITE);
 DrawText(TextFormat("Torres: %d", ownedTowers), btnBuyTower.x + 85, btnBuyTower.y + 20 + btnBuyTower.height + 10, 20, WHITE);
 
-
-
-if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(mouseBuy, btnBuyArcher)) {
-    BuyArcher();
-}
-
-if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(mouseBuy, btnBuyWizard)) {
-    BuyWizard();
-}
-
-if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(mouseBuy, btnBuyCannon)) {
-    BuyCannon();
-}
-
-if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(mouseBuy, btnBuyTower)) {
-    BuyTower();
-}
     Rectangle btnVoltar = { 40, 40, 160, 50 };
     Vector2 mouse = GetMousePosition();
     bool hover = CheckCollisionPointRec(mouse, btnVoltar);
