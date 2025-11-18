@@ -119,11 +119,18 @@ void drawLinesMap(){
     float cellWidth = (float)screenWidth / GRID_WIDTH;
     float cellHeight = (float)screenHeight / GRID_HEIGHT;
 
+    Vector2 mouse = GetMousePosition();
+    
     for (int y = 0; y < GRID_HEIGHT; y++) {
         for (int x = 0; x < GRID_WIDTH; x++) {
             Rectangle dest = { x * cellWidth, y * cellHeight, cellWidth, cellHeight };
 
-            DrawRectangleLines((int)dest.x, (int)dest.y, (int)dest.width, (int)dest.height, BLACK);
+            if (CheckCollisionPointRec(mouse, dest))
+            {
+                // Highlight semi-transparente branco
+                DrawRectangleRec(dest, Fade(WHITE, 0.3f));  // 0.3f = 30% de opacidade
+            }
+
         }
     }
 }
