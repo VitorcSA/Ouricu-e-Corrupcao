@@ -114,7 +114,7 @@ void SpawnEnemy(Enemy *enemy, unsigned char *map, float tileWidth, float tileHei
                                               startTile.y * tileHeight + tileHeight/2 };
             enemy[i].target = GetNextTile(startTile, startTile, map);
             enemy[i].lastTarget = startTile;
-            enemy[i].speed = 60;
+            enemy[i].speed = 2.0f; // inimigo anda 3 tiles por segundo
             enemy[i].frame = 0;
             enemy[i].frameTime = 0;
             enemy[i].health = 10;
@@ -124,6 +124,8 @@ void SpawnEnemy(Enemy *enemy, unsigned char *map, float tileWidth, float tileHei
 }
 
 void UpdateEnemy2(Enemy *enemy, unsigned char *map, float tileWidth, float tileHeight, float delta) {
+    float tileSize = (tileWidth < tileHeight) ? tileWidth : tileHeight;
+
     for (int i = 0; i < MAX_ENEMIES; i++) {
         if (!enemy[i].active) continue;
 
@@ -140,11 +142,12 @@ void UpdateEnemy2(Enemy *enemy, unsigned char *map, float tileWidth, float tileH
 
         Vector2 dir = Vector2Subtract(targetPixel, enemy[i].pixelPos);
         float dist = Vector2Length(dir);
+        float speedPx = enemy[i].speed * tileSize;
 
         // se ainda não chegou ao próximo tile
         if (dist > 2.0f) {
             dir = Vector2Normalize(dir);
-            enemy[i].pixelPos = Vector2Add(enemy[i].pixelPos, Vector2Scale(dir, enemy[i].speed * delta));
+            enemy[i].pixelPos = Vector2Add(enemy[i].pixelPos, Vector2Scale(dir, speedPx * delta));
         } else {
             // chegou no tile alvo — atualiza o tile atual e busca o próximo
             enemy[i].lastTarget = (Vector2)enemy[i].pos;;
