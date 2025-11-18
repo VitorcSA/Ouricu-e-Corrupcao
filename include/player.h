@@ -110,7 +110,7 @@ extern Texture2D cannonTextureShot;
 extern Texture2D cannonballTexture;
 
 void InitPlayer(void);
-void UpdatePlayer(void);
+void UpdatePlayer(unsigned char *mapa);
 
 void DrawTowers(void);
 void RecenterTowers(int newWidth, int newHeight);

@@ -113,6 +113,22 @@ bool IsTowerOnGrid(Vector2 gridPos) {
     return false;
 }
 
+bool IsTowerOnPath(Vector2 gridPos, unsigned char *mapa){
+        int screenWidth = GetScreenWidth();
+        int screenHeight = GetScreenHeight();
+
+        float cellWidth = (float)screenWidth / COLS;
+        float cellHeight = (float)screenHeight / ROWS;
+
+        int gridX = (int)(gridPos.x);
+        int gridY = (int)(gridPos.y);
+
+    if(mapa[gridY * COLS  + gridX] != 0){
+        return true;
+    }
+    return false;
+}
+
 void AddTower(Vector2 pos, int screenWidth, int screenHeight)
 {
     if (ownedTowers <= 0) return;
@@ -167,7 +183,7 @@ void shootProject(Projects *project, Vector2 start, Vector2 target, float speed,
     }
 }
 
-void UpdatePlayer(void)
+void UpdatePlayer(unsigned char *mapa)
 {
     float dt = GetFrameTime();
 
@@ -244,10 +260,12 @@ void UpdatePlayer(void)
             gridY * cellHeight + (cellHeight * 0.5f) - 16
         };
 
-        if (!IsTowerOnGrid(gridPos)) {
-            AddTower(cellCenter, screenWidth, screenHeight);
-        } else {
-            printf("Já existe uma torre nesse grid!\n");
+        if(!IsTowerOnPath(gridPos, mapa)){
+            if (!IsTowerOnGrid(gridPos)) {
+                AddTower(cellCenter, screenWidth, screenHeight);
+            } else {
+                printf("Já existe uma torre nesse grid!\n");
+            }
         }
     }
 

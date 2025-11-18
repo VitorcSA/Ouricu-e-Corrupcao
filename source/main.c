@@ -426,7 +426,7 @@ DrawText(TextFormat("Torres: %d", ownedTowers), btnBuyTower.x + 85, btnBuyTower.
             }
 
             UpdateEnemy2(enemies, mapTower, cellWidth, cellHeight, dt);
-            UpdatePlayer();
+            UpdatePlayer(mapTower);
             UpdateGoldHUD(&goldHUD, playerGold);
 
             ClearBackground((Color){20, 20, 30, 255});
