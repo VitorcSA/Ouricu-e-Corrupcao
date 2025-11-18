@@ -120,10 +120,9 @@ void AddTower(Vector2 pos, int screenWidth, int screenHeight)
     float cellWidth  = (float)screenWidth / (float)COLS;
     float cellHeight = (float)screenHeight / (float)ROWS;
 
-
     towers[towerCount].pos = pos;
-    towers[towerCount].basePos = (Vector2){ pos.x / ((float)GetScreenWidth() / 1280.0f),
-                                            pos.y / ((float)GetScreenHeight() / 720.0f) };
+    towers[towerCount].basePos = (Vector2){ pos.x / (float)GetScreenWidth(),
+                                            pos.y / (float)GetScreenHeight() };
     float s = (cellWidth < cellHeight) ? cellWidth : cellHeight;
     towers[towerCount].size = s * 0.9f;
     towers[towerCount].active = true;
@@ -183,7 +182,7 @@ void UpdatePlayer(void)
 
     case UNIT_ARCHER:
         if (ownedArchers > 0) {
-            AddPlayer(archers, (Vector2){ towers[selTower].pos.x + 5, towers[selTower].pos.y - 47 },
+            AddPlayer(archers, (Vector2){ towers[selTower].pos.x + 5, towers[selTower].pos.y - 40 },
                       MAX_ARCHERS, &archerCount,
                       GetScreenWidth(), GetScreenHeight());
             towers[selTower].hasDefender = true;
