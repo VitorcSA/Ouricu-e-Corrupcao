@@ -32,7 +32,6 @@ extern Enemy enemies[MAX_ENEMIES];
 extern Enemy orcs[MAX_ORCS];
 
 void DrawEnemies2(Enemy *enemy, Texture2D enemyTexture, int maxEnemies);
-void InitEnemies(void);
 void InitEnemiesTexture(void);
 void InitEnemy(Enemy *enemy, float health, int maxEnemys);
 void recenterEnemies(int newWidth, int newHeight);

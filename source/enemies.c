@@ -80,29 +80,6 @@ void InitEnemy(Enemy *enemy, float health, int maxEnemys){
     }
 }
 
-void InitEnemies() {
-    Image img = LoadImage("assets/Walk.png");
-    walkTexture = LoadTextureFromImage(img);
-    UnloadImage(img);
-
-    float cellWidth  = (float)GetScreenWidth() / (float)COLS;
-    float cellHeight = (float)GetScreenHeight() / (float)ROWS;
-
-    float s = (cellWidth < cellHeight) ? cellWidth : cellHeight;
-
-    for (int i = 0; i < MAX_ENEMIES; i++) {
-        enemies[i].active = false;
-        enemies[i].pos = (Vector2){0, 0};
-        enemies[i].target = (Vector2){0, 0};
-        enemies[i].lastTarget = (Vector2){0, 0};
-        enemies[i].speed = 0;
-        enemies[i].frame = 0;
-        enemies[i].frameTime = 0;
-        enemies[i].health = 10;
-        enemies[i].size = s / 64.0f;
-    }
-}
-
 void SpawnEnemy(Enemy *enemy, unsigned char *map, float tileWidth, float tileHeight) {
     Vector2 startTile = FindStart(map);
 
@@ -152,6 +129,10 @@ void UpdateEnemy2(Enemy *enemy, unsigned char *map, float tileWidth, float tileH
             // chegou no tile alvo — atualiza o tile atual e busca o próximo
             enemy[i].lastTarget = (Vector2)enemy[i].pos;;
             enemy[i].pos = enemy[i].target;
+
+            enemy[i].pixelPos.x = enemy[i].pos.x * tileWidth  + tileWidth/2;
+            enemy[i].pixelPos.y = enemy[i].pos.y * tileHeight + tileHeight/2;
+
             Vector2 next = GetNextTile(enemy[i].pos, enemy[i].lastTarget, map);
 
             // se não há próximo, desativa o inimigo (chegou ao fim)
@@ -183,11 +164,11 @@ void DrawEnemies2(Enemy *enemy, Texture2D enemyTexture, int maxEnemies) {
                             enemyTexture.height };
 
         Rectangle dest = (Rectangle){ enemy[i].pixelPos.x, 
-                            enemy[i].pixelPos.y - offset, 
+                            enemy[i].pixelPos.y, 
                             w, 
                             h };
         
-        Vector2 origin = { w / 2, h / 2 };  // mantém centro fixo
+        Vector2 origin = { w /4, h  };  // mantém centro fixo
 
         DrawTexturePro( enemyTexture, 
                         src, 
