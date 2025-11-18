@@ -37,6 +37,13 @@ int towerCount = 0;
 int archerCount = 0;
 int wizardCount = 0;
 int cannonCount = 0;
+int ownedArchers = 1;
+int ownedWizards = 0;
+int ownedCannons = 0;
+int ownedTowers = 1;
+
+bool wizardUnlocked = false;
+bool cannonUnlocked = false;
 
 void InitPlayer()
 {
@@ -80,6 +87,11 @@ void InitPlayer()
     Image cannonball = LoadImage("assets/inimigosAnimation/cannonball.png");
     cannonballTexture = LoadTextureFromImage(cannonball);
     UnloadImage(cannonball);
+
+    Texture2D imagetower   = LoadTexture("assets/fototorre.png");
+    Texture2D imgArcher  = LoadTexture("assets/fotoarqueiro.png");
+    Texture2D imgWizard    = LoadTexture("assets/fotomago.png");
+    Texture2D imgCannon  = LoadTexture("assets/fotocanhão.png");
 }
 
 bool IsTowerOnGrid(Vector2 gridPos) {
@@ -88,7 +100,6 @@ bool IsTowerOnGrid(Vector2 gridPos) {
     float cellWidth = (float)screenWidth / COLS;
     float cellHeight = (float)screenHeight / ROWS;
 
-    // Verifica se já existe torre na mesma célula (x,y)
     for (int i = 0; i < MAX_TOWERS; i++) {
         if (towers[i].active) {
             int towerGridX = (int)(towers[i].pos.x / cellWidth);
@@ -104,19 +115,21 @@ bool IsTowerOnGrid(Vector2 gridPos) {
 
 void AddTower(Vector2 pos, int screenWidth, int screenHeight)
 {
-    if (towerCount >= MAX_TOWERS) return;
+    if (ownedTowers <= 0) return;
 
     float cellWidth  = (float)screenWidth / (float)COLS;
     float cellHeight = (float)screenHeight / (float)ROWS;
 
-    towers[towerCount].pos = pos;
-    towers[towerCount].basePos = (Vector2){ pos.x / ((float)screenWidth ),
-                                            pos.y / ((float)screenHeight ) };
 
+    towers[towerCount].pos = pos;
+    towers[towerCount].basePos = (Vector2){ pos.x / ((float)GetScreenWidth() / 1280.0f),
+                                            pos.y / ((float)GetScreenHeight() / 720.0f) };
     float s = (cellWidth < cellHeight) ? cellWidth : cellHeight;
     towers[towerCount].size = s * 0.9f;
     towers[towerCount].active = true;
+
     towerCount++;
+    ownedTowers--;
 }
 
 void AddPlayer(Players *player, Vector2 pos, int max, int *playerCount, int screenWidth, int screenHeight){
@@ -159,33 +172,51 @@ void UpdatePlayer(void)
 {
     float dt = GetFrameTime();
 
-    // === HUD de seleção de defensor ===
     if (HUD_IsActive()) {
         HUD_Update();
         UnitType selected = HUD_GetSelectedUnit();
         int selTower = HUD_GetSelectedTower();
 
         if (selTower >= 0 && selTower < towerCount && towers[selTower].active) {
-            if (!towers[selTower].hasDefender) { // impede mais de um defensor por torre
+            if (!towers[selTower].hasDefender) {
                 switch (selected) {
-                    case UNIT_ARCHER:
-                        AddPlayer(archers, (Vector2){ towers[selTower].pos.x + 5, towers[selTower].pos.y - 47 }, MAX_ARCHERS, &archerCount, GetScreenWidth(), GetScreenHeight());
-                        towers[selTower].hasDefender = true;
-                        break;
 
-                    case UNIT_WIZARD:
-                        AddPlayer(wizards, (Vector2){ towers[selTower].pos.x + 20, towers[selTower].pos.y - 45 }, MAX_WIZARDS, &wizardCount, GetScreenWidth(), GetScreenHeight());
-                        towers[selTower].hasDefender = true;
-                        break;
+    case UNIT_ARCHER:
+        if (ownedArchers > 0) {
+            AddPlayer(archers, (Vector2){ towers[selTower].pos.x + 5, towers[selTower].pos.y - 47 },
+                      MAX_ARCHERS, &archerCount,
+                      GetScreenWidth(), GetScreenHeight());
+            towers[selTower].hasDefender = true;
+        } else {
+            printf("Você não tem arqueiros suficientes!\n");
+        }
+        break;
 
-                    case UNIT_CANNON:
-                        AddPlayer(cannons, (Vector2){ towers[selTower].pos.x, towers[selTower].pos.y - 15 }, MAX_CANNONBALLS, &cannonCount, GetScreenWidth(), GetScreenHeight());
-                        towers[selTower].hasDefender = true;
-                        break;
+        case UNIT_WIZARD:
+        // Se desbloqueado permanentemente, permite sempre colocar
+        if (wizardUnlocked || ownedWizards > 0) {
+            AddPlayer(wizards, (Vector2){ towers[selTower].pos.x + 20, towers[selTower].pos.y - 45 },
+                      MAX_WIZARDS, &wizardCount,
+                      GetScreenWidth(), GetScreenHeight());
+            towers[selTower].hasDefender = true;
+            if (!wizardUnlocked) ownedWizards--;
+        } else {
+            printf("Você não tem magos suficientes!\n");
+        }
+        break;
 
-                    default:
-                        break;
-                }
+    case UNIT_CANNON:
+        if (cannonUnlocked || ownedCannons > 0) {
+            AddPlayer(cannons, (Vector2){ towers[selTower].pos.x, towers[selTower].pos.y - 15 },
+                      MAX_CANNONS, &cannonCount,
+                      GetScreenWidth(), GetScreenHeight());
+            towers[selTower].hasDefender = true;
+            if (!cannonUnlocked) ownedCannons--;
+        } else {
+            printf("Você não tem canhões suficientes!\n");
+        }
+        break;
+}
             } else {
                 printf("Essa torre já tem um defensor!\n");
             }
@@ -193,7 +224,6 @@ void UpdatePlayer(void)
         return;
     }
 
-    // === Criar torre (só 1 por grid) ===
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
         Vector2 mousePos = GetMousePosition();
 
@@ -222,7 +252,6 @@ void UpdatePlayer(void)
         }
     }
 
-    // === Abrir HUD de torre (botão direito) ===
     if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
         Vector2 mouse = GetMousePosition();
         for (int i = 0; i < towerCount; i++) {
@@ -233,23 +262,19 @@ void UpdatePlayer(void)
         }
     }
 
-    // === Arqueiros ===
     for (int i = 0; i < archerCount; i++) {
         if (!archers[i].active) continue;
 
-        // animação
         archers[i].frameTime += dt;
         if (archers[i].frameTime >= 0.1f) {
             archers[i].frame = (archers[i].frame + 1) % ARCHER_QT_FRAMES_SHOOT;
             archers[i].frameTime = 0;
         }
 
-        // ataque
         archers[i].shotTimer -= dt;
         if (archers[i].shotTimer <= 0) {
             bool foundTarget = false;
 
-            // inimigos normais
             for (int e = 0; e < MAX_ENEMIES; e++) {
                 if (!enemies[e].active) continue;
 
@@ -264,7 +289,6 @@ void UpdatePlayer(void)
                 }
             }
 
-            // orcs
                 for (int e = 0; e < MAX_ORCS; e++) {
                     if (!orcs[e].active) continue;
                     float dist = Vector2Distance(archers[i].pos, orcs[e].pos);
@@ -337,7 +361,6 @@ void UpdatePlayer(void)
         }
     }
 
-    // === Canhões ===
     for (int i = 0; i < cannonCount; i++) {
         if (!cannons[i].active) continue;
         cannons[i].frameTime += dt;
@@ -378,7 +401,6 @@ void UpdatePlayer(void)
         }
     }
 
-    // === Flechas ===
     for (int i = 0; i < MAX_ARROWS; i++) {
         if (!arrows[i].active) continue;
         Vector2 dir = Vector2Normalize(Vector2Subtract(arrows[i].target, arrows[i].pos));
@@ -404,7 +426,6 @@ void UpdatePlayer(void)
         }
     }
 
-    // === Bolas de fogo ===
     for (int i = 0; i < MAX_FIREBALLS; i++) {
         if (!fireballs[i].active) continue;
         fireballs[i].frameTime += dt;
@@ -436,7 +457,6 @@ void UpdatePlayer(void)
         }
     }
 
-    // === Balas de canhão ===
     for (int i = 0; i < MAX_CANNONBALLS; i++) {
         if (!cannonballs[i].active) continue;
         Vector2 dir = Vector2Normalize(Vector2Subtract(cannonballs[i].target, cannonballs[i].pos));
@@ -463,9 +483,55 @@ void UpdatePlayer(void)
     }
 }
 
-// ------------------------------------------------------
-// Desenho
-// ------------------------------------------------------
+void BuyArcher() {
+    int price = 50;
+    if (playerGold >= price) {
+        playerGold -= price;
+        ownedArchers++;
+    }
+}
+
+void BuyWizard() {
+    int price = 5;
+    if (!wizardUnlocked) {
+        if (playerGold >= price) {
+            playerGold -= price;
+            wizardUnlocked = true;
+            ownedWizards++;
+        }
+        return;
+    }
+
+    if (playerGold >= price) {
+        playerGold -= price;
+    }
+}
+
+void BuyCannon() {
+    int price = 10;
+    if (!cannonUnlocked) {
+        if (playerGold >= price) {
+            playerGold -= price;
+            cannonUnlocked = true;
+            ownedCannons++;
+        }
+        return;
+    }
+
+    if (playerGold >= price) {
+        playerGold -= price;
+    }
+}
+
+
+void BuyTower() {
+    int price = 15;
+    if (playerGold >= price) {
+        playerGold -= price;
+        ownedTowers++;
+    }
+}
+
 void DrawTowers() {
     for (int i = 0; i < towerCount; i++) {
         if (!towers[i].active) continue;
@@ -564,9 +630,6 @@ void drawProjects(Projects *project, Texture2D projectTexture, bool hasFrames, i
     }
 }
 
-// ------------------------------------------------------
-// Reposicionamento e descarte
-// ------------------------------------------------------
 void recenterPlayers(Players *player, int playerCount, int newWidth, int newHeight ){
     float scaleX = (float)newWidth;
     float scaleY = (float)newHeight;

@@ -10,6 +10,10 @@ static UnitType chosenUnit = UNIT_NONE;
 static int hudWidth = 150;
 static int hudHeight = 220;
 
+float barsaude = 1.0f;
+float barcomida = 0.5f;
+float barinfra = 0.25f;
+
 void HUD_ShowAt(Vector2 pos, int towerIndex) {
     hudVisible = true;
     hudPos = (Vector2){pos.x, pos.y - hudHeight - 10};
@@ -33,15 +37,22 @@ void HUD_Update(void) {
         Rectangle cannonBtn = { hudPos.x, hudPos.y + 2 * section, hudWidth, section };
 
         if (CheckCollisionPointRec(mouse, archerBtn)) {
-            chosenUnit = UNIT_ARCHER;
-            hudVisible = false;
-        } else if (CheckCollisionPointRec(mouse, wizardBtn)) {
-            chosenUnit = UNIT_WIZARD;
-            hudVisible = false;
-        } else if (CheckCollisionPointRec(mouse, cannonBtn)) {
-            chosenUnit = UNIT_CANNON;
-            hudVisible = false;
-        }
+                chosenUnit = UNIT_ARCHER;
+                hudVisible = false;
+    }
+
+        if (CheckCollisionPointRec(mouse, wizardBtn)) {
+            if (wizardUnlocked) {     // <--- coloque aqui
+                chosenUnit = UNIT_WIZARD;
+                hudVisible = false;
+    }
+}
+        else if (CheckCollisionPointRec(mouse, cannonBtn)) {
+            if (cannonUnlocked) {
+                chosenUnit = UNIT_CANNON;
+                hudVisible = false;
+    }
+}
     }
 }
 
@@ -58,15 +69,25 @@ void HUD_Draw(void) {
     DrawRectangleLines(hudPos.x, hudPos.y + 2 * section, hudWidth, section, DARKGRAY);
 
     DrawText("Archer", hudPos.x + 10, hudPos.y + 10, 20, BLACK);
+    // Wizard
+if (wizardUnlocked)
     DrawText("Wizard", hudPos.x + 10, hudPos.y + section + 10, 20, BLACK);
-    DrawText("Cannon", hudPos.x + 10, hudPos.y + 2 * section + 10, 20, BLACK);
+else
+    DrawText("Wizard (Bloqueado)", hudPos.x + 10, hudPos.y + section + 10, 20, RED);
+
+// Cannon
+if (cannonUnlocked)
+    DrawText("Cannon", hudPos.x + 10, hudPos.y + 2*section + 10, 20, BLACK);
+else
+    DrawText("Cannon (Bloqueado)", hudPos.x + 10, hudPos.y + 2*section + 10, 20, RED);
+
 }
 
 void InitGoldHUD(GoldHUD *hud)
 {
     hud->gold = 0;
-    hud->rect.width = 140;  // ajustar se necessário
-    hud->rect.height = 40;  // altura suficiente para o texto
+    hud->rect.width = 140;
+    hud->rect.height = 40;
     hud->rect.x = GetScreenWidth() - hud->rect.width - 10;
     hud->rect.y = GetScreenHeight() - hud->rect.height - 10;
 
@@ -121,7 +142,6 @@ void DrawGoldHUDAt(GoldHUD *hud) {
     DrawText(label, labelX, centerY, fontSize, YELLOW);
     DrawText(TextFormat("%d", playerGold), valueX, centerY, fontSize, RAYWHITE);
 
-    // Desenhar a moeda à direita
     if (hud->coinTexture.id > 0) {
         DrawTextureEx(
             hud->coinTexture,
@@ -143,4 +163,118 @@ void desenharRetangulo(int alturaImagem, int posYSprite){
 
 void desenharRei(Texture2D reiTextura, int posx, int posy){
     DrawTexture(reiTextura, posx, posy, WHITE);
+}
+
+void DrawDefenderHUD(Texture2D torreImg, Texture2D archerImg, Texture2D wizardImg, Texture2D cannonImg,
+                     int ownedTowers, int ownedArchers, int ownedWizards, int ownedCannons,
+                     Vector2 reiPos, float fundoHeight)
+{
+    int screenW = GetScreenWidth();
+
+    int containerW = 360;     // um pouco mais largo
+    int containerH = 220;     // 🔥 agora da MESMA altura do retângulo cinza
+    int padding = 20;
+
+    // HUD fica à esquerda do rei, dentro do retângulo cinza inferior
+    int x = (int)(reiPos.x - containerW - 25);
+    if (x < 10) x = 10;
+
+    int y = (int)fundoHeight;   // começa exatamente no topo do retângulo cinza
+
+    Rectangle containerRect = { (float)x, (float)y, (float)containerW, (float)containerH };
+
+    // Fundo do HUD
+    DrawRectangleRounded(containerRect, 0.10f, 6, (Color){35, 35, 45, 230});
+    DrawRectangleRoundedLines(containerRect, 0.10f, 6, (Color){200, 200, 200, 70});
+
+    // Cada item ocupa 1/4 da largura
+    int cols = 4;
+    float slotW = (containerW - padding * 2) / (float)cols;
+    float slotH = containerH - padding * 2;
+
+    float imgSize = 64;   // tamanho fixo 64×64
+
+    Texture2D imgs[4] = { torreImg, archerImg, wizardImg, cannonImg };
+    int counts[4] = { ownedTowers, ownedArchers, ownedWizards, ownedCannons };
+
+    for (int i = 0; i < 4; i++) {
+
+        float slotX = x + padding + i * slotW;
+        float slotY = y + padding;
+
+        float cx = slotX + slotW * 0.5f;
+        float cy = slotY + slotH * 0.5f;
+
+        Texture2D tex = imgs[i];
+
+        // Desenhar textura centralizada no espaço
+        Rectangle src = { 0, 0, (float)tex.width, (float)tex.height };
+        Rectangle dst = {
+            cx - imgSize / 2,
+            cy - imgSize / 2,
+            imgSize,
+            imgSize
+        };
+        DrawTexturePro(tex, src, dst, (Vector2){0,0}, 0.0f, WHITE);
+
+        // Badge superior com contador
+        int badgeW = 32;
+        int badgeH = 22;
+        int badgeX = (int)(slotX + slotW - badgeW - 6);
+        int badgeY = (int)(slotY + 6);
+
+        DrawRectangle(badgeX, badgeY, badgeW, badgeH, (Color){20, 20, 30, 220});
+        DrawRectangleLines(badgeX, badgeY, badgeW, badgeH, (Color){200,200,200,120});
+
+        char buf[16];
+        sprintf(buf, "%d", counts[i]);
+
+        int fs = 14;
+        int tw = MeasureText(buf, fs);
+        DrawText(buf, badgeX + (badgeW - tw) / 2, badgeY + (badgeH - fs) / 2, fs, WHITE);
+    }
+}
+
+void DrawHorizontalBar(float x, float y, float width, float height, float value)
+{
+    if (value < 0) value = 0;
+    if (value > 1) value = 1;
+
+    Color col = (value > 0.66f) ? GREEN :
+                (value > 0.33f) ? YELLOW :
+                                  RED;
+
+    // fundo da barra
+    DrawRectangle(x, y, width, height, (Color){25,25,35,200});
+
+    // preenchimento
+    float filledWidth = width * value;
+    DrawRectangle(x, y, filledWidth, height, col);
+}
+
+void DrawSideHUDBig(float v1, float v2, float v3)
+{
+    float barWidth  = 140;
+    float barHeight = 24;
+    float spacing   = 15;
+
+    // tamanho da HUD
+    float hudWidth  = barWidth * 3 + spacing * 2 + 40;
+    float hudHeight = barHeight + 40;
+
+    // canto inferior direito
+    float hudX = GetScreenWidth()  - hudWidth  - 20;
+    float hudY = GetScreenHeight() - hudHeight - 20;
+
+    // HUD de fundo (sem bordas)
+    DrawRectangle(hudX, hudY, hudWidth, hudHeight, (Color){15,15,20,200});
+
+    // posição inicial das barras
+    float startX = hudX + 20;
+    float startY = hudY + (hudHeight - barHeight)/2;
+
+    // três barras lado a lado
+    DrawHorizontalBar(startX, startY, barWidth, barHeight, v1);
+    DrawHorizontalBar(startX + barWidth + spacing, startY, barWidth, barHeight, v2);
+    DrawHorizontalBar(startX + 2*(barWidth + spacing), startY, barWidth, barHeight, v3);
 }

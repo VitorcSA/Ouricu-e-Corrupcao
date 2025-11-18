@@ -8,7 +8,6 @@
 #include "mapa.h"
 #include "criadorMapa.h"
 
-
 void DrawTutorial(void) {
     const int fontSize = 24;
     int screenWidth = GetScreenWidth();
@@ -20,7 +19,7 @@ void DrawTutorial(void) {
 
     const char *lines[] = {
     "Você é o rei e tem que defender seu reino de inimigos.",
-    "Para isso você usará torres, barreiras, e o mais importante: defensores.",
+    "Para isso você usará torres e defensores.",
     "Clique com o botão esquerdo em algum lugar no campo para adicionar uma torre.",
     "Clique com o botão direito na torre para abrir o menu de defensores.",
     "Escolha um defensor e posicione-o sobre a torre.",
@@ -52,8 +51,6 @@ int main() {
         CloseWindow();
         return 1;
     }
-
-    int playerGold = 0;
     GoldHUD goldHUD;
 
     Image rei = LoadImage("assets/rei.png");
@@ -65,6 +62,11 @@ int main() {
     Texture2D titulo = LoadTexture("assets/titulo.png");
     Texture2D logo = LoadTexture("assets/logo.png");
     Texture2D reinoFundo = LoadTexture("assets/reino.png");
+    Texture2D torreImg    = LoadTexture("assets/fotoTorre.png");
+    Texture2D archerImg   = LoadTexture("assets/fotoArqueiro.png");
+    Texture2D wizardImg   = LoadTexture("assets/fotoMago.png");
+    Texture2D cannonImg   = LoadTexture("assets/fotoCanhao.png");
+
 
     Vector2 posicaoRei = {
         (GetScreenWidth() - reiTextura.width) / 2,
@@ -167,6 +169,10 @@ int main() {
             posicaoRei.y = fundoHeight + 8;
             DrawTexture(reiTextura, posicaoRei.x + 4, posicaoRei.y + 4, (Color){0, 0, 0, 80});
             DrawTexture(reiTextura, posicaoRei.x, posicaoRei.y, WHITE);
+            DrawSideHUDBig(barsaude, barcomida, barinfra);
+            DrawDefenderHUD(torreImg, archerImg, wizardImg, cannonImg,
+                ownedTowers, ownedArchers, ownedWizards, ownedCannons,
+                posicaoRei, fundoHeight);
             int btnWidth = 220;
             int btnHeight = 60;
             Rectangle btnJogar = {
@@ -175,7 +181,6 @@ int main() {
                 btnWidth,
                 btnHeight
             };
-
 
             Vector2 mousePos = GetMousePosition();
             bool hover = CheckCollisionPointRec(mousePos, btnJogar);
@@ -191,7 +196,6 @@ int main() {
             if (hover && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
                 jogoIniciado = true;
 
-            // ---------------- BOTÃO LOJA (CANTO SUPERIOR DIREITO) ----------------
             float bw = 180;
             float bh = 60;
 
@@ -223,7 +227,6 @@ int main() {
 
     DrawText(textoBotaoLoja, textoXLoja, textoYLoja, fontSizeLoja, WHITE);
 
-// AGORA FUNCIONA: abre loja imediatamente!
     if (mouseSobreLoja && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
         lojaAtiva = true;
 
@@ -231,6 +234,105 @@ int main() {
 
     DrawRectangle(0, 0, screenWidth, screenHeight, (Color){25,25,35,255});
     DrawText("LOJA", (screenWidth - MeasureText("LOJA", 40)) / 2, 40, 40, YELLOW);
+
+    // -------- BOTÕES DE COMPRA DOS DEFENSORES --------
+
+// Preços
+int priceArcher = 0;
+int priceWizard = 5;
+int priceCannon = 10;
+int priceTower = 15;
+
+// Posições base
+int bx = 100;
+int by = 150;
+int bw = 260;
+int bh = 60;
+
+Vector2 mouseBuy = GetMousePosition();
+
+Rectangle btnBuyArcher = { bx, by, bw + 30, bh };
+bool hovAr = CheckCollisionPointRec(mouseBuy, btnBuyArcher);
+
+DrawRectangleRec(btnBuyArcher, hovAr ? DARKGREEN : GREEN);
+DrawRectangleLinesEx(btnBuyArcher, 2, BLACK);
+
+DrawText("Arqueiro (Desbloqueado)", btnBuyArcher.x + 10, btnBuyArcher.y + 10, 22, WHITE);
+
+// Clicar
+if (hovAr && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+    if (playerGold >= priceArcher) {
+        playerGold -= priceArcher;
+        archerCount++;
+    }
+}
+
+Rectangle btnBuyWizard = { bx, by + 90, bw + 30, bh };
+bool hovWiz = CheckCollisionPointRec(mouseBuy, btnBuyWizard);
+
+DrawRectangleRec(btnBuyWizard, hovWiz ? DARKBLUE : BLUE);
+DrawRectangleLinesEx(btnBuyWizard, 2, BLACK);
+
+if (!wizardUnlocked) {
+    DrawText("Mago (Bloqueado)", btnBuyWizard.x + 10, btnBuyWizard.y + 10, 22, WHITE);
+    DrawText(TextFormat("Preço: %d", priceWizard), btnBuyWizard.x + 10, btnBuyWizard.y + 35, 20, YELLOW);
+
+    if (hovWiz && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        if (playerGold >= priceWizard) {
+            playerGold -= priceWizard;
+            wizardUnlocked = true;   // <--- DESBLOQUEIA
+        }
+    }
+
+} else {
+    DrawText("Mago (Desbloqueado)", btnBuyWizard.x + 10, btnBuyWizard.y + 10, 22, WHITE);
+}
+
+Rectangle btnBuyCannon = { bx, by + 180, bw + 30, bh };
+bool hovCan = CheckCollisionPointRec(mouseBuy, btnBuyCannon);
+
+DrawRectangleRec(btnBuyCannon, hovCan ? DARKGRAY : GRAY);
+DrawRectangleLinesEx(btnBuyCannon, 2, BLACK);
+
+if (!cannonUnlocked) {
+    DrawText("Canhão (Bloqueado)", btnBuyCannon.x + 10, btnBuyCannon.y + 10, 22, WHITE);
+    DrawText(TextFormat("Preço: %d", priceCannon), btnBuyCannon.x + 10, btnBuyCannon.y + 35, 20, YELLOW);
+
+    if (hovCan && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        if (playerGold >= priceCannon) {
+            playerGold -= priceCannon;
+            cannonUnlocked = true;    // <--- DESBLOQUEIA
+        }
+    }
+
+} else {
+    DrawText("Canhão (Desbloqueado)", btnBuyCannon.x + 10, btnBuyCannon.y + 10, 22, WHITE);
+}
+
+
+Rectangle btnBuyTower = {
+    (screenWidth - bw) / 2,
+    by + 390,
+    bw,
+    bh
+};
+bool hovTor = CheckCollisionPointRec(mouseBuy, btnBuyTower);
+
+DrawRectangleRec(btnBuyTower, hovTor ? (Color){70,70,70,255} : (Color){100,100,100,255});
+DrawRectangleLinesEx(btnBuyTower, 2, BLACK);
+
+DrawText("Comprar Torre", btnBuyTower.x + 10, btnBuyTower.y + 10, 22, WHITE);
+DrawText(TextFormat("Preço: %d", priceTower), btnBuyTower.x + 10, btnBuyTower.y + 35, 20, YELLOW);
+
+// Compra
+if (hovTor && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+    if (playerGold >= priceTower) {
+        playerGold -= priceTower;
+        ownedTowers++;
+    }
+}
+
+DrawText(TextFormat("Torres: %d", ownedTowers), btnBuyTower.x + 85, btnBuyTower.y + 20 + btnBuyTower.height + 10, 20, WHITE);
 
     Rectangle btnVoltar = { 40, 40, 160, 50 };
     Vector2 mouse = GetMousePosition();
@@ -249,12 +351,10 @@ int main() {
 }
         else {
 
-    // -------- PAUSE: alternar quando aperta ESC --------
     if (IsKeyPressed(KEY_ESCAPE)) {
         pauseMenu = !pauseMenu;
     }
 
-    // -------- DESENHAR MENU DE PAUSA --------
     if (pauseMenu) {
 
         DrawMap(mapTower);
@@ -354,6 +454,11 @@ int main() {
     UnloadTexture(reinoFundo);
     UnloadTexture(reiTextura);
     free(mapTower);
+    UnloadTexture(torreImg);
+    UnloadTexture(archerImg);
+    UnloadTexture(wizardImg);
+    UnloadTexture(cannonImg);
+
     UnloadPlayer();
     CloseWindow();
     return 0;
