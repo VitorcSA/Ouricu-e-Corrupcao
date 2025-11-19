@@ -11,7 +11,11 @@ static Texture2D groundEnemyDireitaInferior;
 static Texture2D groundEnemyEsquerdaSuperior;
 static Texture2D groundEnemyEsquerdaInferior;
 static Texture2D buildable;
-
+static Texture2D parede;
+static Texture2D portaInferiorDireita;
+static Texture2D portaInferiorEsquerda;
+static Texture2D portaSuperiorDireita;
+static Texture2D portaSuperiorEsquerda;
 
 bool CheckFile(FILE *file){
     if(file){
@@ -70,6 +74,25 @@ void initTiles(){
     buildable = LoadTextureFromImage(imBuildable);
     UnloadImage(imBuildable);
 
+    Image imParede = LoadImage("assets/mapa/parede.png");
+    parede = LoadTextureFromImage(imParede);
+    UnloadImage(imParede);
+
+    Image imPortaSuperiorDireita = LoadImage("assets/mapa/portaSuperiorDireita.png");
+    portaSuperiorDireita = LoadTextureFromImage(imPortaSuperiorDireita);
+    UnloadImage(imPortaSuperiorDireita);
+
+    Image importaSuperiorEsquerda = LoadImage("assets/mapa/portaSuperiorEsquerda.png");
+    portaSuperiorEsquerda = LoadTextureFromImage(importaSuperiorEsquerda);
+    UnloadImage(importaSuperiorEsquerda);
+
+    Image importaInferiorDireita = LoadImage("assets/mapa/portaInferiorDireita.png");
+    portaInferiorDireita = LoadTextureFromImage(importaInferiorDireita);
+    UnloadImage(importaInferiorDireita);
+
+    Image importaInferiorEsquerda = LoadImage("assets/mapa/portaInferiorEsquerda.png");
+    portaInferiorEsquerda = LoadTextureFromImage(importaInferiorEsquerda);
+    UnloadImage(importaInferiorEsquerda);
 }
 
 Texture2D CheckTile(unsigned char tile) {
@@ -81,6 +104,11 @@ Texture2D CheckTile(unsigned char tile) {
         case 4: return groundEnemyEsquerdaSuperior;
         case 5: return groundEnemyDireitaSuperior;
         case 6: return groundEnemyEsquerdaInferior;
+        case 7: return parede;
+        case 8: return portaInferiorEsquerda;
+        case 9: return portaSuperiorEsquerda;
+        case 10: return portaInferiorDireita;
+        case 11: return portaSuperiorDireita;
         default: return buildable;
     }
 }

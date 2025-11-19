@@ -592,7 +592,7 @@ void DrawPlayer(Players *player, Texture2D playerIdleTexture, Texture2D playerSh
 
         dest = (Rectangle){ player[i].pos.x, 
                             player[i].pos.y - offset, 
-                            w, 
+                            w , 
                             h };
         
         Vector2 origin = { w / 2, h / 2 };  // mantém centro fixo
