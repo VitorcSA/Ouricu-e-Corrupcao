@@ -11,6 +11,8 @@ Enemy orcs[MAX_ORCS];
 Texture2D walkTexture;
 Texture2D OrcTexture;
 
+int vidaPortao;
+
 Vector2 FindStart(unsigned char *map) {
     for (int x = 0; x < ROWS; x++) {
         for (int y = 0; y < COLS; y++) {
@@ -76,6 +78,7 @@ void InitEnemy(Enemy *enemy, float health, int maxEnemys){
         enemy[i].frame = 0;
         enemy[i].frameTime = 0;
         enemy[i].health = health;
+        enemy[i].currentHealth = health;
         enemy[i].size = s / 64.0f;
     }
 }
@@ -94,13 +97,13 @@ void SpawnEnemy(Enemy *enemy, unsigned char *map, float tileWidth, float tileHei
             enemy[i].speed = 2.0f; // inimigo anda 3 tiles por segundo
             enemy[i].frame = 0;
             enemy[i].frameTime = 0;
-            enemy[i].health = 10;
+            enemy[i]. currentHealth = 10;
             break;
         }
     }
 }
 
-void UpdateEnemy2(Enemy *enemy, unsigned char *map, float tileWidth, float tileHeight, float delta) {
+void UpdateEnemy2(Enemy *enemy, unsigned char *map, float tileWidth, float tileHeight, float delta, int *vidaPortao) {
     float tileSize = (tileWidth < tileHeight) ? tileWidth : tileHeight;
 
     for (int i = 0; i < MAX_ENEMIES; i++) {
@@ -135,8 +138,13 @@ void UpdateEnemy2(Enemy *enemy, unsigned char *map, float tileWidth, float tileH
 
             Vector2 next = GetNextTile(enemy[i].pos, enemy[i].lastTarget, map);
 
+            int gridX = enemy[i].pos.x;
+            int gridY = enemy[i].pos.y;
+
             // se não há próximo, desativa o inimigo (chegou ao fim)
-            if (next.x == enemy[i].pos.x && next.y == enemy[i].pos.y) {
+            if ((next.x == enemy[i].pos.x && next.y == enemy[i].pos.y) || map[gridY * COLS + gridX] >= 8) {
+                *vidaPortao -= 1;
+                printf("%d\n", *vidaPortao);
                 enemy[i].active = false;
                 continue;
             }
@@ -145,6 +153,51 @@ void UpdateEnemy2(Enemy *enemy, unsigned char *map, float tileWidth, float tileH
         }
     }
 }
+
+void DrawEnemyHealthBar(Enemy enemy, Texture2D enemyTexture, int totalFrames) {
+    if (!enemy.active) return;
+
+    float frameWidth  = enemyTexture.width / totalFrames;
+    float frameHeight = enemyTexture.height;
+
+    // tamanho real desenhado (com escala "size")
+    float w = frameWidth  * enemy.size;
+    float h = frameHeight * enemy.size;
+
+    // mesma origem do DrawTexturePro
+    Vector2 origin = { w / 4, h };
+
+    float drawX = enemy.pixelPos.x - origin.x;
+    float drawY = enemy.pixelPos.y - origin.y;
+
+    // posição da barra (acima do inimigo)
+    float barWidth  = w;
+    float barHeight = 6;
+    float x = drawX;
+    float y = drawY + 20;  
+
+    float healthPercent = (float)enemy.currentHealth / (float)enemy.health;
+    healthPercent = Clamp(healthPercent, 0.0f, 1.0f);
+
+    DrawRectangle ( x, 
+                    y, 
+                    barWidth, 
+                    barHeight, 
+                    BLACK );
+
+    DrawRectangle ( x, 
+                    y, 
+                    barWidth * healthPercent, 
+                    barHeight, 
+                    GREEN );
+    
+    DrawRectangleLines( x, 
+                        y, 
+                        barWidth, 
+                        barHeight, 
+                        DARKGRAY );
+}
+
 
 void DrawEnemies2(Enemy *enemy, Texture2D enemyTexture, int maxEnemies) {
     float frameWidth = (float)enemyTexture.width / ENEMY_QT_FRAMES;
@@ -175,9 +228,12 @@ void DrawEnemies2(Enemy *enemy, Texture2D enemyTexture, int maxEnemies) {
                         dest, 
                         origin, 
                         0.0f, 
-                        WHITE);  
+                        WHITE);
+
+        DrawEnemyHealthBar(enemies[i], enemyTexture, ENEMY_QT_FRAMES);  
     }
 }
+
 void recenterEnemy(Enemy *enemy, int newWidth, int newHeight, int maxEnemies){
     float scaleX = (float)newWidth;
     float scaleY = (float)newHeight;

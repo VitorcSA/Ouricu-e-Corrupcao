@@ -419,15 +419,15 @@ void UpdatePlayer(unsigned char *mapa)
             int e = arrows[i].enemyIndex;
             int x = arrows[i].orcIndex;
             if (e >= 0 && e < MAX_ENEMIES && enemies[e].active) {
-                enemies[e].health -= ARROW_DAMAGE;
-                if (enemies[e].health <= 0) {
+                enemies[e].currentHealth -= ARROW_DAMAGE;
+                if (enemies[e].currentHealth <= 0) {
                     enemies[e].active = false;
                     playerGold += GOLD_FOR_ENEMY;
                 }
             }
             if (x >= 0 && x < MAX_ORCS && orcs[x].active) {
-                orcs[x].health -= ARROW_DAMAGE;
-                if (orcs[x].health <= 0) {
+                orcs[x].currentHealth -= ARROW_DAMAGE;
+                if (orcs[x].currentHealth <= 0) {
                     orcs[x].active = false;
                     playerGold += GOLD_FOR_ORC;
                 }
@@ -450,15 +450,15 @@ void UpdatePlayer(unsigned char *mapa)
             int e = fireballs[i].enemyIndex;
             int x = fireballs[i].orcIndex;
             if (e >= 0 && e < MAX_ENEMIES && enemies[e].active) {
-                enemies[e].health -= FIREBALL_DAMAGE;
-                if (enemies[e].health <= 0) {
+                enemies[e].currentHealth -= FIREBALL_DAMAGE;
+                if (enemies[e].currentHealth <= 0) {
                     enemies[e].active = false;
                     playerGold += GOLD_FOR_ENEMY;
                 }
             }
             if (x >= 0 && x < MAX_ORCS && orcs[x].active) {
-                orcs[x].health -= FIREBALL_DAMAGE;
-                if (orcs[x].health <= 0) {
+                orcs[x].currentHealth -= FIREBALL_DAMAGE;
+                if (orcs[x].currentHealth <= 0) {
                     orcs[x].active = false;
                     playerGold += GOLD_FOR_ORC;
                 }
@@ -475,15 +475,15 @@ void UpdatePlayer(unsigned char *mapa)
             int e = cannonballs[i].enemyIndex;
             int x = cannonballs[i].orcIndex;
             if (e >= 0 && e < MAX_ENEMIES && enemies[e].active) {
-                enemies[e].health -= CANNONBALL_DAMAGE;
-                if (enemies[e].health <= 0) {
+                enemies[e].currentHealth -= CANNONBALL_DAMAGE;
+                if (enemies[e].currentHealth <= 0) {
                     enemies[e].active = false;
                     playerGold += GOLD_FOR_ENEMY;
                 }
             }
             if (e >= 0 && e < MAX_ORCS && orcs[x].active) {
-                orcs[x].health -= CANNONBALL_DAMAGE;
-                if (orcs[x].health <= 0) {
+                orcs[x].currentHealth -= CANNONBALL_DAMAGE;
+                if (orcs[x].currentHealth <= 0) {
                     orcs[x].active = false;
                     playerGold += GOLD_FOR_ORC;
                 }
@@ -540,7 +540,7 @@ void DrawPlayer(Players *player, Texture2D playerIdleTexture, Texture2D playerSh
 
         dest = (Rectangle){ player[i].pos.x, 
                             player[i].pos.y - offset, 
-                            w, 
+                            w , 
                             h };
         
         Vector2 origin = { w / 2, h / 2 };  // mantém centro fixo
