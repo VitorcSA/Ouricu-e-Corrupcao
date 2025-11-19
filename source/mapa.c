@@ -111,7 +111,7 @@ void DrawMap(unsigned char *self) {
     }
 }
 
-void drawLinesMap(){
+void drawLinesMap(unsigned char *mapa){
     int screenWidth = GetScreenWidth();
     int screenHeight = GetScreenHeight();
 
@@ -120,45 +120,19 @@ void drawLinesMap(){
     float cellHeight = (float)screenHeight / GRID_HEIGHT;
 
     Vector2 mouse = GetMousePosition();
-    
+
     for (int y = 0; y < GRID_HEIGHT; y++) {
         for (int x = 0; x < GRID_WIDTH; x++) {
             Rectangle dest = { x * cellWidth, y * cellHeight, cellWidth, cellHeight };
 
-            if (CheckCollisionPointRec(mouse, dest))
+            if(CheckCollisionPointRec(mouse, dest) && mapa[y * 15 + x] != 0)
             {
-                // Highlight semi-transparente branco
+                DrawRectangleRec(dest, Fade(RED, 0.3f));    
+            }else if (CheckCollisionPointRec(mouse, dest))
+            {
                 DrawRectangleRec(dest, Fade(WHITE, 0.3f));  // 0.3f = 30% de opacidade
             }
 
         }
     }
 }
-/*
-// tipo de retorno precisa bater com o .h -> bool
-bool HandleTowerPlacement(void) {
-    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-        Vector2 mouse = GetMousePosition();
-
-        int screenWidth = GetScreenWidth();
-        int screenHeight = GetScreenHeight();
-        float cellWidth = (float)screenWidth / GRID_WIDTH;
-        float cellHeight = (float)screenHeight / GRID_HEIGHT;
-
-        int gridX = mouse.x / cellWidth;
-        int gridY = mouse.y / cellHeight;
-
-        if (gridX >= 0 && gridX < GRID_WIDTH && gridY >= 0 && gridY < GRID_HEIGHT) {
-            if (grid[gridY * GRID_WIDTH + gridX] == CELL_BUILDABLE) {
-                grid[gridY * GRID_WIDTH + gridX] = CELL_OCCUPIED;
-                return true;
-            } else if (grid[gridY * GRID_WIDTH + gridX] == CELL_PATH) {
-                printf("⚠️ Não pode colocar torre no caminho!\n");
-                } else if (grid[gridY * GRID_WIDTH + gridX] == CELL_OCCUPIED) {
-                    printf("Já tem uma torre aqui!\n");
-                }
-        }
-    }
-    return false;
-}
-*/

@@ -358,7 +358,7 @@ DrawText(TextFormat("Torres: %d", ownedTowers), btnBuyTower.x + 85, btnBuyTower.
     if (pauseMenu) {
 
         DrawMap(mapTower);
-        drawLinesMap();
+        drawLinesMap(mapTower);
         DrawEnemies2(enemies, walkTexture, MAX_ENEMIES);
         DrawTowers();
         DrawPlayer(archers, archerIdeleTexture, archerTexture, archerCount, ARCHER_QT_FRAMES_SHOOT, ARCHER_QT_FRAMES_IDLE);
@@ -416,7 +416,7 @@ DrawText(TextFormat("Torres: %d", ownedTowers), btnBuyTower.x + 85, btnBuyTower.
     }
 
             DrawMap(mapTower);
-            drawLinesMap();
+            drawLinesMap(mapTower);
             float dt = GetFrameTime();
             enemyTimer += dt;
 

@@ -114,14 +114,8 @@ bool IsTowerOnGrid(Vector2 gridPos) {
 }
 
 bool IsTowerOnPath(Vector2 gridPos, unsigned char *mapa){
-        int screenWidth = GetScreenWidth();
-        int screenHeight = GetScreenHeight();
-
-        float cellWidth = (float)screenWidth / COLS;
-        float cellHeight = (float)screenHeight / ROWS;
-
-        int gridX = (int)(gridPos.x);
-        int gridY = (int)(gridPos.y);
+    int gridX = (int)(gridPos.x);
+    int gridY = (int)(gridPos.y);
 
     if(mapa[gridY * COLS  + gridX] != 0){
         return true;

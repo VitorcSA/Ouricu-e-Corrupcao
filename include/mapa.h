@@ -20,7 +20,7 @@ unsigned char *ReadMap(const char *fileName);
 void initTiles();
 Texture2D CheckTile(unsigned char tile);
 void DrawMap(unsigned char *self);
-void drawLinesMap();
+void drawLinesMap(unsigned char *mapa);
 bool HandleTowerPlacement(void); // Descomente se a função for usada
 
 #endif // MAPA_H
