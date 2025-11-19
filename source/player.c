@@ -32,7 +32,7 @@ Texture2D cannonTextureIdle;
 Texture2D cannonTextureShot;
 Texture2D cannonballTexture;
 
-int playerGold = 0;
+int playerGold;
 int towerCount = 0;
 int archerCount = 0;
 int wizardCount = 0;
@@ -87,11 +87,6 @@ void InitPlayer()
     Image cannonball = LoadImage("assets/inimigosAnimation/cannonball.png");
     cannonballTexture = LoadTextureFromImage(cannonball);
     UnloadImage(cannonball);
-
-    Texture2D imagetower   = LoadTexture("assets/fototorre.png");
-    Texture2D imgArcher  = LoadTexture("assets/fotoarqueiro.png");
-    Texture2D imgWizard    = LoadTexture("assets/fotomago.png");
-    Texture2D imgCannon  = LoadTexture("assets/fotocanhão.png");
 }
 
 bool IsTowerOnGrid(Vector2 gridPos) {

@@ -43,6 +43,8 @@ void DrawTutorial(void) {
 int main() {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(1280, 720, "Poder e Corrupcao");
+    Image logo = LoadImage("assets/logo.png");
+    SetWindowIcon(logo);
     SetExitKey(KEY_NULL);
     SetTargetFPS(60);
 
@@ -51,7 +53,10 @@ int main() {
         CloseWindow();
         return 1;
     }
+    extern int playerGold;
     GoldHUD goldHUD;
+    playerGold = LoadGold();
+
 
     Image rei = LoadImage("assets/rei.png");
     ImageResize(&rei, 200, 200);
@@ -60,13 +65,7 @@ int main() {
 
     Texture2D fundo = LoadTexture("assets/fundotitulo.png");
     Texture2D titulo = LoadTexture("assets/titulo.png");
-    Texture2D logo = LoadTexture("assets/logo.png");
     Texture2D reinoFundo = LoadTexture("assets/reino.png");
-    Texture2D torreImg    = LoadTexture("assets/fotoTorre.png");
-    Texture2D archerImg   = LoadTexture("assets/fotoArqueiro.png");
-    Texture2D wizardImg   = LoadTexture("assets/fotoMago.png");
-    Texture2D cannonImg   = LoadTexture("assets/fotoCanhao.png");
-
 
     Vector2 posicaoRei = {
         (GetScreenWidth() - reiTextura.width) / 2,
@@ -101,6 +100,7 @@ int main() {
     InitPlayer();
     initTiles();
     InitGoldHUD(&goldHUD);
+    InitRanking();
     int prevGold = -1;
 
     float enemyTimer = 0;
@@ -173,9 +173,8 @@ int main() {
             DrawTexture(reiTextura, posicaoRei.x + 4, posicaoRei.y + 4, (Color){0, 0, 0, 80});
             DrawTexture(reiTextura, posicaoRei.x, posicaoRei.y, WHITE);
             DrawSideHUDBig(barsaude, barcomida, barinfra);
-            DrawDefenderHUD(torreImg, archerImg, wizardImg, cannonImg,
-                ownedTowers, ownedArchers, ownedWizards, ownedCannons,
-                posicaoRei, fundoHeight);
+            screenHeight = GetScreenHeight();
+            RankingHUD(screenHeight);
             int btnWidth = 220;
             int btnHeight = 60;
             Rectangle btnJogar = {
@@ -455,16 +454,13 @@ DrawText(TextFormat("Torres: %d", ownedTowers), btnBuyTower.x + 85, btnBuyTower.
         EndDrawing();
     }
 
+    SaveGold(playerGold);
     UnloadTexture(titulo);
     UnloadTexture(fundo);
-    UnloadTexture(logo);
+    UnloadImage(logo);
     UnloadTexture(reinoFundo);
     UnloadTexture(reiTextura);
     free(mapTower);
-    UnloadTexture(torreImg);
-    UnloadTexture(archerImg);
-    UnloadTexture(wizardImg);
-    UnloadTexture(cannonImg);
 
     UnloadPlayer();
     CloseWindow();
