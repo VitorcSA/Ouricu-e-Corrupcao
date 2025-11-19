@@ -16,8 +16,23 @@ float barinfra = 1.0f;
 
 void HUD_ShowAt(Vector2 pos, int towerIndex) {
     hudVisible = true;
-    hudPos = (Vector2){pos.x, pos.y - hudHeight - 10};
+
+    int screenW = GetScreenWidth();
+    int screenH = GetScreenHeight();
+
+    hudWidth  = screenW * 0.18f;   // 18% da largura da tela
+    hudHeight = screenH * 0.30f;   // 30% da altura da tela
+
+    hudPos = (Vector2){ pos.x, 
+                        pos.y - hudHeight * 0.5f };
+
+    if (hudPos.x + hudWidth > screenW)  hudPos.x = screenW - hudWidth - 10;
+    if (hudPos.y + hudHeight > screenH) hudPos.y = screenH - hudHeight - 10;
+    if (hudPos.y < 0)                   hudPos.y = 10;
+    if (hudPos.x < 0)                   hudPos.x = 10;
+
     selectedTower = towerIndex;
+
     chosenUnit = UNIT_NONE;
 }
 
@@ -27,6 +42,12 @@ UnitType HUD_GetSelectedUnit(void) { return chosenUnit; }
 
 void HUD_Update(void) {
     if (!hudVisible) return;
+
+    int screenW = GetScreenWidth();
+    int screenH = GetScreenHeight();
+
+    hudWidth  = screenW * 0.18f;
+    hudHeight = screenH * 0.30f;
 
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
         Vector2 mouse = GetMousePosition();
