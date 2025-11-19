@@ -37,6 +37,7 @@ void desenharRetangulo (int alturaImagem, int posYSprite);
 void desenharRei(Texture2D reiTextura, int largura, int altura);
 void DrawHorizontalBar(float x, float y, float width, float height, float value);
 void DrawSideHUDBig(float v1, float v2, float v3);
+void UpdateBars(int playerGold, int *prevGold);
 void DrawDefenderHUD(Texture2D torreImg, Texture2D archerImg, Texture2D wizardImg, Texture2D cannonImg,
                      int ownedTowers, int ownedArchers, int ownedWizards, int ownedCannons,
                      Vector2 reiPos, float fundoHeight);

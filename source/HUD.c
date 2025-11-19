@@ -11,8 +11,8 @@ static int hudWidth = 150;
 static int hudHeight = 220;
 
 float barsaude = 1.0f;
-float barcomida = 0.5f;
-float barinfra = 0.25f;
+float barcomida = 1.0f;
+float barinfra = 1.0f;
 
 void HUD_ShowAt(Vector2 pos, int towerIndex) {
     hudVisible = true;
@@ -277,4 +277,23 @@ void DrawSideHUDBig(float v1, float v2, float v3)
     DrawHorizontalBar(startX, startY, barWidth, barHeight, v1);
     DrawHorizontalBar(startX + barWidth + spacing, startY, barWidth, barHeight, v2);
     DrawHorizontalBar(startX + 2*(barWidth + spacing), startY, barWidth, barHeight, v3);
+}
+
+void UpdateBars(int playerGold, int *prevGold) {
+
+    if (playerGold > *prevGold) {
+        *prevGold = playerGold;
+    }
+
+    int delta = *prevGold - playerGold;
+
+    if (delta >= 10) {
+        int steps = delta / 10;
+
+        barsaude -= steps * 0.1f;
+        barcomida -= steps * 0.1f;
+        barinfra -= steps * 0.1f;
+    }
+    *prevGold = playerGold;
+    printf("%f", barsaude);
 }

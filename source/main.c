@@ -99,6 +99,7 @@ int main() {
     InitPlayer();
     initTiles();
     InitGoldHUD(&goldHUD);
+    int prevGold = -1;
 
     float enemyTimer = 0;
 
@@ -241,7 +242,7 @@ int main() {
 int priceArcher = 0;
 int priceWizard = 0;
 int priceCannon = 0;
-int priceTower = 0;
+int priceTower = 10;
 
 // Posições base
 int bx = 100;
@@ -329,6 +330,7 @@ if (hovTor && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
     if (playerGold >= priceTower) {
         playerGold -= priceTower;
         ownedTowers++;
+        UpdateBars(playerGold, &prevGold);
     }
 }
 

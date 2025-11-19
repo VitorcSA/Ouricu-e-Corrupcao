@@ -121,11 +121,6 @@ void DrawPlayerInvertido(Players *player, Texture2D playerIdleTexture, Texture2D
 void AddPlayer(Players *player, Vector2 pos, int max, int *playerCount, int screenWidth, int screenHeight);
 void shotProject(Projects *project, Vector2 start, Vector2 target, float speed, int enemyIndex, int max, bool hasFrames);
 
-void BuyArcher();
-void BuyWizard();
-void BuyCannon();
-void BuyTower();
-
 void UnloadPlayer(void);
 
 #endif

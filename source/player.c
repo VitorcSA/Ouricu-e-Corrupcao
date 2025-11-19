@@ -493,55 +493,6 @@ void UpdatePlayer(unsigned char *mapa)
     }
 }
 
-void BuyArcher() {
-    int price = 50;
-    if (playerGold >= price) {
-        playerGold -= price;
-        ownedArchers++;
-    }
-}
-
-void BuyWizard() {
-    int price = 5;
-    if (!wizardUnlocked) {
-        if (playerGold >= price) {
-            playerGold -= price;
-            wizardUnlocked = true;
-            ownedWizards++;
-        }
-        return;
-    }
-
-    if (playerGold >= price) {
-        playerGold -= price;
-    }
-}
-
-void BuyCannon() {
-    int price = 10;
-    if (!cannonUnlocked) {
-        if (playerGold >= price) {
-            playerGold -= price;
-            cannonUnlocked = true;
-            ownedCannons++;
-        }
-        return;
-    }
-
-    if (playerGold >= price) {
-        playerGold -= price;
-    }
-}
-
-
-void BuyTower() {
-    int price = 15;
-    if (playerGold >= price) {
-        playerGold -= price;
-        ownedTowers++;
-    }
-}
-
 void DrawTowers() {
     for (int i = 0; i < towerCount; i++) {
         if (!towers[i].active) continue;
