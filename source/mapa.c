@@ -121,18 +121,10 @@ void drawLinesMap(unsigned char *mapa){
 
     Vector2 mouse = GetMousePosition();
 
-    for (int y = 0; y < GRID_HEIGHT; y++) {
-        for (int x = 0; x < GRID_WIDTH; x++) {
-            Rectangle dest = { x * cellWidth, y * cellHeight, cellWidth, cellHeight };
+    int gridX = (int)(mouse.x / cellWidth);
+    int gridY = (int)(mouse.y / cellHeight);
+    Rectangle dest = { gridX * cellWidth, gridY * cellHeight, cellWidth, cellHeight };
 
-            if(CheckCollisionPointRec(mouse, dest) && mapa[y * 15 + x] != 0)
-            {
-                DrawRectangleRec(dest, Fade(RED, 0.3f));    
-            }else if (CheckCollisionPointRec(mouse, dest))
-            {
-                DrawRectangleRec(dest, Fade(WHITE, 0.3f));  // 0.3f = 30% de opacidade
-            }
-
-        }
-    }
+    if(mapa[gridY * GRID_WIDTH + gridX] != 0)DrawRectangleRec(dest, Fade(RED, 0.3f));
+    else DrawRectangleRec(dest, Fade(WHITE, 0.3f));
 }
