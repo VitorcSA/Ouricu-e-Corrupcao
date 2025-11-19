@@ -241,9 +241,9 @@ int main() {
 
 // Preços
 int priceArcher = 0;
-int priceWizard = 5;
-int priceCannon = 10;
-int priceTower = 15;
+int priceWizard = 0;
+int priceCannon = 0;
+int priceTower = 0;
 
 // Posições base
 int bx = 100;
@@ -363,8 +363,8 @@ DrawText(TextFormat("Torres: %d", ownedTowers), btnBuyTower.x + 85, btnBuyTower.
         drawLinesMap(mapTower);
         DrawEnemies2(enemies, walkTexture, MAX_ENEMIES);
         DrawTowers();
-        DrawPlayer(archers, archerIdeleTexture, archerTexture, archerCount, ARCHER_QT_FRAMES_SHOOT, ARCHER_QT_FRAMES_IDLE);
-        DrawPlayer(wizards, idlewizardTexture, wizardTexture, wizardCount, WIZARD_QT_FRAMES_SHOOT, WIZARD_QT_FRAMES_IDLE);
+        DrawPlayerInvertido(archers, archerIdeleTexture, archerTexture, archerCount, ARCHER_QT_FRAMES_SHOOT, ARCHER_QT_FRAMES_IDLE);
+        DrawPlayerInvertido(wizards, idlewizardTexture, wizardTexture, wizardCount, WIZARD_QT_FRAMES_SHOOT, WIZARD_QT_FRAMES_IDLE);
         DrawPlayer(cannons, cannonTextureIdle, cannonTextureShot, cannonCount, CANNON_QT_FRAMES_SHOOT, CANNON_QT_FRAMES_IDLE);
         drawProjects(arrows, arrowTexture, false, MAX_ARROWS, ARROW_QT_FRAMES);
         drawProjects(cannonballs, cannonballTexture, false, MAX_CANNONBALLS, CANNONBALL_QT_FRAMES);
@@ -435,8 +435,8 @@ DrawText(TextFormat("Torres: %d", ownedTowers), btnBuyTower.x + 85, btnBuyTower.
             DrawEnemies2(enemies, walkTexture, MAX_ENEMIES);
             DrawTowers();
 
-            DrawPlayer(archers, archerIdeleTexture, archerTexture, archerCount, ARCHER_QT_FRAMES_SHOOT, ARCHER_QT_FRAMES_IDLE);
-            DrawPlayer(wizards, idlewizardTexture, wizardTexture, wizardCount, WIZARD_QT_FRAMES_SHOOT, WIZARD_QT_FRAMES_IDLE);
+            DrawPlayerInvertido(archers, archerIdeleTexture, archerTexture, archerCount, ARCHER_QT_FRAMES_SHOOT, ARCHER_QT_FRAMES_IDLE);
+            DrawPlayerInvertido(wizards, idlewizardTexture, wizardTexture, wizardCount, WIZARD_QT_FRAMES_SHOOT, WIZARD_QT_FRAMES_IDLE);
             DrawPlayer(cannons, cannonTextureIdle, cannonTextureShot, cannonCount, CANNON_QT_FRAMES_SHOOT, CANNON_QT_FRAMES_IDLE);
 
             drawProjects(arrows, arrowTexture, false, MAX_ARROWS, ARROW_QT_FRAMES);
