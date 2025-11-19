@@ -11,6 +11,8 @@ Enemy orcs[MAX_ORCS];
 Texture2D walkTexture;
 Texture2D OrcTexture;
 
+int vidaPortao;
+
 Vector2 FindStart(unsigned char *map) {
     for (int x = 0; x < ROWS; x++) {
         for (int y = 0; y < COLS; y++) {
@@ -100,7 +102,7 @@ void SpawnEnemy(Enemy *enemy, unsigned char *map, float tileWidth, float tileHei
     }
 }
 
-void UpdateEnemy2(Enemy *enemy, unsigned char *map, float tileWidth, float tileHeight, float delta) {
+void UpdateEnemy2(Enemy *enemy, unsigned char *map, float tileWidth, float tileHeight, float delta, int *vidaPortao) {
     float tileSize = (tileWidth < tileHeight) ? tileWidth : tileHeight;
 
     for (int i = 0; i < MAX_ENEMIES; i++) {
@@ -135,8 +137,13 @@ void UpdateEnemy2(Enemy *enemy, unsigned char *map, float tileWidth, float tileH
 
             Vector2 next = GetNextTile(enemy[i].pos, enemy[i].lastTarget, map);
 
+            int gridX = enemy[i].pos.x;
+            int gridY = enemy[i].pos.y;
+
             // se não há próximo, desativa o inimigo (chegou ao fim)
-            if (next.x == enemy[i].pos.x && next.y == enemy[i].pos.y) {
+            if ((next.x == enemy[i].pos.x && next.y == enemy[i].pos.y) || map[gridY * COLS + gridX] >= 8) {
+                *vidaPortao -= 1;
+                printf("%d\n", *vidaPortao);
                 enemy[i].active = false;
                 continue;
             }

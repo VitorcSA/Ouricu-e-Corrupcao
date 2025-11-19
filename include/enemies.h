@@ -31,13 +31,15 @@ extern Texture2D walkTexture;
 extern Enemy enemies[MAX_ENEMIES];
 extern Enemy orcs[MAX_ORCS];
 
+extern int vidaPortao;
+
 void DrawEnemies2(Enemy *enemy, Texture2D enemyTexture, int maxEnemies);
 void InitEnemiesTexture(void);
 void InitEnemy(Enemy *enemy, float health, int maxEnemys);
 void recenterEnemies(int newWidth, int newHeight);
 void SpawnEnemy(Enemy *enemy, unsigned char *map, float tileWidth, float tileHeight);
 void SpawnOrcs(Vector2 pathStart);
-void UpdateEnemy2(Enemy *enemy, unsigned char *map, float tileWidth, float tileHeight, float delta);
+void UpdateEnemy2(Enemy *enemy, unsigned char *map, float tileWidth, float tileHeight, float delta, int *vidaPortao);
 void UpdateOrcs(float dt, Vector2 pathStart, Vector2 pathEnd);
 void UnloadEnemies(void);
 

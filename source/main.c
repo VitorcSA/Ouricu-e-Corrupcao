@@ -80,6 +80,8 @@ int main() {
     bool jogoIniciado = false;
     bool pauseMenu = false;
     bool lojaAtiva = false;
+    bool isGameOver = false;
+    vidaPortao = 3;
 
     const char *arquivoMapaTowerDefense = "assets/mapa/mapaTowerDefense";
 
@@ -102,7 +104,7 @@ int main() {
 
     float enemyTimer = 0;
 
-    while (!WindowShouldClose()) {
+    while (!WindowShouldClose() && !isGameOver) {
         int screenWidth = GetScreenWidth();
         int screenHeight = GetScreenHeight();
         float cellWidth = screenWidth / (float)COLS;
@@ -425,7 +427,7 @@ DrawText(TextFormat("Torres: %d", ownedTowers), btnBuyTower.x + 85, btnBuyTower.
                 enemyTimer = 0;
             }
 
-            UpdateEnemy2(enemies, mapTower, cellWidth, cellHeight, dt);
+            UpdateEnemy2(enemies, mapTower, cellWidth, cellHeight, dt, &vidaPortao);
             UpdatePlayer(mapTower);
             UpdateGoldHUD(&goldHUD, playerGold);
 
@@ -443,6 +445,10 @@ DrawText(TextFormat("Torres: %d", ownedTowers), btnBuyTower.x + 85, btnBuyTower.
 
             DrawGoldHUDAt(&goldHUD);
             HUD_Draw();
+            printf("%d\n", vidaPortao);
+            if(vidaPortao <= 0){
+                isGameOver = true;
+            }
         }
 
         EndDrawing();
