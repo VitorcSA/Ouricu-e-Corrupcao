@@ -134,7 +134,7 @@ void AddTower(Vector2 pos, int screenWidth, int screenHeight)
     towers[towerCount].basePos = (Vector2){ pos.x / (float)GetScreenWidth(),
                                             pos.y / (float)GetScreenHeight() };
     float s = (cellWidth < cellHeight) ? cellWidth : cellHeight;
-    towers[towerCount].size = s * 0.9f;
+    towers[towerCount].size = s * 1.1f;
     towers[towerCount].active = true;
 
     towerCount++;
@@ -192,7 +192,7 @@ void UpdatePlayer(unsigned char *mapa)
 
     case UNIT_ARCHER:
         if (ownedArchers > 0) {
-            AddPlayer(archers, (Vector2){ towers[selTower].pos.x + 5, towers[selTower].pos.y - 40 },
+            AddPlayer(archers, (Vector2){ towers[selTower].pos.x + 5, towers[selTower].pos.y - 45 },
                       MAX_ARCHERS, &archerCount,
                       GetScreenWidth(), GetScreenHeight());
             towers[selTower].hasDefender = true;
@@ -202,9 +202,8 @@ void UpdatePlayer(unsigned char *mapa)
         break;
 
         case UNIT_WIZARD:
-        // Se desbloqueado permanentemente, permite sempre colocar
         if (wizardUnlocked || ownedWizards > 0) {
-            AddPlayer(wizards, (Vector2){ towers[selTower].pos.x + 20, towers[selTower].pos.y - 45 },
+            AddPlayer(wizards, (Vector2){ towers[selTower].pos.x - 8, towers[selTower].pos.y - 46 },
                       MAX_WIZARDS, &wizardCount,
                       GetScreenWidth(), GetScreenHeight());
             towers[selTower].hasDefender = true;
@@ -216,7 +215,7 @@ void UpdatePlayer(unsigned char *mapa)
 
     case UNIT_CANNON:
         if (cannonUnlocked || ownedCannons > 0) {
-            AddPlayer(cannons, (Vector2){ towers[selTower].pos.x, towers[selTower].pos.y - 15 },
+            AddPlayer(cannons, (Vector2){ towers[selTower].pos.x + 4, towers[selTower].pos.y - 22 },
                       MAX_CANNONS, &cannonCount,
                       GetScreenWidth(), GetScreenHeight());
             towers[selTower].hasDefender = true;
@@ -556,8 +555,6 @@ void DrawTowers() {
         };
         Vector2 origin = { 0, 0 };
         DrawTexturePro(torreTexture, src, dest, origin, 0.0f, WHITE);
-
-        
     }
 }
 
@@ -584,7 +581,7 @@ void DrawPlayer(Players *player, Texture2D playerIdleTexture, Texture2D playerSh
         float h = frameHeight * player[i].size;
 
         float offset = h / 6.0f;
-
+        
         src = (Rectangle){  frameWidth * player[i].frame, 
                             0, 
                             frameWidth, 
@@ -602,7 +599,52 @@ void DrawPlayer(Players *player, Texture2D playerIdleTexture, Texture2D playerSh
                         dest, 
                         origin, 
                         0.0f, 
-                        WHITE);  
+                        WHITE);
+    }
+}
+
+void DrawPlayerInvertido(Players *player, Texture2D playerIdleTexture, Texture2D playerShootingTexture, int playerCount, int quantFrameShot, int quantFrameIdle){
+    for(int i = 0; i < playerCount; i++){
+        if (!player[i].active) continue;
+
+        Texture2D tex;
+        Rectangle src, dest;
+        int frames;
+
+        if (player[i].isShooting) {
+            tex = playerShootingTexture;
+            frames = quantFrameShot;
+        } else {
+            tex = playerIdleTexture;
+            frames = quantFrameIdle;
+        }
+
+        int frameWidth  = tex.width  / frames;
+        int frameHeight = tex.height;
+
+        float w = frameWidth  * player[i].size;
+        float h = frameHeight * player[i].size;
+
+        float offset = h / 6.0f;
+        
+        src = (Rectangle){  frameWidth * player[i].frame, 
+                            0, 
+                            frameWidth * (-1), 
+                            tex.height };
+
+        dest = (Rectangle){ player[i].pos.x, 
+                            player[i].pos.y - offset, 
+                            w, 
+                            h };
+        
+        Vector2 origin = { w / 2, h / 2 };
+
+        DrawTexturePro( tex, 
+                        src, 
+                        dest, 
+                        origin, 
+                        0.0f, 
+                        WHITE);
     }
 }
 
@@ -668,7 +710,7 @@ void RecenterTowers(int newWidth, int newHeight)
         towers[i].pos.x = towers[i].basePos.x * scaleX;
         towers[i].pos.y = towers[i].basePos.y * scaleY;
         float s = (cellWidth < cellHeight) ? cellWidth : cellHeight;
-        towers[i].size = s * 0.9f; // 90% da célula, por exemplo
+        towers[i].size = s * 1.1f; // 90% da célula, por exemplo
 
     }
 
