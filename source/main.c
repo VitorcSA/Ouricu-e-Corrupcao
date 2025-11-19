@@ -7,6 +7,7 @@
 #include "player.h"
 #include "mapa.h"
 #include "criadorMapa.h"
+#include "game.h"
 
 void DrawTutorial(void) {
     const int fontSize = 24;
@@ -52,6 +53,7 @@ int main() {
         return 1;
     }
     GoldHUD goldHUD;
+    EnemyWave wave;
 
     Image rei = LoadImage("assets/rei.png");
     ImageResize(&rei, 200, 200);
@@ -424,8 +426,10 @@ DrawText(TextFormat("Torres: %d", ownedTowers), btnBuyTower.x + 85, btnBuyTower.
             float dt = GetFrameTime();
             enemyTimer += dt;
 
+
+
             if (enemyTimer > 2.0f) {
-                SpawnEnemy(enemies, mapTower, cellWidth, cellHeight);
+                UpdateWaves(&wave, mapTower, cellWidth, cellHeight, dt);
                 enemyTimer = 0;
             }
 
