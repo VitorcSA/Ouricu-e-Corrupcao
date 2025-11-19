@@ -19,6 +19,7 @@ typedef struct {
     Vector2 target;     // próximo tile
     Vector2 lastTarget;
     float health;
+    float currentHealth;
     float speed;
     float size;
     float frameTime;

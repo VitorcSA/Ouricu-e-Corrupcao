@@ -445,7 +445,6 @@ DrawText(TextFormat("Torres: %d", ownedTowers), btnBuyTower.x + 85, btnBuyTower.
 
             DrawGoldHUDAt(&goldHUD);
             HUD_Draw();
-            printf("%d\n", vidaPortao);
             if(vidaPortao <= 0){
                 isGameOver = true;
             }
