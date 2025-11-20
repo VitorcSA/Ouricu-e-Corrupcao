@@ -245,8 +245,8 @@ void DrawHorizontalBar(float x, float y, float width, float height, float value)
     if (value < 0) value = 0;
     if (value > 1) value = 1;
 
-    Color col = (value > 0.66f) ? GREEN :
-                (value > 0.33f) ? YELLOW :
+    Color col = (value > 0.66f) ? DARKGREEN :
+                (value > 0.33f) ? ORANGE :
                                   RED;
 
     DrawRectangle(x, y, width, height, (Color){25,25,35,200});
@@ -273,8 +273,11 @@ void DrawSideHUDBig(float v1, float v2, float v3)
     float startY = hudY + (hudHeight - barHeight)/2;
 
     DrawHorizontalBar(startX, startY, barWidth, barHeight, v1);
+    DrawText("SAÚDE",startX + 40, startY + 3, 17, WHITE);
     DrawHorizontalBar(startX + barWidth + spacing, startY, barWidth, barHeight, v2);
+    DrawText("COMIDA", startX + 190, startY + 3, 17, WHITE);
     DrawHorizontalBar(startX + 2*(barWidth + spacing), startY, barWidth, barHeight, v3);
+    DrawText("PODER", startX + 350, startY + 3, 17, WHITE);
 }
 
 void UpdateBars(int playerGold, int *prevGold) {
@@ -288,12 +291,11 @@ void UpdateBars(int playerGold, int *prevGold) {
     if (delta >= 10) {
         int steps = delta / 10;
 
-        barsaude -= steps * 0.1f;
-        barcomida -= steps * 0.1f;
+        barsaude -= steps * 0.2f;
+        barcomida -= steps * 0.3f;
         barinfra -= steps * 0.1f;
     }
     *prevGold = playerGold;
-    printf("%f", barsaude);
 }
 
 void RankingHUD(int screenHeight)
