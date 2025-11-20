@@ -538,7 +538,7 @@ void DrawPlayer(Players *player, Texture2D playerIdleTexture, Texture2D playerSh
                             w , 
                             h };
         
-        Vector2 origin = { w / 2, h / 2 };  // mantém centro fixo
+        Vector2 origin = { w / 2, h / 2 };
 
         DrawTexturePro( tex, 
                         src, 
@@ -656,7 +656,7 @@ void RecenterTowers(int newWidth, int newHeight)
         towers[i].pos.x = towers[i].basePos.x * scaleX;
         towers[i].pos.y = towers[i].basePos.y * scaleY;
         float s = (cellWidth < cellHeight) ? cellWidth : cellHeight;
-        towers[i].size = s * 1.1f; // 90% da célula, por exemplo
+        towers[i].size = s * 1.1f;
 
     }
 

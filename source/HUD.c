@@ -123,13 +123,12 @@ void HUD_Draw(void) {
     DrawRectangleLines(hudPos.x, hudPos.y + 2 * section, hudWidth, section, DARKGRAY);
 
     DrawText("Archer", hudPos.x + 10, hudPos.y + 10, 20, BLACK);
-    // Wizard
+
 if (wizardUnlocked)
     DrawText("Wizard", hudPos.x + 10, hudPos.y + section + 10, 20, BLACK);
 else
     DrawText("Wizard (Bloqueado)", hudPos.x + 10, hudPos.y + section + 10, 20, RED);
 
-// Cannon
 if (cannonUnlocked)
     DrawText("Cannon", hudPos.x + 10, hudPos.y + 2*section + 10, 20, BLACK);
 else
@@ -250,10 +249,8 @@ void DrawHorizontalBar(float x, float y, float width, float height, float value)
                 (value > 0.33f) ? YELLOW :
                                   RED;
 
-    // fundo da barra
     DrawRectangle(x, y, width, height, (Color){25,25,35,200});
 
-    // preenchimento
     float filledWidth = width * value;
     DrawRectangle(x, y, filledWidth, height, col);
 }
@@ -264,22 +261,17 @@ void DrawSideHUDBig(float v1, float v2, float v3)
     float barHeight = 24;
     float spacing   = 15;
 
-    // tamanho da HUD
     float hudWidth  = barWidth * 3 + spacing * 2 + 40;
     float hudHeight = barHeight + 40;
 
-    // canto inferior direito
     float hudX = GetScreenWidth()  - hudWidth  - 20;
     float hudY = GetScreenHeight() - hudHeight - 20;
 
-    // HUD de fundo (sem bordas)
     DrawRectangle(hudX, hudY, hudWidth, hudHeight, (Color){15,15,20,200});
 
-    // posição inicial das barras
     float startX = hudX + 20;
     float startY = hudY + (hudHeight - barHeight)/2;
 
-    // três barras lado a lado
     DrawHorizontalBar(startX, startY, barWidth, barHeight, v1);
     DrawHorizontalBar(startX + barWidth + spacing, startY, barWidth, barHeight, v2);
     DrawHorizontalBar(startX + 2*(barWidth + spacing), startY, barWidth, barHeight, v3);

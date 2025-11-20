@@ -24,8 +24,8 @@ void DrawTutorial(void) {
     "Clique com o botão direito na torre para abrir o menu de defensores.",
     "Escolha um defensor e posicione-o sobre a torre.",
     "Com o tempo você vai desbloqueando novos defensores.",
-    "Cada defensor tem habilidades diferentes que serão explicadas ao desbloqueá-los.",
-    "Lembre-se: ao gastar muitos recursos apenas em defesa ou só em seu povo:",
+    "Cada defensor tem distâncias de ataque e danos diferentes.",
+    "Lembre-se: ao gastar muitos recursos apenas em defesa, esquecendo de seu povo:",
     "GAME OVER"
     };
 
@@ -237,15 +237,11 @@ int main() {
     DrawRectangle(0, 0, screenWidth, screenHeight, (Color){25,25,35,255});
     DrawText("LOJA", (screenWidth - MeasureText("LOJA", 40)) / 2, 40, 40, YELLOW);
 
-    // -------- BOTÕES DE COMPRA DOS DEFENSORES --------
-
-// Preços
 int priceArcher = 0;
 int priceWizard = 0;
 int priceCannon = 0;
 int priceTower = 10;
 
-// Posições base
 int bx = 100;
 int by = 150;
 int bw = 260;
@@ -261,7 +257,6 @@ DrawRectangleLinesEx(btnBuyArcher, 2, BLACK);
 
 DrawText("Arqueiro (Desbloqueado)", btnBuyArcher.x + 10, btnBuyArcher.y + 10, 22, WHITE);
 
-// Clicar
 if (hovAr && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
     if (playerGold >= priceArcher) {
         playerGold -= priceArcher;
@@ -282,7 +277,7 @@ if (!wizardUnlocked) {
     if (hovWiz && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
         if (playerGold >= priceWizard) {
             playerGold -= priceWizard;
-            wizardUnlocked = true;   // <--- DESBLOQUEIA
+            wizardUnlocked = true;
         }
     }
 
@@ -303,7 +298,7 @@ if (!cannonUnlocked) {
     if (hovCan && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
         if (playerGold >= priceCannon) {
             playerGold -= priceCannon;
-            cannonUnlocked = true;    // <--- DESBLOQUEIA
+            cannonUnlocked = true;
         }
     }
 
@@ -326,7 +321,6 @@ DrawRectangleLinesEx(btnBuyTower, 2, BLACK);
 DrawText("Comprar Torre", btnBuyTower.x + 10, btnBuyTower.y + 10, 22, WHITE);
 DrawText(TextFormat("Preço: %d", priceTower), btnBuyTower.x + 10, btnBuyTower.y + 35, 20, YELLOW);
 
-// Compra
 if (hovTor && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
     if (playerGold >= priceTower) {
         playerGold -= priceTower;
