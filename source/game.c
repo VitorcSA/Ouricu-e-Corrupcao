@@ -3,15 +3,14 @@
 #include <stdio.h>
 #include <enemies.h>
 
-EnemyWave enemywave = {0};
-float timeBetweenWaves = 3.0f;   // intervalo entre hordas
-float waveCooldown = 0.0f;       // contador do cooldown
+static float timeBetweenWaves = 3.0f;   // intervalo entre hordas
+static float waveCooldown = 0.0f;       // contador do cooldown
 
 void StartNewWave(EnemyWave *wave) {
     wave->number++;
     wave->enemiesToSpawn = 5 + wave->number * 2;   // cada horda tem mais inimigos
     wave->enemiesSpawned = 0;
-    wave->spawnInterval = 0.5f - (wave->number * 0.02f); // spawn mais rápido
+    wave->spawnInterval = 1.0f - (wave->number * 0.02f); // spawn mais rápido
     if (wave->spawnInterval < 0.1f) wave->spawnInterval = 0.1f;
 
     wave->spawnTimer = 0.0f;
@@ -22,6 +21,12 @@ void StartNewWave(EnemyWave *wave) {
 }
 
 void UpdateWaves(EnemyWave *wave, unsigned char *mapTower, float cellWidth, float cellHeight, float deltaTime) {
+
+    if (wave->number >= wave->totalWaves && !wave->active) {
+        printf("TODAS AS WAVES COMPLETAS! Voltando ao menu...\n");
+        // aqui você troca o estado do jogo 
+        return;
+    }
 
     // Se a wave não está ativa, inicia o cooldown
     if (!wave->active) {

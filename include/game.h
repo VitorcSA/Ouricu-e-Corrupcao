@@ -3,6 +3,7 @@
 
 typedef struct {
     int number;             // número da horda
+    int totalWaves;         // número total de waves do nível
     int enemiesToSpawn;     // quantos inimigos essa horda terá
     int enemiesSpawned;     // quantos já foram spawnados
     float spawnInterval;    // tempo entre cada inimigo
@@ -10,9 +11,13 @@ typedef struct {
     bool active;            // está acontecendo agora?
 } EnemyWave;
 
-extern EnemyWave wave;
+typedef enum {
+    TUTORIAL_STATE,
+    MENU_STATE,
+    GAME_STATE,
+} GameState;    
 
-void StartNewWave(Wave *wave);
-void UpdateWaves(Wave *wave, unsigned char *mapTower, float cellWidth, float cellHeight, float deltaTime);
+void StartNewWave(EnemyWave *wave);
+void UpdateWaves(EnemyWave *wave, unsigned char *mapTower, float cellWidth, float cellHeight, float deltaTime);
 
 #endif

@@ -53,7 +53,10 @@ int main() {
         return 1;
     }
     GoldHUD goldHUD;
-    EnemyWave wave;
+    EnemyWave wave = {0};
+    GameState currentGameState = TUTORIAL_STATE;
+
+    wave.totalWaves = 3;
 
     Image rei = LoadImage("assets/rei.png");
     ImageResize(&rei, 200, 200);
@@ -130,15 +133,35 @@ int main() {
                 }
             }
 
+            int screenWidth = GetScreenWidth();
+            int screenHeight = GetScreenHeight();
+            float cellWidth = screenWidth / (float)COLS;
+            float cellHeight = screenHeight / (float)ROWS;
+
             posicaoRei.x = (GetScreenWidth() - reiTextura.width) / 2;
             posicaoRei.y = (GetScreenHeight() - reiTextura.height);
         
-            RecenterTowers(GetScreenWidth(), GetScreenHeight());
+            RecenterTowers(screenWidth, screenHeight);
             recenterEnemies(GetScreenWidth(), GetScreenHeight());
         }
         BeginDrawing();
         ClearBackground((Color){20, 20, 30, 255});
 
+        switch (currentGameState)
+        {
+        case TUTORIAL_STATE:
+            rawTutorial();
+            DrawText("Clique ou pressione ENTER para continuar",
+                     (GetScreenWidth() - MeasureText("Clique ou pressione ENTER para continuar", 24)) / 2,
+                     GetScreenHeight() - 80, 24, LIGHTGRAY);
+
+            if (IsKeyPressed(KEY_ENTER) || IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+                tutorialAtivo = false;
+            break;
+        
+        default:
+            break;
+        }
         if (tutorialAtivo) {
             DrawTutorial();
             DrawText("Clique ou pressione ENTER para continuar",
@@ -424,14 +447,10 @@ DrawText(TextFormat("Torres: %d", ownedTowers), btnBuyTower.x + 85, btnBuyTower.
             DrawMap(mapTower);
             drawLinesMap(mapTower);
             float dt = GetFrameTime();
-            enemyTimer += dt;
+    
+            UpdateWaves(&wave, mapTower, cellWidth, cellHeight, dt);
+            enemyTimer = 0;
 
-
-
-            if (enemyTimer > 2.0f) {
-                UpdateWaves(&wave, mapTower, cellWidth, cellHeight, dt);
-                enemyTimer = 0;
-            }
 
             UpdateEnemy2(enemies, mapTower, cellWidth, cellHeight, dt, &vidaPortao);
             UpdatePlayer(mapTower);
