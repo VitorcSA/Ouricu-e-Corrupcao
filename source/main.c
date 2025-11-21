@@ -54,8 +54,9 @@ int main() {
     }
     GoldHUD goldHUD;
     EnemyWave wave = {0};
-    GameState currentGameState = TUTORIAL_STATE;
+    GameState currentGameState;
 
+    currentGameState = TUTORIAL_STATE;
     wave.totalWaves = 3;
 
     Image rei = LoadImage("assets/rei.png");
@@ -150,29 +151,16 @@ int main() {
         switch (currentGameState)
         {
         case TUTORIAL_STATE:
-            rawTutorial();
-            DrawText("Clique ou pressione ENTER para continuar",
-                     (GetScreenWidth() - MeasureText("Clique ou pressione ENTER para continuar", 24)) / 2,
-                     GetScreenHeight() - 80, 24, LIGHTGRAY);
-
-            if (IsKeyPressed(KEY_ENTER) || IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-                tutorialAtivo = false;
-            break;
-        
-        default:
-            break;
-        }
-        if (tutorialAtivo) {
             DrawTutorial();
             DrawText("Clique ou pressione ENTER para continuar",
                      (GetScreenWidth() - MeasureText("Clique ou pressione ENTER para continuar", 24)) / 2,
                      GetScreenHeight() - 80, 24, LIGHTGRAY);
 
             if (IsKeyPressed(KEY_ENTER) || IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-                tutorialAtivo = false;
-        }
+                currentGameState = MENU_STATE;
+            break;
 
-        else if (!jogoIniciado) {
+        case MENU_STATE:
             float hudHeight = 220.0f;
             float fundoHeight = GetScreenHeight() - hudHeight;
             float scaleX = (float)GetScreenWidth() / reinoFundo.width;
@@ -222,7 +210,7 @@ int main() {
             DrawGoldHUDAt(&goldHUD);
 
             if (hover && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-                jogoIniciado = true;
+                currentGameState = GAME_STATE;
 
             float bw = 180;
             float bh = 60;
@@ -377,8 +365,9 @@ DrawText(TextFormat("Torres: %d", ownedTowers), btnBuyTower.x + 85, btnBuyTower.
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && hover)
         lojaAtiva = false;
     }
-}
-        else {
+    break;
+
+    case GAME_STATE:
 
     if (IsKeyPressed(KEY_ESCAPE)) {
         pauseMenu = !pauseMenu;
@@ -435,7 +424,7 @@ DrawText(TextFormat("Torres: %d", ownedTowers), btnBuyTower.x + 85, btnBuyTower.
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
             if (hov1) pauseMenu = false;
             if (hov2) {
-                jogoIniciado = false;
+                currentGameState = MENU_STATE;
                 pauseMenu = false;
             }
         }
@@ -473,6 +462,7 @@ DrawText(TextFormat("Torres: %d", ownedTowers), btnBuyTower.x + 85, btnBuyTower.
             if(vidaPortao <= 0){
                 isGameOver = true;
             }
+            break;
         }
 
         EndDrawing();
