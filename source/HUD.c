@@ -12,7 +12,7 @@ static int hudHeight = 220;
 
 float barsaude = 1.0f;
 float barcomida = 1.0f;
-float barinfra = 1.0f;
+float barpoder = 1.0f;
 
 Texture2D cobreTexture;
 Texture2D ferroTexture;
@@ -293,7 +293,7 @@ void UpdateBars(int playerGold, int *prevGold) {
 
         barsaude -= steps * 0.2f;
         barcomida -= steps * 0.3f;
-        barinfra -= steps * 0.1f;
+        barpoder -= steps * 0.1f;
     }
     *prevGold = playerGold;
 }

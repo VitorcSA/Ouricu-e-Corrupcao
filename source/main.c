@@ -172,7 +172,7 @@ int main() {
             posicaoRei.y = fundoHeight + 8;
             DrawTexture(reiTextura, posicaoRei.x + 4, posicaoRei.y + 4, (Color){0, 0, 0, 80});
             DrawTexture(reiTextura, posicaoRei.x, posicaoRei.y, WHITE);
-            DrawSideHUDBig(barsaude, barcomida, barinfra);
+            DrawSideHUDBig(barsaude, barcomida, barpoder);
             screenHeight = GetScreenHeight();
             RankingHUD(screenHeight);
             int btnWidth = 220;
@@ -330,6 +330,51 @@ if (hovTor && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
 }
 
 DrawText(TextFormat("Torres: %d", ownedTowers), btnBuyTower.x + 85, btnBuyTower.y + 20 + btnBuyTower.height + 10, 20, WHITE);
+
+int rightX = screenWidth - (bw + 100);   // distância da borda direita
+int rightW = bw;
+int rightH = bh;
+
+Vector2 mouseRight = GetMousePosition();
+
+// Botão 1
+Rectangle btnRight1 = { rightX, by, rightW, rightH };
+bool hovR1 = CheckCollisionPointRec(mouseRight, btnRight1);
+DrawRectangleRec(btnRight1, hovR1 ? (Color){60,60,90,255} : (Color){40,40,60,255});
+DrawRectangleLinesEx(btnRight1, 2, WHITE);
+DrawText("Investir em Saúde", btnRight1.x + 10, btnRight1.y + 15, 22, WHITE);
+int porcentagem = barsaude * 100;
+DrawText(TextFormat("%d%%", porcentagem), btnRight1.x - 60, btnRight1.y + 15, 22, WHITE);
+
+// Botão 2
+Rectangle btnRight2 = { rightX, by + 90, rightW, rightH };
+bool hovR2 = CheckCollisionPointRec(mouseRight, btnRight2);
+DrawRectangleRec(btnRight2, hovR2 ? (Color){60,60,90,255} : (Color){40,40,60,255});
+DrawRectangleLinesEx(btnRight2, 2, WHITE);
+DrawText("Investir em Comida", btnRight2.x + 10, btnRight2.y + 15, 22, WHITE);
+int pct = barcomida * 100;
+DrawText(TextFormat("%d%%", pct), btnRight2.x - 60, btnRight2.y + 15, 22, WHITE);
+
+// Botão 3
+Rectangle btnRight3 = { rightX, by + 180, rightW, rightH };
+bool hovR3 = CheckCollisionPointRec(mouseRight, btnRight3);
+DrawRectangleRec(btnRight3, hovR3 ? (Color){60,60,90,255} : (Color){40,40,60,255});
+DrawRectangleLinesEx(btnRight3, 2, WHITE);
+DrawText("Investir em Poder", btnRight3.x + 10, btnRight3.y + 15, 22, WHITE);
+int porcent = barpoder * 100;
+DrawText(TextFormat("%d%%", porcent), btnRight3.x - 60, btnRight3.y + 15, 22, WHITE);
+
+if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+    if (hovR1) {
+        barsaude += 0.1f;
+    }
+    if (hovR2) {
+        barcomida += 0.1f;
+    }
+    if (hovR3) {
+        barpoder += 0.1f;
+    }
+}
 
     Rectangle btnVoltar = { 40, 40, 160, 50 };
     Vector2 mouse = GetMousePosition();

@@ -19,7 +19,7 @@ typedef struct {
 
 extern float barsaude;
 extern float barcomida;
-extern float barinfra;
+extern float barpoder;
 
 void HUD_ShowAt(Vector2 pos, int towerIndex);
 void HUD_Update(void);
