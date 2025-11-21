@@ -187,7 +187,7 @@ void UpdatePlayer(unsigned char *mapa)
 
     case UNIT_ARCHER:
         if (ownedArchers > 0) {
-            AddPlayer(archers, (Vector2){ towers[selTower].pos.x + 5, towers[selTower].pos.y - 45 },
+            AddPlayer(archers, (Vector2){ towers[selTower].pos.x + 5, towers[selTower].pos.y - 68 },
                       MAX_ARCHERS, &archerCount,
                       GetScreenWidth(), GetScreenHeight());
             towers[selTower].hasDefender = true;
@@ -198,7 +198,7 @@ void UpdatePlayer(unsigned char *mapa)
 
         case UNIT_WIZARD:
         if (wizardUnlocked || ownedWizards > 0) {
-            AddPlayer(wizards, (Vector2){ towers[selTower].pos.x - 8, towers[selTower].pos.y - 46 },
+            AddPlayer(wizards, (Vector2){ towers[selTower].pos.x - 8, towers[selTower].pos.y - 68 },
                       MAX_WIZARDS, &wizardCount,
                       GetScreenWidth(), GetScreenHeight());
             towers[selTower].hasDefender = true;
@@ -210,7 +210,7 @@ void UpdatePlayer(unsigned char *mapa)
 
     case UNIT_CANNON:
         if (cannonUnlocked || ownedCannons > 0) {
-            AddPlayer(cannons, (Vector2){ towers[selTower].pos.x + 4, towers[selTower].pos.y - 22 },
+            AddPlayer(cannons, (Vector2){ towers[selTower].pos.x + 4, towers[selTower].pos.y - 28 },
                       MAX_CANNONS, &cannonCount,
                       GetScreenWidth(), GetScreenHeight());
             towers[selTower].hasDefender = true;

@@ -43,6 +43,7 @@ void DrawTutorial(void) {
 int main() {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(1280, 720, "Poder e Corrupcao");
+    ToggleFullscreen();
     Image logo = LoadImage("assets/logo.png");
     SetWindowIcon(logo);
     SetExitKey(KEY_NULL);
