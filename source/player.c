@@ -32,7 +32,7 @@ Texture2D cannonTextureIdle;
 Texture2D cannonTextureShot;
 Texture2D cannonballTexture;
 
-int playerGold = 0;
+int playerGold;
 int towerCount = 0;
 int archerCount = 0;
 int wizardCount = 0;
@@ -87,11 +87,6 @@ void InitPlayer()
     Image cannonball = LoadImage("assets/inimigosAnimation/cannonball.png");
     cannonballTexture = LoadTextureFromImage(cannonball);
     UnloadImage(cannonball);
-
-    Texture2D imagetower   = LoadTexture("assets/fototorre.png");
-    Texture2D imgArcher  = LoadTexture("assets/fotoarqueiro.png");
-    Texture2D imgWizard    = LoadTexture("assets/fotomago.png");
-    Texture2D imgCannon  = LoadTexture("assets/fotocanhão.png");
 }
 
 bool IsTowerOnGrid(Vector2 gridPos) {
@@ -192,7 +187,7 @@ void UpdatePlayer(unsigned char *mapa)
 
     case UNIT_ARCHER:
         if (ownedArchers > 0) {
-            AddPlayer(archers, (Vector2){ towers[selTower].pos.x + 5, towers[selTower].pos.y - 45 },
+            AddPlayer(archers, (Vector2){ towers[selTower].pos.x + 5, towers[selTower].pos.y - 68 },
                       MAX_ARCHERS, &archerCount,
                       GetScreenWidth(), GetScreenHeight());
             towers[selTower].hasDefender = true;
@@ -203,7 +198,7 @@ void UpdatePlayer(unsigned char *mapa)
 
         case UNIT_WIZARD:
         if (wizardUnlocked || ownedWizards > 0) {
-            AddPlayer(wizards, (Vector2){ towers[selTower].pos.x - 8, towers[selTower].pos.y - 46 },
+            AddPlayer(wizards, (Vector2){ towers[selTower].pos.x - 8, towers[selTower].pos.y - 68 },
                       MAX_WIZARDS, &wizardCount,
                       GetScreenWidth(), GetScreenHeight());
             towers[selTower].hasDefender = true;
@@ -215,7 +210,7 @@ void UpdatePlayer(unsigned char *mapa)
 
     case UNIT_CANNON:
         if (cannonUnlocked || ownedCannons > 0) {
-            AddPlayer(cannons, (Vector2){ towers[selTower].pos.x + 4, towers[selTower].pos.y - 22 },
+            AddPlayer(cannons, (Vector2){ towers[selTower].pos.x + 4, towers[selTower].pos.y - 28 },
                       MAX_CANNONS, &cannonCount,
                       GetScreenWidth(), GetScreenHeight());
             towers[selTower].hasDefender = true;
@@ -543,7 +538,7 @@ void DrawPlayer(Players *player, Texture2D playerIdleTexture, Texture2D playerSh
                             w , 
                             h };
         
-        Vector2 origin = { w / 2, h / 2 };  // mantém centro fixo
+        Vector2 origin = { w / 2, h / 2 };
 
         DrawTexturePro( tex, 
                         src, 
@@ -661,7 +656,7 @@ void RecenterTowers(int newWidth, int newHeight)
         towers[i].pos.x = towers[i].basePos.x * scaleX;
         towers[i].pos.y = towers[i].basePos.y * scaleY;
         float s = (cellWidth < cellHeight) ? cellWidth : cellHeight;
-        towers[i].size = s * 1.1f; // 90% da célula, por exemplo
+        towers[i].size = s * 1.1f;
 
     }
 

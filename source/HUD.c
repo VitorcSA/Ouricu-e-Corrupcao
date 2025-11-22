@@ -12,7 +12,40 @@ static int hudHeight = 220;
 
 float barsaude = 1.0f;
 float barcomida = 1.0f;
-float barinfra = 1.0f;
+float barpoder = 1.0f;
+
+Texture2D cobreTexture;
+Texture2D ferroTexture;
+Texture2D bronzeTexture;
+Texture2D prataTexture;
+Texture2D ouroTexture;
+Texture2D diamanteTexture;
+
+void InitRanking(){
+    Image cobre = LoadImage("assets/Ranking/cobre.png");
+    cobreTexture = LoadTextureFromImage(cobre);
+    UnloadImage(cobre);
+
+    Image ferro = LoadImage("assets/Ranking/ferro.png");
+    ferroTexture = LoadTextureFromImage(ferro);
+    UnloadImage(ferro);
+
+    Image bronze = LoadImage("assets/Ranking/bronze.png");
+    bronzeTexture = LoadTextureFromImage(bronze);
+    UnloadImage(bronze);
+
+    Image prata = LoadImage("assets/Ranking/prata.png");
+    prataTexture = LoadTextureFromImage(prata);
+    UnloadImage(prata);
+
+    Image ouro = LoadImage("assets/Ranking/ouro.png");
+    ouroTexture = LoadTextureFromImage(ouro);
+    UnloadImage(ouro);
+
+    Image diamante = LoadImage("assets/Ranking/diamante.png");
+    diamanteTexture = LoadTextureFromImage(diamante);
+    UnloadImage(diamante);
+}
 
 void HUD_ShowAt(Vector2 pos, int towerIndex) {
     hudVisible = true;
@@ -20,8 +53,8 @@ void HUD_ShowAt(Vector2 pos, int towerIndex) {
     int screenW = GetScreenWidth();
     int screenH = GetScreenHeight();
 
-    hudWidth  = screenW * 0.18f;   // 18% da largura da tela
-    hudHeight = screenH * 0.30f;   // 30% da altura da tela
+    hudWidth  = screenW * 0.18f;
+    hudHeight = screenH * 0.30f;
 
     hudPos = (Vector2){ pos.x, 
                         pos.y - hudHeight * 0.5f };
@@ -63,7 +96,7 @@ void HUD_Update(void) {
     }
 
         if (CheckCollisionPointRec(mouse, wizardBtn)) {
-            if (wizardUnlocked) {     // <--- coloque aqui
+            if (wizardUnlocked) {
                 chosenUnit = UNIT_WIZARD;
                 hudVisible = false;
     }
@@ -90,18 +123,39 @@ void HUD_Draw(void) {
     DrawRectangleLines(hudPos.x, hudPos.y + 2 * section, hudWidth, section, DARKGRAY);
 
     DrawText("Archer", hudPos.x + 10, hudPos.y + 10, 20, BLACK);
-    // Wizard
+
 if (wizardUnlocked)
     DrawText("Wizard", hudPos.x + 10, hudPos.y + section + 10, 20, BLACK);
 else
     DrawText("Wizard (Bloqueado)", hudPos.x + 10, hudPos.y + section + 10, 20, RED);
 
-// Cannon
 if (cannonUnlocked)
     DrawText("Cannon", hudPos.x + 10, hudPos.y + 2*section + 10, 20, BLACK);
 else
     DrawText("Cannon (Bloqueado)", hudPos.x + 10, hudPos.y + 2*section + 10, 20, RED);
 
+}
+
+void SaveGold(int playerGold)
+{
+    FILE *f = fopen("save_gold.dat", "wb");
+    if (f == NULL) return;
+
+    fwrite(&playerGold, sizeof(int), 1, f);
+    fclose(f);
+}
+
+int LoadGold()
+{
+    FILE *f = fopen("save_gold.dat", "rb");
+    if (f == NULL)
+        return 0;
+
+    int playerGold = 0;
+    fread(&playerGold, sizeof(int), 1, f);
+    fclose(f);
+
+    return playerGold;
 }
 
 void InitGoldHUD(GoldHUD *hud)
@@ -186,89 +240,17 @@ void desenharRei(Texture2D reiTextura, int posx, int posy){
     DrawTexture(reiTextura, posx, posy, WHITE);
 }
 
-void DrawDefenderHUD(Texture2D torreImg, Texture2D archerImg, Texture2D wizardImg, Texture2D cannonImg,
-                     int ownedTowers, int ownedArchers, int ownedWizards, int ownedCannons,
-                     Vector2 reiPos, float fundoHeight)
-{
-    int screenW = GetScreenWidth();
-
-    int containerW = 360;     // um pouco mais largo
-    int containerH = 220;     // 🔥 agora da MESMA altura do retângulo cinza
-    int padding = 20;
-
-    // HUD fica à esquerda do rei, dentro do retângulo cinza inferior
-    int x = (int)(reiPos.x - containerW - 25);
-    if (x < 10) x = 10;
-
-    int y = (int)fundoHeight;   // começa exatamente no topo do retângulo cinza
-
-    Rectangle containerRect = { (float)x, (float)y, (float)containerW, (float)containerH };
-
-    // Fundo do HUD
-    DrawRectangleRounded(containerRect, 0.10f, 6, (Color){35, 35, 45, 230});
-    DrawRectangleRoundedLines(containerRect, 0.10f, 6, (Color){200, 200, 200, 70});
-
-    // Cada item ocupa 1/4 da largura
-    int cols = 4;
-    float slotW = (containerW - padding * 2) / (float)cols;
-    float slotH = containerH - padding * 2;
-
-    float imgSize = 64;   // tamanho fixo 64×64
-
-    Texture2D imgs[4] = { torreImg, archerImg, wizardImg, cannonImg };
-    int counts[4] = { ownedTowers, ownedArchers, ownedWizards, ownedCannons };
-
-    for (int i = 0; i < 4; i++) {
-
-        float slotX = x + padding + i * slotW;
-        float slotY = y + padding;
-
-        float cx = slotX + slotW * 0.5f;
-        float cy = slotY + slotH * 0.5f;
-
-        Texture2D tex = imgs[i];
-
-        // Desenhar textura centralizada no espaço
-        Rectangle src = { 0, 0, (float)tex.width, (float)tex.height };
-        Rectangle dst = {
-            cx - imgSize / 2,
-            cy - imgSize / 2,
-            imgSize,
-            imgSize
-        };
-        DrawTexturePro(tex, src, dst, (Vector2){0,0}, 0.0f, WHITE);
-
-        // Badge superior com contador
-        int badgeW = 32;
-        int badgeH = 22;
-        int badgeX = (int)(slotX + slotW - badgeW - 6);
-        int badgeY = (int)(slotY + 6);
-
-        DrawRectangle(badgeX, badgeY, badgeW, badgeH, (Color){20, 20, 30, 220});
-        DrawRectangleLines(badgeX, badgeY, badgeW, badgeH, (Color){200,200,200,120});
-
-        char buf[16];
-        sprintf(buf, "%d", counts[i]);
-
-        int fs = 14;
-        int tw = MeasureText(buf, fs);
-        DrawText(buf, badgeX + (badgeW - tw) / 2, badgeY + (badgeH - fs) / 2, fs, WHITE);
-    }
-}
-
 void DrawHorizontalBar(float x, float y, float width, float height, float value)
 {
     if (value < 0) value = 0;
     if (value > 1) value = 1;
 
-    Color col = (value > 0.66f) ? GREEN :
-                (value > 0.33f) ? YELLOW :
+    Color col = (value > 0.66f) ? DARKGREEN :
+                (value > 0.33f) ? ORANGE :
                                   RED;
 
-    // fundo da barra
     DrawRectangle(x, y, width, height, (Color){25,25,35,200});
 
-    // preenchimento
     float filledWidth = width * value;
     DrawRectangle(x, y, filledWidth, height, col);
 }
@@ -279,25 +261,23 @@ void DrawSideHUDBig(float v1, float v2, float v3)
     float barHeight = 24;
     float spacing   = 15;
 
-    // tamanho da HUD
     float hudWidth  = barWidth * 3 + spacing * 2 + 40;
     float hudHeight = barHeight + 40;
 
-    // canto inferior direito
     float hudX = GetScreenWidth()  - hudWidth  - 20;
     float hudY = GetScreenHeight() - hudHeight - 20;
 
-    // HUD de fundo (sem bordas)
     DrawRectangle(hudX, hudY, hudWidth, hudHeight, (Color){15,15,20,200});
 
-    // posição inicial das barras
     float startX = hudX + 20;
     float startY = hudY + (hudHeight - barHeight)/2;
 
-    // três barras lado a lado
     DrawHorizontalBar(startX, startY, barWidth, barHeight, v1);
+    DrawText("SAÚDE",startX + 40, startY + 3, 17, WHITE);
     DrawHorizontalBar(startX + barWidth + spacing, startY, barWidth, barHeight, v2);
+    DrawText("COMIDA", startX + 190, startY + 3, 17, WHITE);
     DrawHorizontalBar(startX + 2*(barWidth + spacing), startY, barWidth, barHeight, v3);
+    DrawText("PODER", startX + 350, startY + 3, 17, WHITE);
 }
 
 void UpdateBars(int playerGold, int *prevGold) {
@@ -311,10 +291,27 @@ void UpdateBars(int playerGold, int *prevGold) {
     if (delta >= 10) {
         int steps = delta / 10;
 
-        barsaude -= steps * 0.1f;
-        barcomida -= steps * 0.1f;
-        barinfra -= steps * 0.1f;
+        barsaude -= steps * 0.2f;
+        barcomida -= steps * 0.3f;
+        barpoder -= steps * 0.1f;
     }
     *prevGold = playerGold;
-    printf("%f", barsaude);
+}
+
+void RankingHUD(int screenHeight)
+{
+    int size = 192;
+    Vector2 pos = {10, screenHeight - size - 10};
+
+    DrawTexturePro(
+        cobreTexture,
+        (Rectangle){0, 0, cobreTexture.width, cobreTexture.height},
+        (Rectangle){pos.x, pos.y, size, size},
+        (Vector2){0, 0},
+        0,
+        WHITE
+    );
+    float textX = pos.x + size + 10;
+    float textY = pos.y + size/2 - 15;
+    DrawText("NÍVEL 1", textX, textY, 30, WHITE);
 }

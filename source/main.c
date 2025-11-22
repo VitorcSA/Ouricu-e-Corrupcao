@@ -25,8 +25,8 @@ void DrawTutorial(void) {
     "Clique com o botão direito na torre para abrir o menu de defensores.",
     "Escolha um defensor e posicione-o sobre a torre.",
     "Com o tempo você vai desbloqueando novos defensores.",
-    "Cada defensor tem habilidades diferentes que serão explicadas ao desbloqueá-los.",
-    "Lembre-se: ao gastar muitos recursos apenas em defesa ou só em seu povo:",
+    "Cada defensor tem distâncias de ataque e danos diferentes.",
+    "Lembre-se: ao gastar muitos recursos apenas em defesa, esquecendo de seu povo:",
     "GAME OVER"
     };
 
@@ -44,6 +44,9 @@ void DrawTutorial(void) {
 int main() {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(1280, 720, "Poder e Corrupcao");
+    ToggleFullscreen();
+    Image logo = LoadImage("assets/logo.png");
+    SetWindowIcon(logo);
     SetExitKey(KEY_NULL);
     SetTargetFPS(60);
 
@@ -52,12 +55,15 @@ int main() {
         CloseWindow();
         return 1;
     }
+    extern int playerGold;
     GoldHUD goldHUD;
     EnemyWave wave = {0};
     GameState currentGameState;
 
     currentGameState = TUTORIAL_STATE;
     wave.totalWaves = 3;
+    playerGold = LoadGold();
+
 
     Image rei = LoadImage("assets/rei.png");
     ImageResize(&rei, 200, 200);
@@ -66,13 +72,7 @@ int main() {
 
     Texture2D fundo = LoadTexture("assets/fundotitulo.png");
     Texture2D titulo = LoadTexture("assets/titulo.png");
-    Texture2D logo = LoadTexture("assets/logo.png");
     Texture2D reinoFundo = LoadTexture("assets/reino.png");
-    Texture2D torreImg    = LoadTexture("assets/fotoTorre.png");
-    Texture2D archerImg   = LoadTexture("assets/fotoArqueiro.png");
-    Texture2D wizardImg   = LoadTexture("assets/fotoMago.png");
-    Texture2D cannonImg   = LoadTexture("assets/fotoCanhao.png");
-
 
     Vector2 posicaoRei = {
         (GetScreenWidth() - reiTextura.width) / 2,
@@ -107,6 +107,7 @@ int main() {
     InitPlayer();
     initTiles();
     InitGoldHUD(&goldHUD);
+    InitRanking();
     int prevGold = -1;
 
     float enemyTimer = 0;
@@ -185,10 +186,9 @@ int main() {
             posicaoRei.y = fundoHeight + 8;
             DrawTexture(reiTextura, posicaoRei.x + 4, posicaoRei.y + 4, (Color){0, 0, 0, 80});
             DrawTexture(reiTextura, posicaoRei.x, posicaoRei.y, WHITE);
-            DrawSideHUDBig(barsaude, barcomida, barinfra);
-            DrawDefenderHUD(torreImg, archerImg, wizardImg, cannonImg,
-                ownedTowers, ownedArchers, ownedWizards, ownedCannons,
-                posicaoRei, fundoHeight);
+            DrawSideHUDBig(barsaude, barcomida, barpoder);
+            screenHeight = GetScreenHeight();
+            RankingHUD(screenHeight);
             int btnWidth = 220;
             int btnHeight = 60;
             Rectangle btnJogar = {
@@ -251,15 +251,11 @@ int main() {
     DrawRectangle(0, 0, screenWidth, screenHeight, (Color){25,25,35,255});
     DrawText("LOJA", (screenWidth - MeasureText("LOJA", 40)) / 2, 40, 40, YELLOW);
 
-    // -------- BOTÕES DE COMPRA DOS DEFENSORES --------
-
-// Preços
 int priceArcher = 0;
 int priceWizard = 0;
 int priceCannon = 0;
 int priceTower = 10;
 
-// Posições base
 int bx = 100;
 int by = 150;
 int bw = 260;
@@ -275,7 +271,6 @@ DrawRectangleLinesEx(btnBuyArcher, 2, BLACK);
 
 DrawText("Arqueiro (Desbloqueado)", btnBuyArcher.x + 10, btnBuyArcher.y + 10, 22, WHITE);
 
-// Clicar
 if (hovAr && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
     if (playerGold >= priceArcher) {
         playerGold -= priceArcher;
@@ -296,7 +291,7 @@ if (!wizardUnlocked) {
     if (hovWiz && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
         if (playerGold >= priceWizard) {
             playerGold -= priceWizard;
-            wizardUnlocked = true;   // <--- DESBLOQUEIA
+            wizardUnlocked = true;
         }
     }
 
@@ -317,7 +312,7 @@ if (!cannonUnlocked) {
     if (hovCan && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
         if (playerGold >= priceCannon) {
             playerGold -= priceCannon;
-            cannonUnlocked = true;    // <--- DESBLOQUEIA
+            cannonUnlocked = true;
         }
     }
 
@@ -340,7 +335,6 @@ DrawRectangleLinesEx(btnBuyTower, 2, BLACK);
 DrawText("Comprar Torre", btnBuyTower.x + 10, btnBuyTower.y + 10, 22, WHITE);
 DrawText(TextFormat("Preço: %d", priceTower), btnBuyTower.x + 10, btnBuyTower.y + 35, 20, YELLOW);
 
-// Compra
 if (hovTor && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
     if (playerGold >= priceTower) {
         playerGold -= priceTower;
@@ -350,6 +344,51 @@ if (hovTor && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
 }
 
 DrawText(TextFormat("Torres: %d", ownedTowers), btnBuyTower.x + 85, btnBuyTower.y + 20 + btnBuyTower.height + 10, 20, WHITE);
+
+int rightX = screenWidth - (bw + 100);   // distância da borda direita
+int rightW = bw;
+int rightH = bh;
+
+Vector2 mouseRight = GetMousePosition();
+
+// Botão 1
+Rectangle btnRight1 = { rightX, by, rightW, rightH };
+bool hovR1 = CheckCollisionPointRec(mouseRight, btnRight1);
+DrawRectangleRec(btnRight1, hovR1 ? (Color){60,60,90,255} : (Color){40,40,60,255});
+DrawRectangleLinesEx(btnRight1, 2, WHITE);
+DrawText("Investir em Saúde", btnRight1.x + 10, btnRight1.y + 15, 22, WHITE);
+int porcentagem = barsaude * 100;
+DrawText(TextFormat("%d%%", porcentagem), btnRight1.x - 60, btnRight1.y + 15, 22, WHITE);
+
+// Botão 2
+Rectangle btnRight2 = { rightX, by + 90, rightW, rightH };
+bool hovR2 = CheckCollisionPointRec(mouseRight, btnRight2);
+DrawRectangleRec(btnRight2, hovR2 ? (Color){60,60,90,255} : (Color){40,40,60,255});
+DrawRectangleLinesEx(btnRight2, 2, WHITE);
+DrawText("Investir em Comida", btnRight2.x + 10, btnRight2.y + 15, 22, WHITE);
+int pct = barcomida * 100;
+DrawText(TextFormat("%d%%", pct), btnRight2.x - 60, btnRight2.y + 15, 22, WHITE);
+
+// Botão 3
+Rectangle btnRight3 = { rightX, by + 180, rightW, rightH };
+bool hovR3 = CheckCollisionPointRec(mouseRight, btnRight3);
+DrawRectangleRec(btnRight3, hovR3 ? (Color){60,60,90,255} : (Color){40,40,60,255});
+DrawRectangleLinesEx(btnRight3, 2, WHITE);
+DrawText("Investir em Poder", btnRight3.x + 10, btnRight3.y + 15, 22, WHITE);
+int porcent = barpoder * 100;
+DrawText(TextFormat("%d%%", porcent), btnRight3.x - 60, btnRight3.y + 15, 22, WHITE);
+
+if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+    if (hovR1) {
+        barsaude += 0.1f;
+    }
+    if (hovR2) {
+        barcomida += 0.1f;
+    }
+    if (hovR3) {
+        barpoder += 0.1f;
+    }
+}
 
     Rectangle btnVoltar = { 40, 40, 160, 50 };
     Vector2 mouse = GetMousePosition();
@@ -468,16 +507,13 @@ DrawText(TextFormat("Torres: %d", ownedTowers), btnBuyTower.x + 85, btnBuyTower.
         EndDrawing();
     }
 
+    SaveGold(playerGold);
     UnloadTexture(titulo);
     UnloadTexture(fundo);
-    UnloadTexture(logo);
+    UnloadImage(logo);
     UnloadTexture(reinoFundo);
     UnloadTexture(reiTextura);
     free(mapTower);
-    UnloadTexture(torreImg);
-    UnloadTexture(archerImg);
-    UnloadTexture(wizardImg);
-    UnloadTexture(cannonImg);
 
     UnloadPlayer();
     CloseWindow();
