@@ -55,6 +55,7 @@ int main() {
         CloseWindow();
         return 1;
     }
+
     extern int playerGold;
     GoldHUD goldHUD;
     EnemyWave wave = {0};
@@ -63,7 +64,6 @@ int main() {
     currentGameState = TUTORIAL_STATE;
     wave.totalWaves = 3;
     playerGold = LoadGold();
-
 
     Image rei = LoadImage("assets/rei.png");
     ImageResize(&rei, 200, 200);
@@ -121,17 +121,22 @@ int main() {
         if (IsWindowResized() || IsKeyPressed(KEY_F11)) {
             if (IsKeyPressed(KEY_F11)) {
                 borderless = !borderless;
+
                 if (borderless) {
+
                     SetWindowState(FLAG_WINDOW_UNDECORATED);
                     SetWindowSize(GetMonitorWidth(0), GetMonitorHeight(0));
                     SetWindowPosition(0, 0);
+
                 } else {
+
                     ClearWindowState(FLAG_WINDOW_UNDECORATED);
                     SetWindowSize(1280, 720);
                     SetWindowPosition(
                         (GetMonitorWidth(0) - 1280) / 2,
                         (GetMonitorHeight(0) - 720) / 2
                     );
+
                 }
             }
 
@@ -151,7 +156,10 @@ int main() {
 
         switch (currentGameState)
         {
+
+        //Parte do tutorial
         case TUTORIAL_STATE:
+
             DrawTutorial();
             DrawText("Clique ou pressione ENTER para continuar",
                      (GetScreenWidth() - MeasureText("Clique ou pressione ENTER para continuar", 24)) / 2,
@@ -161,7 +169,9 @@ int main() {
                 currentGameState = MENU_STATE;
             break;
 
+        //Parte do reino
         case MENU_STATE:
+
             float hudHeight = 220.0f;
             float fundoHeight = GetScreenHeight() - hudHeight;
             float scaleX = (float)GetScreenWidth() / reinoFundo.width;
@@ -169,308 +179,388 @@ int main() {
             float scale = (scaleX > scaleY) ? scaleX : scaleY;
 
             Rectangle source = {0, 0, (float)reinoFundo.width, (float)reinoFundo.height};
-            Rectangle dest = {
-                (GetScreenWidth() - reinoFundo.width * scale) / 2.0f,
-                (fundoHeight - reinoFundo.height * scale) / 2.0f,
-                reinoFundo.width * scale,
-                reinoFundo.height * scale
-            };
+            Rectangle dest = { (GetScreenWidth() - reinoFundo.width * scale) / 2.0f,
+                               (fundoHeight - reinoFundo.height * scale) / 2.0f,
+                                reinoFundo.width * scale,
+                                reinoFundo.height * scale };
+
             Vector2 origin = {0, 0};
+
             DrawTexturePro(reinoFundo, source, dest, origin, 0.0f, WHITE);
 
-            DrawRectangle(0, (int)fundoHeight, GetScreenWidth(), (int)hudHeight,
-                          (Color){45, 45, 55, 255});
-            DrawRectangleLines(0, (int)fundoHeight, GetScreenWidth(), (int)hudHeight, DARKGRAY);
+            DrawRectangle ( 0, 
+                           (int)fundoHeight, 
+                            GetScreenWidth(), 
+                            (int)hudHeight,
+                            (Color){45, 45, 55, 255} );
+
+            DrawRectangleLines( 0, 
+                                (int)fundoHeight, 
+                                GetScreenWidth(), 
+                                (int)hudHeight, 
+                                DARKGRAY );
 
             posicaoRei.x = (GetScreenWidth() - reiTextura.width) / 2.0f;
             posicaoRei.y = fundoHeight + 8;
+
             DrawTexture(reiTextura, posicaoRei.x + 4, posicaoRei.y + 4, (Color){0, 0, 0, 80});
             DrawTexture(reiTextura, posicaoRei.x, posicaoRei.y, WHITE);
             DrawSideHUDBig(barsaude, barcomida, barpoder);
             screenHeight = GetScreenHeight();
             RankingHUD(screenHeight);
+
             int btnWidth = 220;
             int btnHeight = 60;
-            Rectangle btnJogar = {
-                (GetScreenWidth() - btnWidth) / 2,
-                fundoHeight - 120,
-                btnWidth,
-                btnHeight
-            };
+
+            Rectangle btnJogar = { (GetScreenWidth() - btnWidth) / 2,
+                                    fundoHeight - 120,
+                                    btnWidth,
+                                    btnHeight };
 
             Vector2 mousePos = GetMousePosition();
             bool hover = CheckCollisionPointRec(mousePos, btnJogar);
 
             DrawRectangleRec(btnJogar, hover ? DARKGREEN : (Color){0, 100, 0, 255});
             DrawRectangleLinesEx(btnJogar, 3, GOLD);
-            DrawText("JOGAR",
-                     btnJogar.x + (btnWidth - MeasureText("JOGAR", 30)) / 2,
-                     btnJogar.y + 12, 30, WHITE);
+            DrawText( "JOGAR",
+                      btnJogar.x + (btnWidth - MeasureText("JOGAR", 30)) / 2,
+                      btnJogar.y + 12, 30, WHITE);
 
             DrawGoldHUDAt(&goldHUD);
 
-            if (hover && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-                currentGameState = GAME_STATE;
+            if (hover && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) currentGameState = GAME_STATE;
 
             float bw = 180;
             float bh = 60;
 
-            Rectangle botaoLoja = {
-            GetScreenWidth() - bw - 20,
-            20,
-            bw,
-            bh
-};
+            Rectangle botaoLoja = { GetScreenWidth() - bw - 20,
+                                    20,
+                                    bw,
+                                    bh };
 
-    Vector2 mouseLoja = GetMousePosition();
-    bool mouseSobreLoja = CheckCollisionPointRec(mouseLoja, botaoLoja);
+            Vector2 mouseLoja = GetMousePosition();
+            bool mouseSobreLoja = CheckCollisionPointRec(mouseLoja, botaoLoja);
 
-    Color corBotaoLoja = mouseSobreLoja ?
-        (Color){40, 40, 50, 200} :
-        (Color){20, 20, 30, 180};
+            Color corBotaoLoja = mouseSobreLoja ?
+                (Color){40, 40, 50, 200} :
+                (Color){20, 20, 30, 180};
 
-    Color corBordaLoja = (Color){255, 255, 255, 120};
+            Color corBordaLoja = (Color){255, 255, 255, 120};
 
-    DrawRectangleRounded(botaoLoja, 0.2f, 8, corBotaoLoja);
-    DrawRectangleRoundedLines(botaoLoja, 0.2f, 8, corBordaLoja);
+            DrawRectangleRounded(botaoLoja, 0.2f, 8, corBotaoLoja);
+            DrawRectangleRoundedLines(botaoLoja, 0.2f, 8, corBordaLoja);
 
-    const char *textoBotaoLoja = "Loja";
-    int fontSizeLoja = 22;
-    int textoLarguraLoja = MeasureText(textoBotaoLoja, fontSizeLoja);
+            const char *textoBotaoLoja = "Loja";
+            int fontSizeLoja = 22;
+            int textoLarguraLoja = MeasureText(textoBotaoLoja, fontSizeLoja);
 
-    int textoXLoja = botaoLoja.x + (botaoLoja.width - textoLarguraLoja) / 2;
-    int textoYLoja = botaoLoja.y + (botaoLoja.height - fontSizeLoja) / 2 + 2;
+            int textoXLoja = botaoLoja.x + (botaoLoja.width - textoLarguraLoja) / 2;
+            int textoYLoja = botaoLoja.y + (botaoLoja.height - fontSizeLoja) / 2 + 2;
 
-    DrawText(textoBotaoLoja, textoXLoja, textoYLoja, fontSizeLoja, WHITE);
+            DrawText( textoBotaoLoja, 
+                      textoXLoja, 
+                      textoYLoja, 
+                      fontSizeLoja, 
+                      WHITE );
 
-    if (mouseSobreLoja && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
-        lojaAtiva = true;
+            if (mouseSobreLoja && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) lojaAtiva = true;
 
-        else if (lojaAtiva) {
+            else if (lojaAtiva) {
 
-    DrawRectangle(0, 0, screenWidth, screenHeight, (Color){25,25,35,255});
-    DrawText("LOJA", (screenWidth - MeasureText("LOJA", 40)) / 2, 40, 40, YELLOW);
+                DrawRectangle ( 0, 
+                                0, 
+                                screenWidth, 
+                                screenHeight, 
+                                (Color){25,25,35,255} );
 
-int priceArcher = 0;
-int priceWizard = 0;
-int priceCannon = 0;
-int priceTower = 10;
+                DrawText( "LOJA", 
+                          (screenWidth - MeasureText("LOJA", 40)) / 2, 
+                          40, 
+                          40, 
+                          YELLOW );
 
-int bx = 100;
-int by = 150;
-int bw = 260;
-int bh = 60;
+                int priceArcher = 0;
+                int priceWizard = 0;
+                int priceCannon = 0;
+                int priceTower = 10;
 
-Vector2 mouseBuy = GetMousePosition();
+                int bx = 100;
+                int by = 150;
+                int bw = 260;
+                int bh = 60;
 
-Rectangle btnBuyArcher = { bx, by, bw + 30, bh };
-bool hovAr = CheckCollisionPointRec(mouseBuy, btnBuyArcher);
+                Vector2 mouseBuy = GetMousePosition();
 
-DrawRectangleRec(btnBuyArcher, hovAr ? DARKGREEN : GREEN);
-DrawRectangleLinesEx(btnBuyArcher, 2, BLACK);
+                Rectangle btnBuyArcher = { bx, by, bw + 30, bh };
+                bool hovAr = CheckCollisionPointRec(mouseBuy, btnBuyArcher);
 
-DrawText("Arqueiro (Desbloqueado)", btnBuyArcher.x + 10, btnBuyArcher.y + 10, 22, WHITE);
+                DrawRectangleRec(btnBuyArcher, hovAr ? DARKGREEN : GREEN);
+                DrawRectangleLinesEx(btnBuyArcher, 2, BLACK);
 
-if (hovAr && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-    if (playerGold >= priceArcher) {
-        playerGold -= priceArcher;
-        archerCount++;
-    }
-}
+                DrawText( "Arqueiro (Desbloqueado)", 
+                           btnBuyArcher.x + 10, 
+                           btnBuyArcher.y + 10, 
+                           22, 
+                           WHITE );
 
-Rectangle btnBuyWizard = { bx, by + 90, bw + 30, bh };
-bool hovWiz = CheckCollisionPointRec(mouseBuy, btnBuyWizard);
+                if (hovAr && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+                    if (playerGold >= priceArcher) {
+                        playerGold -= priceArcher;
+                        archerCount++;
+                    }
+                }
 
-DrawRectangleRec(btnBuyWizard, hovWiz ? DARKBLUE : BLUE);
-DrawRectangleLinesEx(btnBuyWizard, 2, BLACK);
+                Rectangle btnBuyWizard = { bx, by + 90, bw + 30, bh };
+                bool hovWiz = CheckCollisionPointRec(mouseBuy, btnBuyWizard);
 
-if (!wizardUnlocked) {
-    DrawText("Mago (Bloqueado)", btnBuyWizard.x + 10, btnBuyWizard.y + 10, 22, WHITE);
-    DrawText(TextFormat("Preço: %d", priceWizard), btnBuyWizard.x + 10, btnBuyWizard.y + 35, 20, YELLOW);
+                DrawRectangleRec(btnBuyWizard, hovWiz ? DARKBLUE : BLUE);
+                DrawRectangleLinesEx(btnBuyWizard, 2, BLACK);
 
-    if (hovWiz && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-        if (playerGold >= priceWizard) {
-            playerGold -= priceWizard;
-            wizardUnlocked = true;
-        }
-    }
+                if (!wizardUnlocked) {
+                    DrawText( "Mago (Bloqueado)", 
+                               btnBuyWizard.x + 10, 
+                               btnBuyWizard.y + 10, 
+                               22, 
+                               WHITE );
 
-} else {
-    DrawText("Mago (Desbloqueado)", btnBuyWizard.x + 10, btnBuyWizard.y + 10, 22, WHITE);
-}
+                    DrawText(TextFormat("Preço: %d", priceWizard), btnBuyWizard.x + 10, btnBuyWizard.y + 35, 20, YELLOW);
 
-Rectangle btnBuyCannon = { bx, by + 180, bw + 30, bh };
-bool hovCan = CheckCollisionPointRec(mouseBuy, btnBuyCannon);
+                    if (hovWiz && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+                        if (playerGold >= priceWizard) {
+                            playerGold -= priceWizard;
+                            wizardUnlocked = true;
+                        }
+                    }
 
-DrawRectangleRec(btnBuyCannon, hovCan ? DARKGRAY : GRAY);
-DrawRectangleLinesEx(btnBuyCannon, 2, BLACK);
+                } else {
+                    DrawText( "Mago (Desbloqueado)", 
+                               btnBuyWizard.x + 10, 
+                               btnBuyWizard.y + 10, 
+                               22, 
+                               WHITE );
+                }
 
-if (!cannonUnlocked) {
-    DrawText("Canhão (Bloqueado)", btnBuyCannon.x + 10, btnBuyCannon.y + 10, 22, WHITE);
-    DrawText(TextFormat("Preço: %d", priceCannon), btnBuyCannon.x + 10, btnBuyCannon.y + 35, 20, YELLOW);
+                Rectangle btnBuyCannon = { bx, 
+                                            by + 180, 
+                                            bw + 
+                                            30, 
+                                            bh };
 
-    if (hovCan && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-        if (playerGold >= priceCannon) {
-            playerGold -= priceCannon;
-            cannonUnlocked = true;
-        }
-    }
+                bool hovCan = CheckCollisionPointRec(mouseBuy, btnBuyCannon);
 
-} else {
-    DrawText("Canhão (Desbloqueado)", btnBuyCannon.x + 10, btnBuyCannon.y + 10, 22, WHITE);
-}
+                DrawRectangleRec(btnBuyCannon, hovCan ? DARKGRAY : GRAY);
+                DrawRectangleLinesEx(btnBuyCannon, 2, BLACK);
 
+                if (!cannonUnlocked) {
 
-Rectangle btnBuyTower = {
-    (screenWidth - bw) / 2,
-    by + 390,
-    bw,
-    bh
-};
-bool hovTor = CheckCollisionPointRec(mouseBuy, btnBuyTower);
+                    DrawText ( "Canhão (Bloqueado)", 
+                                btnBuyCannon.x + 10, 
+                                btnBuyCannon.y + 10, 
+                                22, 
+                                WHITE );
 
-DrawRectangleRec(btnBuyTower, hovTor ? (Color){70,70,70,255} : (Color){100,100,100,255});
-DrawRectangleLinesEx(btnBuyTower, 2, BLACK);
+                    DrawText ( TextFormat("Preço: %d", priceCannon), 
+                                btnBuyCannon.x + 10, 
+                                btnBuyCannon.y + 35, 
+                                20, 
+                                YELLOW );
 
-DrawText("Comprar Torre", btnBuyTower.x + 10, btnBuyTower.y + 10, 22, WHITE);
-DrawText(TextFormat("Preço: %d", priceTower), btnBuyTower.x + 10, btnBuyTower.y + 35, 20, YELLOW);
+                    if (hovCan && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
 
-if (hovTor && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-    if (playerGold >= priceTower) {
-        playerGold -= priceTower;
-        ownedTowers++;
-        UpdateBars(playerGold, &prevGold);
-    }
-}
+                        if (playerGold >= priceCannon) {
+                            playerGold -= priceCannon;
+                            cannonUnlocked = true;
+                        }
 
-DrawText(TextFormat("Torres: %d", ownedTowers), btnBuyTower.x + 85, btnBuyTower.y + 20 + btnBuyTower.height + 10, 20, WHITE);
+                    }
 
-int rightX = screenWidth - (bw + 100);   // distância da borda direita
-int rightW = bw;
-int rightH = bh;
+                } else {
 
-Vector2 mouseRight = GetMousePosition();
+                    DrawText("Canhão (Desbloqueado)", btnBuyCannon.x + 10, btnBuyCannon.y + 10, 22, WHITE);
 
-// Botão 1
-Rectangle btnRight1 = { rightX, by, rightW, rightH };
-bool hovR1 = CheckCollisionPointRec(mouseRight, btnRight1);
-DrawRectangleRec(btnRight1, hovR1 ? (Color){60,60,90,255} : (Color){40,40,60,255});
-DrawRectangleLinesEx(btnRight1, 2, WHITE);
-DrawText("Investir em Saúde", btnRight1.x + 10, btnRight1.y + 15, 22, WHITE);
-int porcentagem = barsaude * 100;
-DrawText(TextFormat("%d%%", porcentagem), btnRight1.x - 60, btnRight1.y + 15, 22, WHITE);
+                }
 
-// Botão 2
-Rectangle btnRight2 = { rightX, by + 90, rightW, rightH };
-bool hovR2 = CheckCollisionPointRec(mouseRight, btnRight2);
-DrawRectangleRec(btnRight2, hovR2 ? (Color){60,60,90,255} : (Color){40,40,60,255});
-DrawRectangleLinesEx(btnRight2, 2, WHITE);
-DrawText("Investir em Comida", btnRight2.x + 10, btnRight2.y + 15, 22, WHITE);
-int pct = barcomida * 100;
-DrawText(TextFormat("%d%%", pct), btnRight2.x - 60, btnRight2.y + 15, 22, WHITE);
+                Rectangle btnBuyTower = { (screenWidth - bw) / 2,
+                                           by + 390,
+                                           bw,
+                                           bh };
 
-// Botão 3
-Rectangle btnRight3 = { rightX, by + 180, rightW, rightH };
-bool hovR3 = CheckCollisionPointRec(mouseRight, btnRight3);
-DrawRectangleRec(btnRight3, hovR3 ? (Color){60,60,90,255} : (Color){40,40,60,255});
-DrawRectangleLinesEx(btnRight3, 2, WHITE);
-DrawText("Investir em Poder", btnRight3.x + 10, btnRight3.y + 15, 22, WHITE);
-int porcent = barpoder * 100;
-DrawText(TextFormat("%d%%", porcent), btnRight3.x - 60, btnRight3.y + 15, 22, WHITE);
+                bool hovTor = CheckCollisionPointRec(mouseBuy, btnBuyTower);
 
-if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-    if (hovR1) {
-        barsaude += 0.1f;
-    }
-    if (hovR2) {
-        barcomida += 0.1f;
-    }
-    if (hovR3) {
-        barpoder += 0.1f;
-    }
-}
+                DrawRectangleRec(btnBuyTower, hovTor ? (Color){70,70,70,255} : (Color){100,100,100,255});
+                DrawRectangleLinesEx(btnBuyTower, 2, BLACK);
 
-    Rectangle btnVoltar = { 40, 40, 160, 50 };
-    Vector2 mouse = GetMousePosition();
-    bool hover = CheckCollisionPointRec(mouse, btnVoltar);
+                DrawText ( "Comprar Torre", 
+                            btnBuyTower.x + 10, 
+                            btnBuyTower.y + 10, 
+                            22, 
+                            WHITE );
 
-    DrawRectangleRec(btnVoltar, hover ? DARKGRAY : GRAY);
-    DrawRectangleLinesEx(btnVoltar, 2, WHITE);
+                DrawText ( TextFormat("Preço: %d", priceTower), 
+                            btnBuyTower.x + 10, 
+                            btnBuyTower.y + 35, 
+                            20, 
+                            YELLOW );
 
-    DrawText("Voltar",
-         btnVoltar.x + (btnVoltar.width - MeasureText("Voltar", 26)) / 2,
-         btnVoltar.y + 12, 26, WHITE);
+                if (hovTor && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+                    if (playerGold >= priceTower) {
+                        playerGold -= priceTower;
+                        ownedTowers++;
+                        UpdateBars(playerGold, &prevGold);
+                    }
+                }
 
-    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && hover)
-        lojaAtiva = false;
-    }
-    break;
+                DrawText ( TextFormat( "Torres: %d", ownedTowers), 
+                            btnBuyTower.x + 85, 
+                            btnBuyTower.y + 20 + btnBuyTower.height + 10, 
+                            20, 
+                            WHITE );
 
-    case GAME_STATE:
+                int rightX = screenWidth - (bw + 100);   // distância da borda direita
+                int rightW = bw;
+                int rightH = bh;
 
-    if (IsKeyPressed(KEY_ESCAPE)) {
-        pauseMenu = !pauseMenu;
-    }
+                Vector2 mouseRight = GetMousePosition();
 
-    if (pauseMenu) {
+                // Botão 1
+                Rectangle btnRight1 = { rightX, by, rightW, rightH };
+                bool hovR1 = CheckCollisionPointRec(mouseRight, btnRight1);
+                DrawRectangleRec(btnRight1, hovR1 ? (Color){60,60,90,255} : (Color){40,40,60,255});
+                DrawRectangleLinesEx(btnRight1, 2, WHITE);
+                DrawText("Investir em Saúde", btnRight1.x + 10, btnRight1.y + 15, 22, WHITE);
+                int porcentagem = barsaude * 100;
+                DrawText(TextFormat("%d%%", porcentagem), btnRight1.x - 60, btnRight1.y + 15, 22, WHITE);
 
-        DrawMap(mapTower);
-        drawLinesMap(mapTower);
-        DrawEnemies2(enemies, walkTexture, MAX_ENEMIES);
-        DrawTowers();
-        DrawPlayerInvertido(archers, archerIdeleTexture, archerTexture, archerCount, ARCHER_QT_FRAMES_SHOOT, ARCHER_QT_FRAMES_IDLE);
-        DrawPlayerInvertido(wizards, idlewizardTexture, wizardTexture, wizardCount, WIZARD_QT_FRAMES_SHOOT, WIZARD_QT_FRAMES_IDLE);
-        DrawPlayer(cannons, cannonTextureIdle, cannonTextureShot, cannonCount, CANNON_QT_FRAMES_SHOOT, CANNON_QT_FRAMES_IDLE);
-        drawProjects(arrows, arrowTexture, false, MAX_ARROWS, ARROW_QT_FRAMES);
-        drawProjects(cannonballs, cannonballTexture, false, MAX_CANNONBALLS, CANNONBALL_QT_FRAMES);
-        drawProjects(fireballs, fireballTexture, true, MAX_FIREBALLS, FIREBALL_QT_FRAMES);
-        DrawGoldHUDAt(&goldHUD);
-        HUD_Draw();
+                // Botão 2
+                Rectangle btnRight2 = { rightX, by + 90, rightW, rightH };
+                bool hovR2 = CheckCollisionPointRec(mouseRight, btnRight2);
+                DrawRectangleRec(btnRight2, hovR2 ? (Color){60,60,90,255} : (Color){40,40,60,255});
+                DrawRectangleLinesEx(btnRight2, 2, WHITE);
+                DrawText("Investir em Comida", btnRight2.x + 10, btnRight2.y + 15, 22, WHITE);
+                int pct = barcomida * 100;
+                DrawText(TextFormat("%d%%", pct), btnRight2.x - 60, btnRight2.y + 15, 22, WHITE);
 
-        DrawRectangle(0, 0, screenWidth, screenHeight, (Color){0,0,0,180});
+                // Botão 3
+                Rectangle btnRight3 = { rightX, by + 180, rightW, rightH };
+                bool hovR3 = CheckCollisionPointRec(mouseRight, btnRight3);
+                DrawRectangleRec(btnRight3, hovR3 ? (Color){60,60,90,255} : (Color){40,40,60,255});
+                DrawRectangleLinesEx(btnRight3, 2, WHITE);
+                DrawText("Investir em Poder", btnRight3.x + 10, btnRight3.y + 15, 22, WHITE);
+                int porcent = barpoder * 100;
+                DrawText(TextFormat("%d%%", porcent), btnRight3.x - 60, btnRight3.y + 15, 22, WHITE);
 
-        int mw = 380;
-        int mh = 260;
-        int mx = (screenWidth - mw) / 2;
-        int my = (screenHeight - mh) / 2;
+                if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+                    if (hovR1) barsaude += 0.1f;
 
-        DrawRectangle(mx, my, mw, mh, (Color){30,30,40,240});
-        DrawRectangleLines(mx, my, mw, mh, GOLD);
+                    if (hovR2) barcomida += 0.1f;
+                    
+                    if (hovR3) barpoder += 0.1f;
+                }
 
-        DrawText("PAUSADO", mx + (mw - MeasureText("PAUSADO", 32)) / 2,
-                 my + 20, 32, WHITE);
+                Rectangle btnVoltar = { 40, 40, 160, 50 };
+                Vector2 mouse = GetMousePosition();
+                bool hover = CheckCollisionPointRec(mouse, btnVoltar);
 
-        Rectangle btnContinuar = { mx + 40, my + 90, mw - 80, 50 };
-        Rectangle btnRei       = { mx + 40, my + 160, mw - 80, 50 };
+                DrawRectangleRec(btnVoltar, hover ? DARKGRAY : GRAY);
+                DrawRectangleLinesEx(btnVoltar, 2, WHITE);
 
-        Vector2 mouse = GetMousePosition();
+                DrawText ( "Voltar",
+                            btnVoltar.x + (btnVoltar.width - MeasureText("Voltar", 26)) / 2,
+                            btnVoltar.y + 12, 26, 
+                            WHITE );
 
-        bool hov1 = CheckCollisionPointRec(mouse, btnContinuar);
-        bool hov2 = CheckCollisionPointRec(mouse, btnRei);
+                if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && hover) lojaAtiva = false;
 
-        DrawRectangleRec(btnContinuar, hov1 ? DARKGRAY : GRAY);
-        DrawRectangleLinesEx(btnContinuar, 2, WHITE);
-        DrawText("Continuar",
-                 btnContinuar.x + (btnContinuar.width - MeasureText("Continuar", 26)) / 2,
-                 btnContinuar.y + 12, 26, WHITE);
-
-        DrawRectangleRec(btnRei, hov2 ? DARKGRAY : GRAY);
-        DrawRectangleLinesEx(btnRei, 2, WHITE);
-        DrawText("Voltar ao Reino",
-                 btnRei.x + (btnRei.width - MeasureText("Voltar ao reino", 26)) / 2,
-                 btnRei.y + 12, 26, WHITE);
-
-        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-            if (hov1) pauseMenu = false;
-            if (hov2) {
-                currentGameState = MENU_STATE;
-                pauseMenu = false;
             }
-        }
 
-        EndDrawing();
-        continue;
-    }
+            break;
+
+        //Parte do jogo
+        case GAME_STATE:
+
+            if (IsKeyPressed(KEY_ESCAPE)) {
+                pauseMenu = !pauseMenu;
+            }
+
+            if (pauseMenu) {
+
+                DrawMap(mapTower);
+                drawLinesMap(mapTower);
+
+                DrawEnemies2(enemies, walkTexture, MAX_ENEMIES);
+
+                DrawTowers();
+                DrawPlayerInvertido(archers, archerIdeleTexture, archerTexture, archerCount, ARCHER_QT_FRAMES_SHOOT, ARCHER_QT_FRAMES_IDLE);
+                DrawPlayerInvertido(wizards, idlewizardTexture, wizardTexture, wizardCount, WIZARD_QT_FRAMES_SHOOT, WIZARD_QT_FRAMES_IDLE);
+                DrawPlayer(cannons, cannonTextureIdle, cannonTextureShot, cannonCount, CANNON_QT_FRAMES_SHOOT, CANNON_QT_FRAMES_IDLE);
+
+                drawProjects(arrows, arrowTexture, false, MAX_ARROWS, ARROW_QT_FRAMES);
+                drawProjects(cannonballs, cannonballTexture, false, MAX_CANNONBALLS, CANNONBALL_QT_FRAMES);
+                drawProjects(fireballs, fireballTexture, true, MAX_FIREBALLS, FIREBALL_QT_FRAMES);
+
+                DrawGoldHUDAt(&goldHUD);
+                HUD_Draw();
+
+                DrawRectangle(0, 0, screenWidth, screenHeight, (Color){0,0,0,180});
+
+                int mw = 380;
+                int mh = 260;
+                int mx = (screenWidth - mw) / 2;
+                int my = (screenHeight - mh) / 2;
+
+                DrawRectangle ( mx, 
+                                my, 
+                                mw, 
+                                mh, 
+                                (Color){30,30,40,240} );
+
+                DrawRectangleLines( mx, 
+                                    my, 
+                                    mw, 
+                                    mh, 
+                                    GOLD );
+
+                DrawText ( "PAUSADO", 
+                            mx + (mw - MeasureText("PAUSADO", 32)) / 2,
+                            my + 20, 
+                            32, 
+                            WHITE );
+
+                Rectangle btnContinuar = { mx + 40, my + 90, mw - 80, 50 };
+                Rectangle btnRei       = { mx + 40, my + 160, mw - 80, 50 };
+
+                Vector2 mouse = GetMousePosition();
+
+                bool hov1 = CheckCollisionPointRec(mouse, btnContinuar);
+                bool hov2 = CheckCollisionPointRec(mouse, btnRei);
+
+                DrawRectangleRec(btnContinuar, hov1 ? DARKGRAY : GRAY);
+                DrawRectangleLinesEx(btnContinuar, 2, WHITE);
+                DrawText ( "Continuar",
+                            btnContinuar.x + (btnContinuar.width - MeasureText("Continuar", 26)) / 2,
+                            btnContinuar.y + 12, 26, 
+                            WHITE );
+
+                DrawRectangleRec(btnRei, hov2 ? DARKGRAY : GRAY);
+                DrawRectangleLinesEx(btnRei, 2, WHITE);
+                DrawText ( "Voltar ao Reino",
+                            btnRei.x + (btnRei.width - MeasureText("Voltar ao reino", 26)) / 2,
+                            btnRei.y + 12, 26, 
+                            WHITE );
+
+                if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+
+                    if (hov1) pauseMenu = false;
+
+                    if (hov2) {
+                        currentGameState = MENU_STATE;
+                        pauseMenu = false;
+                    }
+                }
+
+                EndDrawing();
+                continue;
+            }
 
             DrawMap(mapTower);
             drawLinesMap(mapTower);
@@ -501,6 +591,7 @@ if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
             if(vidaPortao <= 0){
                 isGameOver = true;
             }
+
             break;
         }
 
