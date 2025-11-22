@@ -17,6 +17,13 @@ typedef struct {
     Texture2D coinTexture;
 } GoldHUD;
 
+extern Texture2D cobreTexture;
+extern Texture2D ferroTexture;
+extern Texture2D bronzeTexture;
+extern Texture2D prataTexture;
+extern Texture2D ouroTexture;
+extern Texture2D diamanteTexture;
+
 extern float barsaude;
 extern float barcomida;
 extern float barpoder;
@@ -32,18 +39,8 @@ void InitGoldHUD(GoldHUD *hud);
 void UpdateGoldHUD(GoldHUD *hud, int gold);
 void DrawGoldHUDAt(GoldHUD *hud);
 
-void SaveGold(int playerGold);
-int LoadGold(void);
-
 void InitRanking(void);
 void RankingHUD(int screenHeight);
-
-extern Texture2D cobreTexture;
-extern Texture2D ferroTexture;
-extern Texture2D bronzeTexture;
-extern Texture2D prataTexture;
-extern Texture2D ouroTexture;
-extern Texture2D diamanteTexture;
 
 void desenharRetangulo (int alturaImagem, int posYSprite);
 void desenharRei(Texture2D reiTextura, int largura, int altura);

@@ -8,6 +8,7 @@
 #include "mapa.h"
 #include "criadorMapa.h"
 #include "game.h"
+#include "gold.h"
 
 void DrawTutorial(void) {
     const int fontSize = 24;
@@ -44,7 +45,6 @@ void DrawTutorial(void) {
 int main() {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(1280, 720, "Poder e Corrupcao");
-    ToggleFullscreen();
     Image logo = LoadImage("assets/logo.png");
     SetWindowIcon(logo);
     SetExitKey(KEY_NULL);
