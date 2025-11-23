@@ -2,6 +2,7 @@
 #include "game.h"
 #include <stdio.h>
 #include <enemies.h>
+#include <HUD.h>
 
 static float timeBetweenWaves = 3.0f;   // intervalo entre hordas
 static float waveCooldown = 0.0f;       // contador do cooldown
@@ -59,4 +60,212 @@ void UpdateWaves(EnemyWave *wave, unsigned char *mapTower, float cellWidth, floa
 
         printf("Horda %d concluída!\n", wave->number);
     }
+}
+
+void funlojaAtiva(float *barsaude, float *barcomida, float *barpoder, bool *lojaAtiva, bool *cannonUnlocked, bool *wizardUnlocked, int *prevGold, int *ownedTowers, int *archerCount, int *playerGold, int screenWidth, int screenHeight){
+    DrawRectangle ( 0, 
+                    0, 
+                    screenWidth, 
+                    screenHeight, 
+                    (Color){25,25,35,255} );
+
+    DrawText( "LOJA", 
+                (screenWidth - MeasureText("LOJA", 40)) / 2, 
+                40, 
+                40, 
+                YELLOW );
+
+    int priceArcher = 0;
+    int priceWizard = 0;
+    int priceCannon = 0;
+    int priceTower = 10;
+
+    int bx = 100;
+    int by = 150;
+    int bw = 260;
+    int bh = 60;
+
+    Vector2 mouseBuy = GetMousePosition();
+
+    Rectangle btnBuyArcher = { bx, by, bw + 30, bh };
+    bool hovAr = CheckCollisionPointRec(mouseBuy, btnBuyArcher);
+
+    DrawRectangleRec(btnBuyArcher, hovAr ? DARKGREEN : GREEN);
+    DrawRectangleLinesEx(btnBuyArcher, 2, BLACK);
+
+    DrawText( "Arqueiro (Desbloqueado)", 
+               btnBuyArcher.x + 10, 
+                btnBuyArcher.y + 10, 
+                22, 
+                WHITE );
+
+    if (hovAr && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        if (*playerGold >= priceArcher) {
+            *playerGold -= priceArcher;
+            *archerCount++;
+        }
+    }
+
+    Rectangle btnBuyWizard = { bx, by + 90, bw + 30, bh };
+    bool hovWiz = CheckCollisionPointRec(mouseBuy, btnBuyWizard);
+
+    DrawRectangleRec(btnBuyWizard, hovWiz ? DARKBLUE : BLUE);
+    DrawRectangleLinesEx(btnBuyWizard, 2, BLACK);
+
+    if (!*wizardUnlocked) {
+        DrawText( "Mago (Bloqueado)", 
+                   btnBuyWizard.x + 10, 
+                   btnBuyWizard.y + 10, 
+                    22, 
+                   WHITE );
+
+        DrawText(TextFormat("Preço: %d", priceWizard), btnBuyWizard.x + 10, btnBuyWizard.y + 35, 20, YELLOW);
+
+        if (hovWiz && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+            if (*playerGold >= priceWizard) {
+                *playerGold -= priceWizard;
+                *wizardUnlocked = true;
+            }
+        }
+
+    } else {
+        DrawText( "Mago (Desbloqueado)", 
+                   btnBuyWizard.x + 10, 
+                   btnBuyWizard.y + 10, 
+                   22, 
+                   WHITE );
+    }
+
+    Rectangle btnBuyCannon = { bx, 
+                                by + 180, 
+                                bw + 
+                                30, 
+                                bh };
+
+    bool hovCan = CheckCollisionPointRec(mouseBuy, btnBuyCannon);
+
+    DrawRectangleRec(btnBuyCannon, hovCan ? DARKGRAY : GRAY);
+    DrawRectangleLinesEx(btnBuyCannon, 2, BLACK);
+
+    if (!*cannonUnlocked) {
+
+        DrawText ( "Canhão (Bloqueado)", 
+                    btnBuyCannon.x + 10, 
+                    btnBuyCannon.y + 10, 
+                    22, 
+                    WHITE );
+
+        DrawText ( TextFormat("Preço: %d", priceCannon), 
+                    btnBuyCannon.x + 10, 
+                    btnBuyCannon.y + 35, 
+                    20, 
+                    YELLOW );
+
+        if (hovCan && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+
+            if (*playerGold >= priceCannon) {
+                *playerGold -= priceCannon;
+                *cannonUnlocked = true;
+            }
+        }
+
+    } else {
+
+        DrawText("Canhão (Desbloqueado)", btnBuyCannon.x + 10, btnBuyCannon.y + 10, 22, WHITE);
+
+    }
+
+    Rectangle btnBuyTower = { (screenWidth - bw) / 2,
+                               by + 390,
+                               bw,
+                               bh };
+
+    bool hovTor = CheckCollisionPointRec(mouseBuy, btnBuyTower);
+
+    DrawRectangleRec(btnBuyTower, hovTor ? (Color){70,70,70,255} : (Color){100,100,100,255});
+    DrawRectangleLinesEx(btnBuyTower, 2, BLACK);
+
+    DrawText ( "Comprar Torre", 
+                btnBuyTower.x + 10, 
+                btnBuyTower.y + 10, 
+                22, 
+                WHITE );
+
+    DrawText ( TextFormat("Preço: %d", priceTower), 
+                btnBuyTower.x + 10, 
+                btnBuyTower.y + 35, 
+                20, 
+                YELLOW );
+
+    if (hovTor && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        if (*playerGold >= priceTower) {
+            printf("%d\n", *ownedTowers);
+            *playerGold -= priceTower;
+            printf("%d\n", *ownedTowers);
+            *ownedTowers += 1;
+            printf("%d\n", *ownedTowers);
+            UpdateBars(*playerGold, prevGold);
+        }
+    }
+
+    DrawText ( TextFormat( "Torres: %d", *ownedTowers), 
+                btnBuyTower.x + 85, 
+                btnBuyTower.y + 20 + btnBuyTower.height + 10, 
+                20, 
+                WHITE );
+
+    int rightX = screenWidth - (bw + 100);   // distância da borda direita
+    int rightW = bw;
+    int rightH = bh;
+
+    Vector2 mouseRight = GetMousePosition();
+
+    // Botão 1
+    Rectangle btnRight1 = { rightX, by, rightW, rightH };
+    bool hovR1 = CheckCollisionPointRec(mouseRight, btnRight1);
+    DrawRectangleRec(btnRight1, hovR1 ? (Color){60,60,90,255} : (Color){40,40,60,255});
+    DrawRectangleLinesEx(btnRight1, 2, WHITE);
+    DrawText("Investir em Saúde", btnRight1.x + 10, btnRight1.y + 15, 22, WHITE);
+    int porcentagem = *barsaude * 100;
+    DrawText(TextFormat("%d%%", porcentagem), btnRight1.x - 60, btnRight1.y + 15, 22, WHITE);
+
+    // Botão 2
+    Rectangle btnRight2 = { rightX, by + 90, rightW, rightH };
+    bool hovR2 = CheckCollisionPointRec(mouseRight, btnRight2);
+    DrawRectangleRec(btnRight2, hovR2 ? (Color){60,60,90,255} : (Color){40,40,60,255});
+    DrawRectangleLinesEx(btnRight2, 2, WHITE);
+    DrawText("Investir em Comida", btnRight2.x + 10, btnRight2.y + 15, 22, WHITE);
+    int pct = *barcomida * 100;
+    DrawText(TextFormat("%d%%", pct), btnRight2.x - 60, btnRight2.y + 15, 22, WHITE);
+
+    // Botão 3
+    Rectangle btnRight3 = { rightX, by + 180, rightW, rightH };
+    bool hovR3 = CheckCollisionPointRec(mouseRight, btnRight3);
+    DrawRectangleRec(btnRight3, hovR3 ? (Color){60,60,90,255} : (Color){40,40,60,255});
+    DrawRectangleLinesEx(btnRight3, 2, WHITE);
+    DrawText("Investir em Poder", btnRight3.x + 10, btnRight3.y + 15, 22, WHITE);
+    int porcent = *barpoder * 100;
+    DrawText(TextFormat("%d%%", porcent), btnRight3.x - 60, btnRight3.y + 15, 22, WHITE);
+
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        if (hovR1) *barsaude += 0.1f;
+
+        if (hovR2) *barcomida += 0.1f;
+        
+        if (hovR3) *barpoder += 0.1f;
+    }
+
+    Rectangle btnVoltar = { 40, 40, 160, 50 };
+    Vector2 mouse = GetMousePosition();
+    bool hover = CheckCollisionPointRec(mouse, btnVoltar);
+
+    DrawRectangleRec(btnVoltar, hover ? DARKGRAY : GRAY);
+    DrawRectangleLinesEx(btnVoltar, 2, WHITE);
+
+    DrawText ( "Voltar",
+                btnVoltar.x + (btnVoltar.width - MeasureText("Voltar", 26)) / 2,
+                btnVoltar.y + 12, 26, 
+                WHITE );
+
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && hover) *lojaAtiva = false;
 }

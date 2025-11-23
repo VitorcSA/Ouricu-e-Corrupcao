@@ -3,6 +3,7 @@
 
 #include <raylib.h>
 #include <stdbool.h>
+#include <game.h>
 
 typedef enum { 
     UNIT_NONE, 
@@ -42,8 +43,11 @@ void DrawGoldHUDAt(GoldHUD *hud);
 void InitRanking(void);
 void RankingHUD(int screenHeight);
 
-void desenharRetangulo (int alturaImagem, int posYSprite);
-void desenharRei(Texture2D reiTextura, int largura, int altura);
+void desenharReino(Texture2D reinoFundo, float fundoHeight, float scale, int screenWidth);
+void desenharRetangulo(float fundoHeight, int screenWidth);
+void desenharRei(Texture2D reiTextura, Vector2 posicaoRei, float fundoHeight, int screenWidth);
+void botaoStart(GameState *currentGameState, float fundoHeight, int screenWidth);
+void botaoLoja(bool *lojaAtiva, int screenWidth);
 void DrawHorizontalBar(float x, float y, float width, float height, float value);
 void DrawSideHUDBig(float v1, float v2, float v3);
 void UpdateBars(int playerGold, int *prevGold);

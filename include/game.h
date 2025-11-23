@@ -1,6 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 
+
 typedef struct {
     int number;             // número da horda
     int totalWaves;         // número total de waves do nível
@@ -19,5 +20,6 @@ typedef enum {
 
 void StartNewWave(EnemyWave *wave);
 void UpdateWaves(EnemyWave *wave, unsigned char *mapTower, float cellWidth, float cellHeight, float deltaTime);
+void funlojaAtiva(float *barsaude, float *barcomida, float *barpoder, bool *lojaAtiva, bool *cannonUnlocked, bool *wizardUnlocked, int *prevGold, int *ownedTowers, int *archerCount, int *playerGold, int screenWidth, int screenHeight);
 
 #endif

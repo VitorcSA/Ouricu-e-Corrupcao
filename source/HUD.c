@@ -2,6 +2,7 @@
 #include "HUD.h"
 #include "player.h"
 #include <stdio.h>
+#include "game.h"
 
 static bool hudVisible = false;
 static Vector2 hudPos;
@@ -206,16 +207,120 @@ void DrawGoldHUDAt(GoldHUD *hud) {
     }
 }
 
-void desenharRetangulo(int alturaImagem, int posYSprite){
-    int screenWidth = GetScreenWidth();
-    int screenHeight = GetScreenHeight();
-    int posY = posYSprite - 5; 
-    int alturaRetangulo = screenHeight - posY;          
-    DrawRectangle(0, posY, screenWidth, alturaRetangulo, GRAY);
+void desenharReino(Texture2D reinoFundo, float fundoHeight, float scale, int screenWidth){
+    Rectangle source = { 0, 
+                         0, 
+                         (float)reinoFundo.width, 
+                         (float)reinoFundo.height };
+
+    Rectangle dest = { (screenWidth - reinoFundo.width * scale) / 2.0f,
+                        (fundoHeight - reinoFundo.height * scale) / 2.0f,
+                        reinoFundo.width * scale,
+                        reinoFundo.height * scale };
+
+    Vector2 origin = {0, 0};
+
+    //imagem do reino no fundo
+    DrawTexturePro( reinoFundo, 
+                    source, 
+                    dest, 
+                    origin, 
+                    0.0f, 
+                    WHITE );
 }
 
-void desenharRei(Texture2D reiTextura, int posx, int posy){
-    DrawTexture(reiTextura, posx, posy, WHITE);
+void desenharRetangulo(float fundoHeight, int screenWidth){
+    //retangulo cinza do rei
+    DrawRectangle ( 0, 
+                    (int)fundoHeight, 
+                    screenWidth, 
+                    (int)hudHeight,
+                    (Color){45, 45, 55, 255} );
+            
+    //linhas circurlando retangulo cinza
+    DrawRectangleLines( 0, 
+                        (int)fundoHeight, 
+                        screenWidth, 
+                        (int)hudHeight, 
+                        DARKGRAY );
+}
+
+void desenharRei(Texture2D reiTextura, Vector2 posicaoRei, float fundoHeight, int screenWidth){
+    //centralização do rei
+    posicaoRei.x = (screenWidth - reiTextura.width) / 2.0f;
+    posicaoRei.y = fundoHeight + 8;
+
+    //sombra do rei
+    DrawTexture( reiTextura, 
+                 posicaoRei.x + 4, 
+                 posicaoRei.y + 4, 
+                 (Color){0, 0, 0, 80} );
+
+    //desenho do rei
+    DrawTexture( reiTextura, 
+                 posicaoRei.x, 
+                 posicaoRei.y, 
+                 WHITE );
+}
+
+void botaoStart(GameState *currentGameState, float fundoHeight, int screenWidth){
+    int btnWidth = 220;
+    int btnHeight = 60;
+
+    //botão para começar o jogo
+    Rectangle btnJogar = { (screenWidth - btnWidth) / 2,
+                            fundoHeight - 120,
+                            btnWidth,
+                            btnHeight };
+
+    Vector2 mousePos = GetMousePosition();
+    bool hover = CheckCollisionPointRec(mousePos, btnJogar);
+
+    DrawRectangleRec(btnJogar, hover ? DARKGREEN : (Color){0, 100, 0, 255});
+    DrawRectangleLinesEx(btnJogar, 3, GOLD);
+    DrawText( "JOGAR",
+                btnJogar.x + (btnWidth - MeasureText("JOGAR", 30)) / 2,
+                btnJogar.y + 12, 30, 
+                WHITE );
+
+    if (hover && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) *currentGameState = GAME_STATE;
+}
+
+void botaoLoja(bool *lojaAtiva, int screenWidth){
+    float bw = 180;
+    float bh = 60;
+
+    Rectangle botaoLoja = { screenWidth - bw - 20,
+                            20,
+                            bw,
+                            bh };
+
+    Vector2 mouseLoja = GetMousePosition();
+    bool mouseSobreLoja = CheckCollisionPointRec(mouseLoja, botaoLoja);
+
+    Color corBotaoLoja = mouseSobreLoja ?
+        (Color){40, 40, 50, 200} :
+        (Color){20, 20, 30, 180};
+
+    Color corBordaLoja = (Color){255, 255, 255, 120};
+
+    DrawRectangleRounded(botaoLoja, 0.2f, 8, corBotaoLoja);
+    DrawRectangleRoundedLines(botaoLoja, 0.2f, 8, corBordaLoja);
+
+    const char *textoBotaoLoja = "Loja";
+    int fontSizeLoja = 22;
+    int textoLarguraLoja = MeasureText(textoBotaoLoja, fontSizeLoja);
+
+    int textoXLoja = botaoLoja.x + (botaoLoja.width - textoLarguraLoja) / 2;
+    int textoYLoja = botaoLoja.y + (botaoLoja.height - fontSizeLoja) / 2 + 2;
+
+    DrawText  ( textoBotaoLoja, 
+                textoXLoja, 
+                textoYLoja, 
+                fontSizeLoja, 
+                WHITE );
+
+    if (mouseSobreLoja && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) *lojaAtiva = true;
 }
 
 void DrawHorizontalBar(float x, float y, float width, float height, float value)
