@@ -8,7 +8,7 @@
 #include "mapa.h"
 #include "criadorMapa.h"
 #include "game.h"
-#include "gold.h"
+#include "salvar.h"
 
 void DrawTutorial(void) {
     const int fontSize = 24;
@@ -43,6 +43,7 @@ void DrawTutorial(void) {
 }
 
 int main() {
+    //Configuração da janela
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(1280, 720, "Poder e Corrupcao");
     Image logo = LoadImage("assets/logo.png");
@@ -50,21 +51,16 @@ int main() {
     SetExitKey(KEY_NULL);
     SetTargetFPS(60);
 
-    if (!FileExists("assets/rei.png")) {
-        printf("Erro: assets/rei.png nao encontrado\n");
-        CloseWindow();
-        return 1;
-    }
-
+    int prevGold = -1;
     extern int playerGold;
+
     GoldHUD goldHUD;
     EnemyWave wave = {0};
     GameState currentGameState;
 
-    currentGameState = TUTORIAL_STATE;
-    wave.totalWaves = 3;
     playerGold = LoadGold();
 
+    //Iniciar Textura do rei
     Image rei = LoadImage("assets/rei.png");
     ImageResize(&rei, 200, 200);
     Texture2D reiTextura = LoadTextureFromImage(rei);
@@ -74,20 +70,20 @@ int main() {
     Texture2D titulo = LoadTexture("assets/titulo.png");
     Texture2D reinoFundo = LoadTexture("assets/reino.png");
 
-    Vector2 posicaoRei = {
-        (GetScreenWidth() - reiTextura.width) / 2,
-        (GetScreenHeight() - reiTextura.height)
-    };
+    Vector2 posicaoRei;
 
     TelaTitulo(titulo, fundo);
 
-    static bool borderless = false;
+    bool borderless = false;
     bool tutorialAtivo = true;
     bool jogoIniciado = false;
     bool pauseMenu = false;
     bool lojaAtiva = false;
     bool isGameOver = false;
+
     vidaPortao = 3;
+    currentGameState = TUTORIAL_STATE;
+    wave.totalWaves = 3;
 
     const char *arquivoMapaTowerDefense = "assets/mapa/mapaTowerDefense";
 
@@ -108,9 +104,6 @@ int main() {
     initTiles();
     InitGoldHUD(&goldHUD);
     InitRanking();
-    int prevGold = -1;
-
-    float enemyTimer = 0;
 
     while (!WindowShouldClose() && !isGameOver) {
         int screenWidth = GetScreenWidth();
@@ -145,11 +138,11 @@ int main() {
             float cellWidth = screenWidth / (float)COLS;
             float cellHeight = screenHeight / (float)ROWS;
 
-            posicaoRei.x = (GetScreenWidth() - reiTextura.width) / 2;
-            posicaoRei.y = (GetScreenHeight() - reiTextura.height);
+            posicaoRei.x = (screenWidth - reiTextura.width) / 2;
+            posicaoRei.y = (screenHeight - reiTextura.height);
         
             RecenterTowers(screenWidth, screenHeight);
-            recenterEnemies(GetScreenWidth(), GetScreenHeight());
+            recenterEnemies(screenWidth, screenHeight);
         }
         BeginDrawing();
         ClearBackground((Color){20, 20, 30, 255});
@@ -161,9 +154,11 @@ int main() {
         case TUTORIAL_STATE:
 
             DrawTutorial();
-            DrawText("Clique ou pressione ENTER para continuar",
-                     (GetScreenWidth() - MeasureText("Clique ou pressione ENTER para continuar", 24)) / 2,
-                     GetScreenHeight() - 80, 24, LIGHTGRAY);
+            DrawText( "Clique ou pressione ENTER para continuar",
+                      (screenWidth - MeasureText("Clique ou pressione ENTER para continuar", 24)) / 2,
+                       screenHeight - 80, 
+                       24, 
+                       LIGHTGRAY );
 
             if (IsKeyPressed(KEY_ENTER) || IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
                 currentGameState = MENU_STATE;
@@ -173,45 +168,67 @@ int main() {
         case MENU_STATE:
 
             float hudHeight = 220.0f;
-            float fundoHeight = GetScreenHeight() - hudHeight;
-            float scaleX = (float)GetScreenWidth() / reinoFundo.width;
+            float fundoHeight = screenHeight - hudHeight;
+            float scaleX = (float)screenWidth / reinoFundo.width;
             float scaleY = fundoHeight / reinoFundo.height;
             float scale = (scaleX > scaleY) ? scaleX : scaleY;
 
-            Rectangle source = {0, 0, (float)reinoFundo.width, (float)reinoFundo.height};
-            Rectangle dest = { (GetScreenWidth() - reinoFundo.width * scale) / 2.0f,
+            Rectangle source = { 0, 
+                                 0, 
+                                 (float)reinoFundo.width, 
+                                 (float)reinoFundo.height };
+
+            Rectangle dest = { (screenWidth - reinoFundo.width * scale) / 2.0f,
                                (fundoHeight - reinoFundo.height * scale) / 2.0f,
                                 reinoFundo.width * scale,
                                 reinoFundo.height * scale };
 
             Vector2 origin = {0, 0};
 
+            //imagem do reino no fundo
             DrawTexturePro(reinoFundo, source, dest, origin, 0.0f, WHITE);
 
+            //retangulo cinza do rei
             DrawRectangle ( 0, 
                            (int)fundoHeight, 
-                            GetScreenWidth(), 
+                            screenWidth, 
                             (int)hudHeight,
                             (Color){45, 45, 55, 255} );
-
+            
+            //linhas circurlando retangulo cinza
             DrawRectangleLines( 0, 
                                 (int)fundoHeight, 
                                 GetScreenWidth(), 
                                 (int)hudHeight, 
                                 DARKGRAY );
-
-            posicaoRei.x = (GetScreenWidth() - reiTextura.width) / 2.0f;
+            
+            //centralização do rei
+            posicaoRei.x = (screenWidth - reiTextura.width) / 2.0f;
             posicaoRei.y = fundoHeight + 8;
 
-            DrawTexture(reiTextura, posicaoRei.x + 4, posicaoRei.y + 4, (Color){0, 0, 0, 80});
-            DrawTexture(reiTextura, posicaoRei.x, posicaoRei.y, WHITE);
-            DrawSideHUDBig(barsaude, barcomida, barpoder);
-            screenHeight = GetScreenHeight();
+            //sombra do rei
+            DrawTexture( reiTextura, 
+                         posicaoRei.x + 4, 
+                         posicaoRei.y + 4, 
+                         (Color){0, 0, 0, 80} );
+
+            //desenho do rei
+            DrawTexture( reiTextura, 
+                         posicaoRei.x, 
+                         posicaoRei.y, 
+                         WHITE);
+
+            //barra para cuidar do reino
+            DrawSideHUDBig( barsaude, 
+                            barcomida, 
+                            barpoder );
+                            
             RankingHUD(screenHeight);
 
             int btnWidth = 220;
             int btnHeight = 60;
 
+            //botão para começar o jogo
             Rectangle btnJogar = { (GetScreenWidth() - btnWidth) / 2,
                                     fundoHeight - 120,
                                     btnWidth,
@@ -224,7 +241,8 @@ int main() {
             DrawRectangleLinesEx(btnJogar, 3, GOLD);
             DrawText( "JOGAR",
                       btnJogar.x + (btnWidth - MeasureText("JOGAR", 30)) / 2,
-                      btnJogar.y + 12, 30, WHITE);
+                      btnJogar.y + 12, 30, 
+                      WHITE);
 
             DrawGoldHUDAt(&goldHUD);
 
@@ -567,8 +585,6 @@ int main() {
             float dt = GetFrameTime();
     
             UpdateWaves(&wave, mapTower, cellWidth, cellHeight, dt);
-            enemyTimer = 0;
-
 
             UpdateEnemy2(enemies, mapTower, cellWidth, cellHeight, dt, &vidaPortao);
             UpdatePlayer(mapTower);

@@ -198,7 +198,6 @@ void DrawEnemyHealthBar(Enemy enemy, Texture2D enemyTexture, int totalFrames) {
                         DARKGRAY );
 }
 
-
 void DrawEnemies2(Enemy *enemy, Texture2D enemyTexture, int maxEnemies) {
     float frameWidth = (float)enemyTexture.width / ENEMY_QT_FRAMES;
     float frameHeight = (float)enemyTexture.height;
@@ -206,10 +205,9 @@ void DrawEnemies2(Enemy *enemy, Texture2D enemyTexture, int maxEnemies) {
     for(int i = 0; i < maxEnemies; i++){
         if (!enemy[i].active) continue;
 
+        //redimensiona o frame
         float w = frameWidth  * enemy[i].size;
         float h = frameHeight * enemy[i].size;
-
-        float offset = h / 6.0f;
 
         Rectangle src = (Rectangle){  frameWidth * enemy[i].frame, 
                             0, 

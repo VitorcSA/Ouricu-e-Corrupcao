@@ -1,5 +1,5 @@
-#ifndef GOLD_H
-#define GOLD_H
+#ifndef SALVAR_H
+#define sALVAR_H
 
 void SaveGold(int playerGold);
 int LoadGold(void);
