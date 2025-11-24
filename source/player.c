@@ -256,6 +256,79 @@ void putTowerOnGrid(Vector2 mousePos, unsigned char *mapa, int screenWidth, int 
     }
 }
 
+void updatePlayers(Players *player, Projects *project, float dt, float attackRange, float frameTime, int i, int framesShot){
+    player[i].frameTime += dt;
+        if (player[i].frameTime >= frameTime) {
+            player[i].frame = (player[i].frame + 1) % framesShot;
+            player[i].frameTime = 0;
+        }
+
+        player[i].shotTimer -= dt;
+        if (player[i].shotTimer <= 0) {
+            bool foundTarget = false;
+
+            for (int e = 0; e < MAX_ENEMIES; e++) {
+                if (!enemies[e].active) continue;
+
+                float dist = Vector2Distance(player[i].pos, enemies[e].pixelPos);
+
+                if (dist <= attackRange) {
+                    player[i].isShooting = true;
+                    shootProject(project, player[i].pos, enemies[e].pixelPos, ARROW_SPEED, e, MAX_ARROWS, false);
+                    player[i].shotTimer = ARCHER_SHOT_TIME;
+                    foundTarget = true;
+                    break;
+                }
+            }
+
+                for (int e = 0; e < MAX_ORCS; e++) {
+                    if (!orcs[e].active) continue;
+                    float dist = Vector2Distance(player[i].pos, orcs[e].pos);
+                    if (dist <= ATTACK_RANGE_ARCHER) {
+                        player[i].isShooting = true;
+                        shootProject(project, player[i].pos, orcs[e].pos, ARROW_SPEED, e, MAX_ARROWS, false);
+                        player[i].shotTimer = 1.0f;
+                        foundTarget = true;
+                        break;
+                    }
+                }
+
+            if (!foundTarget) player[i].isShooting = false;
+        }
+}
+
+void updateProjects(Projects *project, bool hasFrames, float dt, float frameTime, int i, int damage, int quantFrames){
+    if(hasFrames){
+        project[i].frameTime += dt;
+        if (project[i].frameTime >= frameTime) {
+            project[i].frame = (project[i].frame + 1) % quantFrames;
+            project[i].frameTime = 0;
+        }
+    }
+
+    Vector2 dir = Vector2Normalize(Vector2Subtract(project[i].target, project[i].pos));
+    project[i].pos = Vector2Add(project[i].pos, Vector2Scale(dir, project[i].speed * dt));
+    if (Vector2Distance(project[i].pos, project[i].target) < 5.0f) {
+        int e = project[i].enemyIndex;
+        int x = project[i].orcIndex;
+        if (e >= 0 && e < MAX_ENEMIES && enemies[e].active) {
+            enemies[e].currentHealth -= damage;
+            if (enemies[e].currentHealth <= 0) {
+                    enemies[e].active = false;
+                    playerGold += GOLD_FOR_ENEMY;
+                }
+            }
+            if (x >= 0 && x < MAX_ORCS && orcs[x].active) {
+                orcs[x].currentHealth -= damage;
+                if (orcs[x].currentHealth <= 0) {
+                    orcs[x].active = false;
+                    playerGold += GOLD_FOR_ORC;
+                }
+            }
+        project[i].active = false;
+    }
+}
+
 void UpdatePlayer(unsigned char *mapa, int screenWidth, int screenHeight)
 {
     float dt = GetFrameTime();
@@ -273,7 +346,7 @@ void UpdatePlayer(unsigned char *mapa, int screenWidth, int screenHeight)
 
     //verifica se deve botar a torre no mapa
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) putTowerOnGrid(mousePos, mapa, screenWidth, screenHeight);
-    
+
     //faz a hud aparecer
     if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
         for (int i = 0; i < towerCount; i++) {
@@ -287,221 +360,35 @@ void UpdatePlayer(unsigned char *mapa, int screenWidth, int screenHeight)
     for (int i = 0; i < archerCount; i++) {
         if (!archers[i].active) continue;
 
-        archers[i].frameTime += dt;
-        if (archers[i].frameTime >= 0.1f) {
-            archers[i].frame = (archers[i].frame + 1) % ARCHER_QT_FRAMES_SHOOT;
-            archers[i].frameTime = 0;
-        }
-
-        archers[i].shotTimer -= dt;
-        if (archers[i].shotTimer <= 0) {
-            bool foundTarget = false;
-
-            for (int e = 0; e < MAX_ENEMIES; e++) {
-                if (!enemies[e].active) continue;
-
-                float dist = Vector2Distance(archers[i].pos, enemies[e].pixelPos);
-
-                if (dist <= ATTACK_RANGE_ARCHER) {
-                    archers[i].isShooting = true;
-                    shootProject(arrows, archers[i].pos, enemies[e].pixelPos, ARROW_SPEED, e, MAX_ARROWS, false);
-                    archers[i].shotTimer = ARCHER_SHOT_TIME;
-                    foundTarget = true;
-                    break;
-                }
-            }
-
-                for (int e = 0; e < MAX_ORCS; e++) {
-                    if (!orcs[e].active) continue;
-                    float dist = Vector2Distance(archers[i].pos, orcs[e].pos);
-                    if (dist <= ATTACK_RANGE_ARCHER) {
-                        archers[i].isShooting = true;
-                        shootProject(arrows, archers[i].pos, orcs[e].pos, ARROW_SPEED, e, MAX_ARROWS, false);
-                        archers[i].shotTimer = 1.0f;
-                        foundTarget = true;
-                        break;
-                    }
-                }
-
-            if (!foundTarget) archers[i].isShooting = false;
-        }
+        updatePlayers(archers, arrows, dt, ATTACK_RANGE_ARCHER, 0.1f, i, ARCHER_QT_FRAMES_SHOOT);
     }
+
     for (int i = 0; i < wizardCount; i++) {
         if (!wizards[i].active) continue;
 
-        wizards[i].frameTime += dt;
-        int totalFrames = wizards[i].isShooting ? WIZARD_QT_FRAMES_IDLE : WIZARD_QT_FRAMES_SHOOT;
-
-        if (wizards[i].frameTime >= 0.12f) {
-            wizards[i].frame = (wizards[i].frame + 1) % totalFrames;
-            wizards[i].frameTime = 0;
-        }
-
-        wizards[i].shotTimer -= dt;
-
-        bool foundNear = false;
-
-        for (int e = 0; e < MAX_ENEMIES; e++) {
-            if (!enemies[e].active) continue;
-
-            float dist = Vector2Distance(wizards[i].pos, enemies[e].pixelPos);
-            if (dist <= GRID_SIZE * 3) foundNear = true;
-        }
-
-        wizards[i].isShooting = !foundNear;
-
-        if (wizards[i].shotTimer <= 0) {
-
-            bool attack = false;
-            for (int e = 0; e < MAX_ENEMIES; e++) {
-                if (!enemies[e].active) continue;
-
-                float dist = Vector2Distance(wizards[i].pos, enemies[e].pixelPos);
-                if (dist <= ATTACK_RANGE_WIZARD) {
-                    wizards[i].isShooting = true;
-                    shootProject(fireballs, wizards[i].pos, enemies[e].pixelPos, FIREBALL_SPEED, e, MAX_FIREBALLS, true);
-                    wizards[i].shotTimer = WIZARD_SHOT_TIME;
-                    attack = true;
-                    break;
-                }
-            }
-
-            for (int e = 0; e < MAX_ORCS; e++) {
-                if (!orcs[e].active) continue;
-
-                float dist = Vector2Distance(wizards[i].pos, orcs[e].pos);
-                if (dist <= ATTACK_RANGE_WIZARD) {
-                    wizards[i].isShooting = true;
-                    shootProject(fireballs, wizards[i].pos, orcs[e].pos, FIREBALL_SPEED, e, MAX_FIREBALLS, true);
-                    wizards[i].shotTimer = WIZARD_SHOT_TIME;
-                    attack = true;
-                    break;
-                }
-            }
-
-            if (!attack) wizards[i].isShooting = false;
-        }
+        updatePlayers(wizards, fireballs, dt, ATTACK_RANGE_WIZARD, 0.12f, i, WIZARD_QT_FRAMES_SHOOT);
     }
 
     for (int i = 0; i < cannonCount; i++) {
         if (!cannons[i].active) continue;
-        cannons[i].frameTime += dt;
-        if (cannons[i].frameTime >= 0.1f) {
-            cannons[i].frame = (cannons[i].frame + 1) % CANNON_QT_FRAMES_SHOOT;
-            cannons[i].frameTime = 0;
-        }
-
-        cannons[i].shotTimer -= dt;
-        if (cannons[i].shotTimer <= 0) {
-            bool foundTarget = false;
-
-            for (int e = 0; e < MAX_ENEMIES; e++) {
-                if (!enemies[e].active) continue;
-
-                float dist = Vector2Distance(cannons[i].pos, enemies[e].pixelPos);
-                if (dist <= ATTACK_RANGE_CANNON) {
-                    cannons[i].isShooting = true;
-
-                    shootProject(cannonballs, cannons[i].pos, enemies[e].pixelPos, CANNONBALL_SPEED, e, MAX_CANNONBALLS, false);
-                    cannons[i].shotTimer = CANNON_SHOT_TIME;
-                    foundTarget = true;
-                    break;
-                }
-            }
-            for (int e = 0; e < MAX_ORCS; e++) {
-                if (!orcs[e].active) continue;
-                float dist = Vector2Distance(cannons[i].pos, orcs[e].pos);
-                if (dist <= ATTACK_RANGE_CANNON) {
-                    cannons[i].isShooting = true;
-                    shootProject(cannonballs, cannons[i].pos, orcs[e].pos, CANNONBALL_SPEED, e, MAX_CANNONBALLS, false);
-                    cannons[i].shotTimer = CANNON_SHOT_TIME;
-                    foundTarget = true;
-                    break;
-                }
-            }
-            if (!foundTarget) cannons[i].isShooting = false;
-        }
+        
+        updatePlayers(cannons, cannonballs, dt, ATTACK_RANGE_CANNON, 0.1f, i, CANNON_QT_FRAMES_SHOOT);
     }
 
     for (int i = 0; i < MAX_ARROWS; i++) {
         if (!arrows[i].active) continue;
-        Vector2 dir = Vector2Normalize(Vector2Subtract(arrows[i].target, arrows[i].pos));
-        arrows[i].pos = Vector2Add(arrows[i].pos, Vector2Scale(dir, arrows[i].speed * dt));
-        if (Vector2Distance(arrows[i].pos, arrows[i].target) < 5.0f) {
-            int e = arrows[i].enemyIndex;
-            int x = arrows[i].orcIndex;
-            if (e >= 0 && e < MAX_ENEMIES && enemies[e].active) {
-                enemies[e].currentHealth -= ARROW_DAMAGE;
-                if (enemies[e].currentHealth <= 0) {
-                    enemies[e].active = false;
-                    playerGold += GOLD_FOR_ENEMY;
-                }
-            }
-            if (x >= 0 && x < MAX_ORCS && orcs[x].active) {
-                orcs[x].currentHealth -= ARROW_DAMAGE;
-                if (orcs[x].currentHealth <= 0) {
-                    orcs[x].active = false;
-                    playerGold += GOLD_FOR_ORC;
-                }
-            }
-            arrows[i].active = false;
-        }
+        
+        updateProjects(arrows, false, dt, 1, i, ARROW_DAMAGE, 1);
     }
 
     for (int i = 0; i < MAX_FIREBALLS; i++) {
         if (!fireballs[i].active) continue;
-        fireballs[i].frameTime += dt;
-        if (fireballs[i].frameTime >= 0.08f) {
-            fireballs[i].frame = (fireballs[i].frame + 1) % FIREBALL_QT_FRAMES;
-            fireballs[i].frameTime = 0;
-        }
-
-        Vector2 dir = Vector2Normalize(Vector2Subtract(fireballs[i].target, fireballs[i].pos));
-        fireballs[i].pos = Vector2Add(fireballs[i].pos, Vector2Scale(dir, fireballs[i].speed * dt));
-        if (Vector2Distance(fireballs[i].pos, fireballs[i].target) < 12.0f) {
-            int e = fireballs[i].enemyIndex;
-            int x = fireballs[i].orcIndex;
-            if (e >= 0 && e < MAX_ENEMIES && enemies[e].active) {
-                enemies[e].currentHealth -= FIREBALL_DAMAGE;
-                if (enemies[e].currentHealth <= 0) {
-                    enemies[e].active = false;
-                    playerGold += GOLD_FOR_ENEMY;
-                }
-            }
-            if (x >= 0 && x < MAX_ORCS && orcs[x].active) {
-                orcs[x].currentHealth -= FIREBALL_DAMAGE;
-                if (orcs[x].currentHealth <= 0) {
-                    orcs[x].active = false;
-                    playerGold += GOLD_FOR_ORC;
-                }
-            }
-            fireballs[i].active = false;
-        }
+        updateProjects(fireballs, true, dt, 0.08f, i, FIREBALL_DAMAGE, FIREBALL_QT_FRAMES);
     }
 
     for (int i = 0; i < MAX_CANNONBALLS; i++) {
         if (!cannonballs[i].active) continue;
-        Vector2 dir = Vector2Normalize(Vector2Subtract(cannonballs[i].target, cannonballs[i].pos));
-        cannonballs[i].pos = Vector2Add(cannonballs[i].pos, Vector2Scale(dir, cannonballs[i].speed * dt));
-        if (Vector2Distance(cannonballs[i].pos, cannonballs[i].target) < 5.0f) {
-            int e = cannonballs[i].enemyIndex;
-            int x = cannonballs[i].orcIndex;
-            if (e >= 0 && e < MAX_ENEMIES && enemies[e].active) {
-                enemies[e].currentHealth -= CANNONBALL_DAMAGE;
-                if (enemies[e].currentHealth <= 0) {
-                    enemies[e].active = false;
-                    playerGold += GOLD_FOR_ENEMY;
-                }
-            }
-            if (e >= 0 && e < MAX_ORCS && orcs[x].active) {
-                orcs[x].currentHealth -= CANNONBALL_DAMAGE;
-                if (orcs[x].currentHealth <= 0) {
-                    orcs[x].active = false;
-                    playerGold += GOLD_FOR_ORC;
-                }
-            }
-            cannonballs[i].active = false;
-        }
+        updateProjects(cannonballs, false, dt, 1, i, CANNONBALL_DAMAGE, 1);
     }
 }
 
