@@ -15,11 +15,12 @@ typedef struct {
 typedef enum {
     TUTORIAL_STATE,
     MENU_STATE,
+    LOJA_STATE,
     GAME_STATE,
 } GameState;    
 
 void StartNewWave(EnemyWave *wave);
 void UpdateWaves(EnemyWave *wave, unsigned char *mapTower, float cellWidth, float cellHeight, float deltaTime);
-void funlojaAtiva(float *barsaude, float *barcomida, float *barpoder, bool *lojaAtiva, bool *cannonUnlocked, bool *wizardUnlocked, int *prevGold, int *ownedTowers, int *archerCount, int *playerGold, int screenWidth, int screenHeight);
+void funlojaAtiva(GameState *currentGameState,float *barsaude, float *barcomida, float *barpoder, bool *cannonUnlocked, bool *wizardUnlocked, int *prevGold, int *ownedTowers, int *archerCount, int *playerGold, int screenWidth, int screenHeight);
 
 #endif

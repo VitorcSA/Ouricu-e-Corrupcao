@@ -86,6 +86,8 @@ int main() {
     wave.totalWaves = 3;
 
     const char *arquivoMapaTowerDefense = "assets/mapa/mapaTowerDefense";
+    char *textoBtnStart = "JOGAR";
+    char *textoBtnLoja = "Loja";
 
     if (!verificarSeMapaExiste(arquivoMapaTowerDefense)) {
         criadorDeMapa(arquivoMapaTowerDefense, 15, 15);
@@ -157,9 +159,9 @@ int main() {
                        24, 
                        LIGHTGRAY );
 
-            if (IsKeyPressed(KEY_ENTER) || IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-                currentGameState = MENU_STATE;
-            break;
+            if (IsKeyPressed(KEY_ENTER) || IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) currentGameState = MENU_STATE;
+
+        break;
 
         //Parte do reino
         case MENU_STATE:
@@ -194,20 +196,25 @@ int main() {
             RankingHUD(screenHeight);
 
             //botão para começar a partida
-            botaoStart(&currentGameState, fundoHeight, screenWidth);
+            criarBotao(&currentGameState, GAME_STATE, BTN_START_COR, BTN_START_COR_HOVER, BTN_START_LINES_COR, 
+                        fundoHeight, false, textoBtnStart, screenWidth, BTN_START_WIDTH, BTN_START_X, BTN_START_Y, BTN_START_FONTE);
+
+            //botaoStart(&currentGameState, fundoHeight, screenWidth);
 
             //botao da loja
-            botaoLoja(&lojaAtiva, screenWidth);
+            criarBotao(&currentGameState, LOJA_STATE, BTN_LOJA_COR, BTN_LOJA_COR_HOVER, BTN_LOJA_LINES_COR, 
+                        fundoHeight, true, textoBtnLoja, screenWidth, BTN_LOJA_WIDTH, BTN_LOJA_X, BTN_LOJA_Y, BTN_LOJA_FONTE);
+            //botaoLoja(&currentGameState, screenWidth);
 
             //desenha o gold na tela
             DrawGoldHUDAt(&goldHUD);
 
-            if (lojaAtiva) {
+        break;
 
-               funlojaAtiva(&barsaude, &barcomida, &barpoder, &lojaAtiva, &cannonUnlocked, &wizardUnlocked, &prevGold, &ownedTowers, &archerCount, &playerGold, screenWidth, screenHeight);
-            }
-
-            break;
+        //Parte da loja
+        case LOJA_STATE:
+            funlojaAtiva(&currentGameState, &barsaude, &barcomida, &barpoder, &cannonUnlocked, &wizardUnlocked, &prevGold, &ownedTowers, &archerCount, &playerGold, screenWidth, screenHeight);
+        break;
 
         //Parte do jogo
         case GAME_STATE:
@@ -324,7 +331,8 @@ int main() {
                 isGameOver = true;
             }
 
-            break;
+        break;
+
         }
 
         EndDrawing();

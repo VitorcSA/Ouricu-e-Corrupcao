@@ -62,7 +62,7 @@ void UpdateWaves(EnemyWave *wave, unsigned char *mapTower, float cellWidth, floa
     }
 }
 
-void funlojaAtiva(float *barsaude, float *barcomida, float *barpoder, bool *lojaAtiva, bool *cannonUnlocked, bool *wizardUnlocked, int *prevGold, int *ownedTowers, int *archerCount, int *playerGold, int screenWidth, int screenHeight){
+void funlojaAtiva(GameState *currentGameState,float *barsaude, float *barcomida, float *barpoder, bool *cannonUnlocked, bool *wizardUnlocked, int *prevGold, int *ownedTowers, int *archerCount, int *playerGold, int screenWidth, int screenHeight){
     DrawRectangle ( 0, 
                     0, 
                     screenWidth, 
@@ -199,11 +199,8 @@ void funlojaAtiva(float *barsaude, float *barcomida, float *barpoder, bool *loja
 
     if (hovTor && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
         if (*playerGold >= priceTower) {
-            printf("%d\n", *ownedTowers);
             *playerGold -= priceTower;
-            printf("%d\n", *ownedTowers);
             *ownedTowers += 1;
-            printf("%d\n", *ownedTowers);
             UpdateBars(*playerGold, prevGold);
         }
     }
@@ -267,5 +264,5 @@ void funlojaAtiva(float *barsaude, float *barcomida, float *barpoder, bool *loja
                 btnVoltar.y + 12, 26, 
                 WHITE );
 
-    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && hover) *lojaAtiva = false;
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && hover) *currentGameState = MENU_STATE;
 }

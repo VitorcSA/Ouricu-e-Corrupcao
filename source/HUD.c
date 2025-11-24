@@ -263,30 +263,42 @@ void desenharRei(Texture2D reiTextura, Vector2 posicaoRei, float fundoHeight, in
                  WHITE );
 }
 
-void botaoStart(GameState *currentGameState, float fundoHeight, int screenWidth){
-    int btnWidth = 220;
+void criarBotao(GameState *currentGameState, GameState STATE, Color corBotao, Color corHover, Color RecLines, float fundoHeight, bool isRectangleRound,
+                char *textoBotao, int screenWidth, int btnWidth, int btnX, int btnY, int fonte){
     int btnHeight = 60;
 
-    //botão para começar o jogo
-    Rectangle btnJogar = { (screenWidth - btnWidth) / 2,
-                            fundoHeight - 120,
-                            btnWidth,
-                            btnHeight };
+    Rectangle botao = { btnX,
+                        btnY,
+                        btnWidth,
+                        btnHeight };
 
     Vector2 mousePos = GetMousePosition();
-    bool hover = CheckCollisionPointRec(mousePos, btnJogar);
+    bool hover = CheckCollisionPointRec(mousePos, botao);
 
-    DrawRectangleRec(btnJogar, hover ? DARKGREEN : (Color){0, 100, 0, 255});
-    DrawRectangleLinesEx(btnJogar, 3, GOLD);
-    DrawText( "JOGAR",
-                btnJogar.x + (btnWidth - MeasureText("JOGAR", 30)) / 2,
-                btnJogar.y + 12, 30, 
+    if(!isRectangleRound){
+        DrawRectangleRec(botao, hover ? corBotao : corHover);
+        DrawRectangleLinesEx(botao, 3, RecLines);
+    }else{
+        DrawRectangleRounded(botao, 0.2f, 8, hover ? corBotao : corHover);
+        DrawRectangleRoundedLines(botao, 0.2f, 8, RecLines);
+    }
+
+    int textoLargura = MeasureText(textoBotao, fonte);
+
+    int textoX = botao.x + (botao.width - textoLargura) / 2;
+    int textoY = botao.y + (botao.height - fonte) / 2 + 2;
+
+    DrawText(  textoBotao,
+                textoX,
+                textoY, 
+                fonte, 
                 WHITE );
 
-    if (hover && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) *currentGameState = GAME_STATE;
+    if (hover && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) *currentGameState = STATE;
+
 }
 
-void botaoLoja(bool *lojaAtiva, int screenWidth){
+void botaoLoja(GameState *currentGameState, int screenWidth){
     float bw = 180;
     float bh = 60;
 
@@ -320,8 +332,9 @@ void botaoLoja(bool *lojaAtiva, int screenWidth){
                 fontSizeLoja, 
                 WHITE );
 
-    if (mouseSobreLoja && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) *lojaAtiva = true;
+    if (mouseSobreLoja && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) *currentGameState = LOJA_STATE;
 }
+
 
 void DrawHorizontalBar(float x, float y, float width, float height, float value)
 {
