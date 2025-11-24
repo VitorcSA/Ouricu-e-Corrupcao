@@ -172,6 +172,10 @@ void shootProject(Projects *project, Vector2 start, Vector2 target, float speed,
     }
 }
 
+void selectUnity(int selfTower){
+
+}
+
 void UpdatePlayer(unsigned char *mapa)
 {
     float dt = GetFrameTime();
@@ -224,7 +228,7 @@ void UpdatePlayer(unsigned char *mapa)
                 printf("Essa torre já tem um defensor!\n");
             }
         }
-        return;
+        
     }
 
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {

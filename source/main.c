@@ -88,6 +88,8 @@ int main() {
     const char *arquivoMapaTowerDefense = "assets/mapa/mapaTowerDefense";
     char *textoBtnStart = "JOGAR";
     char *textoBtnLoja = "Loja";
+    char *textoBtnContinuar = "Continuar";
+    char *textoBtnVoltarReino = "Voltar ao reino";
 
     if (!verificarSeMapaExiste(arquivoMapaTowerDefense)) {
         criadorDeMapa(arquivoMapaTowerDefense, 15, 15);
@@ -166,47 +168,37 @@ int main() {
         //Parte do reino
         case MENU_STATE:
 
-            float hudHeight = 220.0f;
             float fundoHeight = screenHeight - hudHeight;
             float scaleX = (float)screenWidth / reinoFundo.width;
             float scaleY = fundoHeight / reinoFundo.height;
             float scale = (scaleX > scaleY) ? scaleX : scaleY;
 
-            //desenho do reino no fundo
             desenharReino( reinoFundo, 
                            fundoHeight, 
                            scale, 
                            screenWidth );
 
-            //desenho do retangulo atras do rei
             desenharRetangulo(fundoHeight, screenWidth);
             
-            //desenho do rei
             desenharRei( reiTextura, 
                          posicaoRei, 
                          fundoHeight, 
                          screenWidth );
 
-            //barra para cuidar do reino
             DrawSideHUDBig( barsaude, 
                             barcomida, 
                             barpoder );
                 
-            //nivel do jogador                
             RankingHUD(screenHeight);
 
             //botão para começar a partida
             criarBotao(&currentGameState, GAME_STATE, BTN_START_COR, BTN_START_COR_HOVER, BTN_START_LINES_COR, 
-                        fundoHeight, false, textoBtnStart, screenWidth, BTN_START_WIDTH, BTN_START_X, BTN_START_Y, BTN_START_FONTE);
-
-            //botaoStart(&currentGameState, fundoHeight, screenWidth);
+                        fundoHeight, false, textoBtnStart, screenWidth, BTN_START_WIDTH, BTN_START_HEIGHT, BTN_START_X, BTN_START_Y, BTN_START_FONTE);
 
             //botao da loja
             criarBotao(&currentGameState, LOJA_STATE, BTN_LOJA_COR, BTN_LOJA_COR_HOVER, BTN_LOJA_LINES_COR, 
-                        fundoHeight, true, textoBtnLoja, screenWidth, BTN_LOJA_WIDTH, BTN_LOJA_X, BTN_LOJA_Y, BTN_LOJA_FONTE);
-            //botaoLoja(&currentGameState, screenWidth);
+                        fundoHeight, true, textoBtnLoja, screenWidth, BTN_LOJA_WIDTH, BTN_LOJA_HEIGHT, BTN_LOJA_X, BTN_LOJA_Y, BTN_LOJA_FONTE);
 
-            //desenha o gold na tela
             DrawGoldHUDAt(&goldHUD);
 
         break;
@@ -220,87 +212,7 @@ int main() {
         case GAME_STATE:
 
             if (IsKeyPressed(KEY_ESCAPE)) {
-                pauseMenu = !pauseMenu;
-            }
-
-            if (pauseMenu) {
-
-                DrawMap(mapTower);
-                drawLinesMap(mapTower);
-
-                DrawEnemies2(enemies, walkTexture, MAX_ENEMIES);
-
-                DrawTowers();
-                DrawPlayerInvertido(archers, archerIdeleTexture, archerTexture, archerCount, ARCHER_QT_FRAMES_SHOOT, ARCHER_QT_FRAMES_IDLE);
-                DrawPlayerInvertido(wizards, idlewizardTexture, wizardTexture, wizardCount, WIZARD_QT_FRAMES_SHOOT, WIZARD_QT_FRAMES_IDLE);
-                DrawPlayer(cannons, cannonTextureIdle, cannonTextureShot, cannonCount, CANNON_QT_FRAMES_SHOOT, CANNON_QT_FRAMES_IDLE);
-
-                drawProjects(arrows, arrowTexture, false, MAX_ARROWS, ARROW_QT_FRAMES);
-                drawProjects(cannonballs, cannonballTexture, false, MAX_CANNONBALLS, CANNONBALL_QT_FRAMES);
-                drawProjects(fireballs, fireballTexture, true, MAX_FIREBALLS, FIREBALL_QT_FRAMES);
-
-                DrawGoldHUDAt(&goldHUD);
-                HUD_Draw();
-
-                DrawRectangle(0, 0, screenWidth, screenHeight, (Color){0,0,0,180});
-
-                int mw = 380;
-                int mh = 260;
-                int mx = (screenWidth - mw) / 2;
-                int my = (screenHeight - mh) / 2;
-
-                DrawRectangle ( mx, 
-                                my, 
-                                mw, 
-                                mh, 
-                                (Color){30,30,40,240} );
-
-                DrawRectangleLines( mx, 
-                                    my, 
-                                    mw, 
-                                    mh, 
-                                    GOLD );
-
-                DrawText ( "PAUSADO", 
-                            mx + (mw - MeasureText("PAUSADO", 32)) / 2,
-                            my + 20, 
-                            32, 
-                            WHITE );
-
-                Rectangle btnContinuar = { mx + 40, my + 90, mw - 80, 50 };
-                Rectangle btnRei       = { mx + 40, my + 160, mw - 80, 50 };
-
-                Vector2 mouse = GetMousePosition();
-
-                bool hov1 = CheckCollisionPointRec(mouse, btnContinuar);
-                bool hov2 = CheckCollisionPointRec(mouse, btnRei);
-
-                DrawRectangleRec(btnContinuar, hov1 ? DARKGRAY : GRAY);
-                DrawRectangleLinesEx(btnContinuar, 2, WHITE);
-                DrawText ( "Continuar",
-                            btnContinuar.x + (btnContinuar.width - MeasureText("Continuar", 26)) / 2,
-                            btnContinuar.y + 12, 26, 
-                            WHITE );
-
-                DrawRectangleRec(btnRei, hov2 ? DARKGRAY : GRAY);
-                DrawRectangleLinesEx(btnRei, 2, WHITE);
-                DrawText ( "Voltar ao Reino",
-                            btnRei.x + (btnRei.width - MeasureText("Voltar ao reino", 26)) / 2,
-                            btnRei.y + 12, 26, 
-                            WHITE );
-
-                if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-
-                    if (hov1) pauseMenu = false;
-
-                    if (hov2) {
-                        currentGameState = MENU_STATE;
-                        pauseMenu = false;
-                    }
-                }
-
-                EndDrawing();
-                continue;
+                currentGameState = PAUSE_STATE;
             }
 
             DrawMap(mapTower);
@@ -330,6 +242,64 @@ int main() {
             if(vidaPortao <= 0){
                 isGameOver = true;
             }
+
+        break;
+
+        case PAUSE_STATE:
+            DrawMap(mapTower);
+            drawLinesMap(mapTower);
+
+            DrawEnemies2(enemies, walkTexture, MAX_ENEMIES);
+
+            DrawTowers();
+            DrawPlayerInvertido(archers, archerIdeleTexture, archerTexture, archerCount, ARCHER_QT_FRAMES_SHOOT, ARCHER_QT_FRAMES_IDLE);
+            DrawPlayerInvertido(wizards, idlewizardTexture, wizardTexture, wizardCount, WIZARD_QT_FRAMES_SHOOT, WIZARD_QT_FRAMES_IDLE);
+            DrawPlayer(cannons, cannonTextureIdle, cannonTextureShot, cannonCount, CANNON_QT_FRAMES_SHOOT, CANNON_QT_FRAMES_IDLE);
+
+            drawProjects(arrows, arrowTexture, false, MAX_ARROWS, ARROW_QT_FRAMES);
+            drawProjects(cannonballs, cannonballTexture, false, MAX_CANNONBALLS, CANNONBALL_QT_FRAMES);
+            drawProjects(fireballs, fireballTexture, true, MAX_FIREBALLS, FIREBALL_QT_FRAMES);
+
+            DrawGoldHUDAt(&goldHUD);
+            HUD_Draw();
+
+            //deixa parte atras do pause transparente cinza
+            DrawRectangle(0, 0, screenWidth, screenHeight, (Color){0,0,0,180});
+
+            // --- caixa do botao de pause --- \\ 
+
+            int mw = 380;
+            int mh = 260;
+            int mx = (screenWidth - mw) / 2;
+            int my = (screenHeight - mh) / 2;
+
+            DrawRectangle ( mx, 
+                            my, 
+                            mw, 
+                            mh, 
+                            (Color){30,30,40,240} );
+
+            DrawRectangleLines( mx, 
+                                my, 
+                                mw, 
+                                mh, 
+                                GOLD );
+
+            DrawText ( "PAUSADO", 
+                        mx + (mw - MeasureText("PAUSADO", 32)) / 2,
+                        my + 20, 
+                        32, 
+                        WHITE );
+
+            // --- caixado botao de pause --- \\ 
+
+            //botao continuar
+            criarBotao(&currentGameState, GAME_STATE, BTN_CONTINUAR_COR, BTN_CONTINUAR_COR_HOVER, BTN_CONTINUAR_LINES_COR, 
+                        fundoHeight, false, textoBtnContinuar, screenWidth, BTN_CONTINUAR_WIDTH, BTN_CONTINUAR_HEIGHT, BTN_CONTINUAR_X, BTN_CONTINUAR_Y, BTN_CONTINUAR_FONTE);
+
+            //botao voltar ao reino
+            criarBotao(&currentGameState, MENU_STATE, BTN_VOLTAR_REINO_COR, BTN_VOLTAR_REINO_COR_HOVER, BTN_VOLTAR_REINO_LINES_COR, 
+                        fundoHeight, false, textoBtnVoltarReino, screenWidth, BTN_VOLTAR_REINO_WIDTH, BTN_VOLTAR_REINO_HEIGHT, BTN_VOLTAR_REINO_X, BTN_VOLTAR_REINO_Y, BTN_VOLTAR_REINO_FONTE);
 
         break;
 

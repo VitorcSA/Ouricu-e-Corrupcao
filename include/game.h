@@ -17,6 +17,7 @@ typedef enum {
     MENU_STATE,
     LOJA_STATE,
     GAME_STATE,
+    PAUSE_STATE,
 } GameState;    
 
 void StartNewWave(EnemyWave *wave);
