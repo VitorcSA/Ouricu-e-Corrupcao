@@ -83,12 +83,9 @@ void InitEnemy(Enemy *enemy, float health, int maxEnemys){
     }
 }
 
-
-
-void SpawnEnemy(Enemy *enemy, unsigned char *map, float tileWidth, float tileHeight) {
+void SpawnEnemy(Enemy *enemy, unsigned char *map, float tileWidth, float tileHeight, int i) {
     Vector2 startTile = FindStart(map);
 
-    for (int i = 0; i < MAX_ENEMIES; i++) {
         if (!enemy[i].active) {
             enemy[i].active = true;
             enemy[i].pos = startTile;
@@ -100,9 +97,7 @@ void SpawnEnemy(Enemy *enemy, unsigned char *map, float tileWidth, float tileHei
             enemy[i].frame = 0;
             enemy[i].frameTime = 0;
             enemy[i]. currentHealth = 10;
-            break;
         }
-    }
 }
 
 void UpdateEnemy2(Enemy *enemy, unsigned char *map, float tileWidth, float tileHeight, float delta, int *vidaPortao) {

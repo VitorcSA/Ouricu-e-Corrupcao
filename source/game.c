@@ -9,6 +9,8 @@ float level = 0.0f;
 static float timeBetweenWaves = 3.0f;   // intervalo entre hordas
 static float waveCooldown = 0.0f;       // contador do cooldown
 
+static int enemyIndex = 0;
+
 void StartNewWave(EnemyWave *wave) {
     wave->number++;
     wave->enemiesToSpawn = 5 + wave->number * 2;   // cada horda tem mais inimigos
@@ -31,19 +33,34 @@ void ResetWaves(EnemyWave *wave) {
     wave->spawnTimer = 0;
     wave->active = false;
 
-    wave->totalWaves = 3 + level * 2; 
+    wave->totalWaves = 3 + (int)level * 2; 
+}
+
+bool TodosInimigosMortos(Enemy *enemies, int maxEnemies) {
+    for (int i = 0; i < maxEnemies; i++) {
+        if (enemies[i].active) { 
+            return false;
+        }
+    }
+    return true; // nenhum ativo → todos mortos
+}
+
+void ResetEnemies(Enemy *enemies, int maxEnemies) {
+    for (int i = 0; i < maxEnemies; i++) {
+        enemies[i].active = false;
+    }
 }
 
 void UpdateWaves(GameState *currentGameState, EnemyWave *wave, unsigned char *mapTower, float cellWidth, float cellHeight, float deltaTime) {
 
-    if (wave->number >= wave->totalWaves && !wave->active) {
+    if ((wave->number >= wave->totalWaves && !wave->active) && TodosInimigosMortos(enemies, MAX_ENEMIES)) {
         printf("TODAS AS WAVES COMPLETAS! Voltando ao menu...\n");
 
         level += 0.5f;
         if(level > 6.0f) level = 6.0f;
 
         ResetWaves(wave);
-        InitEnemy(enemies, MAX_NORMAL_ENEMIES_HEALTH, MAX_ENEMIES);
+        ResetEnemies(enemies, MAX_ENEMIES);
 
         *currentGameState = MENU_STATE;
         return;
@@ -52,6 +69,7 @@ void UpdateWaves(GameState *currentGameState, EnemyWave *wave, unsigned char *ma
     // Se a wave não está ativa, inicia o cooldown
     if (!wave->active) {
         waveCooldown += deltaTime;
+        enemyIndex = 0;
 
         // Quando o cooldown acabar, inicia nova wave
         if (waveCooldown >= timeBetweenWaves) {
@@ -68,7 +86,9 @@ void UpdateWaves(GameState *currentGameState, EnemyWave *wave, unsigned char *ma
     if (wave->spawnTimer >= wave->spawnInterval
         && wave->enemiesSpawned < wave->enemiesToSpawn) {
 
-        SpawnEnemy(enemies, mapTower, cellWidth, cellHeight); 
+        SpawnEnemy(enemies, mapTower, cellWidth, cellHeight, enemyIndex);
+        enemyIndex += 1;
+        printf("%d\n", enemyIndex); 
         wave->enemiesSpawned++;
         wave->spawnTimer = 0;
     }
