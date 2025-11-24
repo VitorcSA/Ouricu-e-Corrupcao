@@ -222,7 +222,7 @@ int main() {
             UpdateWaves(&wave, mapTower, cellWidth, cellHeight, dt);
 
             UpdateEnemy2(enemies, mapTower, cellWidth, cellHeight, dt, &vidaPortao);
-            UpdatePlayer(mapTower);
+            UpdatePlayer(mapTower, screenWidth, screenHeight);
             UpdateGoldHUD(&goldHUD, playerGold);
 
             ClearBackground((Color){20, 20, 30, 255});

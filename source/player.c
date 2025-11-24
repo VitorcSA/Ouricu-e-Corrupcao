@@ -172,99 +172,112 @@ void shootProject(Projects *project, Vector2 start, Vector2 target, float speed,
     }
 }
 
-void selectUnity(int selfTower){
+void selectUnity(UnitType selected, int selTower, int screenWidth, int screenHeight){
+    if (selTower >= 0 && selTower < towerCount && towers[selTower].active) {
+        if (!towers[selTower].hasDefender) {
+            switch (selected) {
 
+                case UNIT_ARCHER:
+                    if (ownedArchers > 0) {
+                        AddPlayer ( archers, 
+                                    (Vector2){ towers[selTower].pos.x + 5, towers[selTower].pos.y - 68 },
+                                    MAX_ARCHERS, 
+                                    &archerCount,
+                                    screenWidth, 
+                                    screenHeight );
+
+                        towers[selTower].hasDefender = true;
+
+                    } else printf("Você não tem arqueiros suficientes!\n");
+                    
+                break;
+
+                case UNIT_WIZARD:
+                    if (wizardUnlocked || ownedWizards > 0) {
+                        AddPlayer ( wizards, 
+                                    (Vector2){ towers[selTower].pos.x - 8, 
+                                    towers[selTower].pos.y - 68 },
+                                    MAX_WIZARDS, 
+                                    &wizardCount,
+                                    screenWidth, 
+                                    screenHeight );
+
+                        towers[selTower].hasDefender = true;
+                        if (!wizardUnlocked) ownedWizards--;
+
+                    } else printf("Você não tem magos suficientes!\n");
+                    
+                break;
+
+                case UNIT_CANNON:
+                    if (cannonUnlocked || ownedCannons > 0) {
+                        AddPlayer ( cannons, 
+                                    (Vector2){ towers[selTower].pos.x + 4, towers[selTower].pos.y - 28 },
+                                    MAX_CANNONS, 
+                                    &cannonCount,
+                                    screenWidth, 
+                                    screenHeight );
+
+                        towers[selTower].hasDefender = true;
+                        if (!cannonUnlocked) ownedCannons--;
+
+                    } else printf("Você não tem canhões suficientes!\n");
+                    
+                break;
+            }
+
+        } else printf("Essa torre já tem um defensor!\n");
+    }
 }
 
-void UpdatePlayer(unsigned char *mapa)
+void putTowerOnGrid(Vector2 mousePos, unsigned char *mapa, int screenWidth, int screenHeight){
+    float cellWidth = (float)screenWidth / COLS;
+    float cellHeight = (float)screenHeight / ROWS;
+
+    Vector2 gridPos = {
+        mousePos.x / cellWidth,
+        mousePos.y / cellHeight
+    };
+
+    int gridX = (int)(mousePos.x / cellWidth);
+    int gridY = (int)(mousePos.y / cellHeight);
+
+    Vector2 cellCenter = {
+        gridX * cellWidth + (cellWidth * 0.5f) - 8,
+        gridY * cellHeight + (cellHeight * 0.5f) - 16
+    };
+
+    if(!IsTowerOnPath(gridPos, mapa)){
+        if (!IsTowerOnGrid(gridPos)) {
+            AddTower(cellCenter, screenWidth, screenHeight);
+        } else {
+            printf("Já existe uma torre nesse grid!\n");
+        }
+    }
+}
+
+void UpdatePlayer(unsigned char *mapa, int screenWidth, int screenHeight)
 {
     float dt = GetFrameTime();
+    Vector2 mousePos = GetMousePosition();
 
+    //hud para adicionar personagem
     if (HUD_IsActive()) {
         HUD_Update();
         UnitType selected = HUD_GetSelectedUnit();
         int selTower = HUD_GetSelectedTower();
 
-        if (selTower >= 0 && selTower < towerCount && towers[selTower].active) {
-            if (!towers[selTower].hasDefender) {
-                switch (selected) {
-
-    case UNIT_ARCHER:
-        if (ownedArchers > 0) {
-            AddPlayer(archers, (Vector2){ towers[selTower].pos.x + 5, towers[selTower].pos.y - 68 },
-                      MAX_ARCHERS, &archerCount,
-                      GetScreenWidth(), GetScreenHeight());
-            towers[selTower].hasDefender = true;
-        } else {
-            printf("Você não tem arqueiros suficientes!\n");
-        }
-        break;
-
-        case UNIT_WIZARD:
-        if (wizardUnlocked || ownedWizards > 0) {
-            AddPlayer(wizards, (Vector2){ towers[selTower].pos.x - 8, towers[selTower].pos.y - 68 },
-                      MAX_WIZARDS, &wizardCount,
-                      GetScreenWidth(), GetScreenHeight());
-            towers[selTower].hasDefender = true;
-            if (!wizardUnlocked) ownedWizards--;
-        } else {
-            printf("Você não tem magos suficientes!\n");
-        }
-        break;
-
-    case UNIT_CANNON:
-        if (cannonUnlocked || ownedCannons > 0) {
-            AddPlayer(cannons, (Vector2){ towers[selTower].pos.x + 4, towers[selTower].pos.y - 28 },
-                      MAX_CANNONS, &cannonCount,
-                      GetScreenWidth(), GetScreenHeight());
-            towers[selTower].hasDefender = true;
-            if (!cannonUnlocked) ownedCannons--;
-        } else {
-            printf("Você não tem canhões suficientes!\n");
-        }
-        break;
-}
-            } else {
-                printf("Essa torre já tem um defensor!\n");
-            }
-        }
-        
+        selectUnity(selected, selTower, screenWidth, screenHeight);
+        return; //retorna por conta de poder selecionar outras torres
     }
 
-    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-        Vector2 mousePos = GetMousePosition();
-
-        int screenWidth = GetScreenWidth();
-        int screenHeight = GetScreenHeight();
-        float cellWidth = (float)screenWidth / COLS;
-        float cellHeight = (float)screenHeight / ROWS;
-
-        Vector2 gridPos = {
-            mousePos.x / cellWidth,
-            mousePos.y / cellHeight
-        };
-
-        int gridX = (int)(mousePos.x / cellWidth);
-        int gridY = (int)(mousePos.y / cellHeight);
-
-        Vector2 cellCenter = {
-            gridX * cellWidth + (cellWidth * 0.5f) - 8,
-            gridY * cellHeight + (cellHeight * 0.5f) - 16
-        };
-
-        if(!IsTowerOnPath(gridPos, mapa)){
-            if (!IsTowerOnGrid(gridPos)) {
-                AddTower(cellCenter, screenWidth, screenHeight);
-            } else {
-                printf("Já existe uma torre nesse grid!\n");
-            }
-        }
-    }
-
+    //verifica se deve botar a torre no mapa
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) putTowerOnGrid(mousePos, mapa, screenWidth, screenHeight);
+    
+    //faz a hud aparecer
     if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
-        Vector2 mouse = GetMousePosition();
         for (int i = 0; i < towerCount; i++) {
-            if (towers[i].active && CheckCollisionPointCircle(mouse, towers[i].pos, towers[i].size / 2)) {
+            if (towers[i].active && CheckCollisionPointCircle(mousePos, towers[i].pos, towers[i].size / 2)) {
                 HUD_ShowAt(towers[i].pos, i);
                 return;
             }
