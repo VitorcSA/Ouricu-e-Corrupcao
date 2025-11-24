@@ -83,7 +83,7 @@ int main() {
 
     vidaPortao = 3;
     currentGameState = TUTORIAL_STATE;
-    wave.totalWaves = 3;
+    wave.totalWaves = 3 + level * 2;
 
     const char *arquivoMapaTowerDefense = "assets/mapa/mapaTowerDefense";
     char *textoBtnStart = "JOGAR";
@@ -219,7 +219,7 @@ int main() {
             drawLinesMap(mapTower);
             float dt = GetFrameTime();
     
-            UpdateWaves(&wave, mapTower, cellWidth, cellHeight, dt);
+            UpdateWaves(&currentGameState, &wave, mapTower, cellWidth, cellHeight, dt);
 
             UpdateEnemy2(enemies, mapTower, cellWidth, cellHeight, dt, &vidaPortao);
             UpdatePlayer(mapTower, screenWidth, screenHeight);

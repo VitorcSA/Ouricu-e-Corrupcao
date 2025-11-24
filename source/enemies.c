@@ -83,6 +83,8 @@ void InitEnemy(Enemy *enemy, float health, int maxEnemys){
     }
 }
 
+
+
 void SpawnEnemy(Enemy *enemy, unsigned char *map, float tileWidth, float tileHeight) {
     Vector2 startTile = FindStart(map);
 
