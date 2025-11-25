@@ -349,8 +349,17 @@ void UpdateBars(int playerGold, int *prevGold) {
         int steps = delta / 10;
 
         barsaude -= steps * 0.2f;
+        if (barsaude < 0.0f){
+            barsaude = 0.0f;
+        }
         barcomida -= steps * 0.3f;
+        if (barcomida < 0.0f){
+            barcomida = 0.0f;
+        }
         barpoder -= steps * 0.1f;
+        if(barpoder < 0.0f){
+            barpoder = 0.0f;
+        }
     }
     *prevGold = playerGold;
 }

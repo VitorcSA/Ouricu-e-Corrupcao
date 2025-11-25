@@ -263,7 +263,6 @@ void funlojaAtiva(GameState *currentGameState,float *barsaude, float *barcomida,
     DrawRectangleRec(btnRight1, hovR1 ? (Color){60,60,90,255} : (Color){40,40,60,255});
     DrawRectangleLinesEx(btnRight1, 2, WHITE);
     DrawText("Investir em Saúde", btnRight1.x + 10, btnRight1.y + 15, 22, WHITE);
-    if(*barsaude > 1) barsaude = 1;
     int porcentagem = *barsaude * 100;
     DrawText(TextFormat("%d%%", porcentagem), btnRight1.x - 60, btnRight1.y + 15, 22, WHITE);
 
@@ -287,10 +286,19 @@ void funlojaAtiva(GameState *currentGameState,float *barsaude, float *barcomida,
 
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
         if (hovR1) *barsaude += 0.1f;
+        if (*barsaude > 1.0f){
+            *barsaude = 1.0f;
+        }
 
         if (hovR2) *barcomida += 0.1f;
-        
+        if (*barcomida > 1.0f){
+            *barcomida = 1.0f;
+        }
+
         if (hovR3) *barpoder += 0.1f;
+        if (*barpoder > 1.0f){
+            *barpoder = 1.0f;
+        }
     }
 
     Rectangle btnVoltar = { 40, 40, 160, 50 };
