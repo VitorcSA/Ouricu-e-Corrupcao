@@ -212,6 +212,7 @@ int main() {
                             barpoder );
                 
             RankingHUD(screenHeight);
+            writeLevel(screenHeight);
 
             //botão para começar a partida
             criarBotao(&currentGameState, GAME_STATE, BTN_START_COR, BTN_START_COR_HOVER, BTN_START_LINES_COR, 

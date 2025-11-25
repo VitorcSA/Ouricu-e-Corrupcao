@@ -79,6 +79,7 @@ void DrawGoldHUDAt(GoldHUD *hud);
 
 void InitRanking(void);
 void RankingHUD(int screenHeight);
+void writeLevel(int screenHeight);
 
 void desenharReino(Texture2D reinoFundo, float fundoHeight, float scale, int screenWidth);
 void desenharRetangulo(float fundoHeight, int screenWidth);

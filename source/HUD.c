@@ -368,16 +368,108 @@ void RankingHUD(int screenHeight)
 {
     int size = 192;
     Vector2 pos = {10, screenHeight - size - 10};
+    if (level >= 0 && level < 1){
+        DrawTexturePro(
+            cobreTexture,
+            (Rectangle){0, 0, cobreTexture.width, cobreTexture.height},
+            (Rectangle){pos.x, pos.y, size, size},
+            (Vector2){0, 0},
+            0,
+            WHITE
+        );
+    }
+    else if(level >= 1 && level < 2){
+        DrawTexturePro(
+            ferroTexture,
+            (Rectangle){0, 0, ferroTexture.width, ferroTexture.height},
+            (Rectangle){pos.x, pos.y, size, size},
+            (Vector2){0, 0},
+            0,
+            WHITE
+        );
+    }
+    else if(level >= 2 && level < 3){
+        DrawTexturePro(
+            bronzeTexture,
+            (Rectangle){0, 0, bronzeTexture.width, bronzeTexture.height},
+            (Rectangle){pos.x, pos.y, size, size},
+            (Vector2){0, 0},
+            0,
+            WHITE
+        );
+    }
+    else if(level >= 3 && level < 4){
+        DrawTexturePro(
+            prataTexture,
+            (Rectangle){0, 0, prataTexture.width, prataTexture.height},
+            (Rectangle){pos.x, pos.y, size, size},
+            (Vector2){0, 0},
+            0,
+            WHITE
+        );
+    }
+    else if(level >= 4 && level < 5){
+        DrawTexturePro(
+            ouroTexture,
+            (Rectangle){0, 0, ouroTexture.width, ouroTexture.height},
+            (Rectangle){pos.x, pos.y, size, size},
+            (Vector2){0, 0},
+            0,
+            WHITE
+        );
+    }
+    else{
+        DrawTexturePro(
+            diamanteTexture,
+            (Rectangle){0, 0, diamanteTexture.width, diamanteTexture.height},
+            (Rectangle){pos.x, pos.y, size, size},
+            (Vector2){0, 0},
+            0,
+            WHITE
+        );
+    }
+}
 
-    DrawTexturePro(
-        cobreTexture,
-        (Rectangle){0, 0, cobreTexture.width, cobreTexture.height},
-        (Rectangle){pos.x, pos.y, size, size},
-        (Vector2){0, 0},
-        0,
-        WHITE
-    );
+void writeLevel(int screenHeight){
+    int size = 192;
+    Vector2 pos = {10, screenHeight - size - 10};
     float textX = pos.x + size + 10;
     float textY = pos.y + size/2 - 15;
-    DrawText("NÍVEL 1", textX, textY, 30, WHITE);
+    if(level == 0){
+        DrawText("NÍVEL 1", textX, textY, 30, WHITE);
+    }
+    else if(level == 0.5){
+        DrawText("NÍVEL 2", textX, textY, 30, WHITE);
+    }
+    else if(level == 1){
+        DrawText("NÍVEL 3", textX, textY, 30, WHITE);
+    }
+    else if(level == 1.5){
+        DrawText("NÍVEL 4", textX, textY, 30, WHITE);
+    }
+    else if(level == 2){
+        DrawText("NÍVEL 5", textX, textY, 30, WHITE);
+    }
+    else if(level == 2.5){
+        DrawText("NÍVEL 6", textX, textY, 30, WHITE);
+    }
+    else if(level == 3){
+        DrawText("NÍVEL 7", textX, textY, 30, WHITE);
+    }
+    else if(level == 3.5){
+        DrawText("NÍVEL 8", textX, textY, 30, WHITE);
+    }
+    else if(level == 4){
+        DrawText("NÍVEL 9", textX, textY, 30, WHITE);
+    }
+    else if(level == 4.5){
+        DrawText("NÍVEL 10", textX, textY, 30, WHITE);
+    }
+    else if(level == 5){
+        DrawText("NÍVEL 11", textX, textY, 30, WHITE);
+    }
+    else{
+        DrawText("NÍVEL 12 - MAXIMO", textX, textY, 30, WHITE);
+    }
+
 }
