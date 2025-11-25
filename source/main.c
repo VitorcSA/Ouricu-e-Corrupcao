@@ -76,16 +76,22 @@ int main() {
     //Tela de inicio do reino
     //TelaLogo(logo);
     TelaTitulo(titulo, fundo);
+
+    //Parte de saves
     int slot = SelectSaveSlotMenu("Escolha o save:");
-    LoadGame(&save, slot);
-    if(!SaveNotEmpty(slot)) StartNewGame(&save);
-    SaveGame(&save, slot);
+    if (SaveNotEmpty(slot)) {
+        printf("oi\n");
+        LoadGame(&save, slot);
+        printf("Save carregado!\n");
+    } 
+    else {
+        StartNewGame(&save);
+        printf("Novo jogo criado no slot %d\n", slot);
+    }
+
+    playerGold = save.gold;
 
     bool borderless = false;
-    bool tutorialAtivo = true;
-    bool jogoIniciado = false;
-    bool pauseMenu = false;
-    bool lojaAtiva = false;
     bool isGameOver = false;
 
     vidaPortao = 3;
@@ -117,6 +123,7 @@ int main() {
     InitRanking();
 
     while (!WindowShouldClose() && !isGameOver) {
+        UpdateSave(&save, barcomida, barpoder, barsaude, level, tempoPassado);
         int screenWidth = GetScreenWidth();
         int screenHeight = GetScreenHeight();
         float cellWidth = screenWidth / (float)COLS;
@@ -316,7 +323,6 @@ int main() {
     }
 
     SaveGame(&save, slot);
-    SaveGold(playerGold);
     UnloadTexture(titulo);
     UnloadTexture(fundo);
     UnloadImage(logo);

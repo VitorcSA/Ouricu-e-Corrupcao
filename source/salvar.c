@@ -4,11 +4,11 @@
 #include <salvar.h>
 
 void GetSaveFileName(int slot, char *buffer) {
-    sprintf(buffer, "save%d.dat", slot);
+    sprintf(buffer, "save%d.bin", slot);
 }
 
 void SaveGame(SaveData *save, int slot) {
-    char filename[15];
+    char filename[64];
     GetSaveFileName(slot, filename);
 
     FILE *file = fopen(filename, "wb");
@@ -84,9 +84,20 @@ int SelectSaveSlotMenu(const char *titulo) {
     return 1; 
 }
 
+void UpdateSave(SaveData *save, float barComida, float barPoder, float barSaude, int level, int tempoPassado) {
+    save->gold = playerGold;
+    save->levelAtual = level;
+    save->barcomida = barComida;
+    save->barpoder = barPoder;
+    save->barsaude = barSaude;
+    save->cannonUnlocked = cannonUnlocked;
+    save->wizardUnlocked = wizardUnlocked;
+    save->tempoPassado += tempoPassado; 
+}
+
 bool SaveNotEmpty(int slot) {
     char filename[64];
-    sprintf(filename, "save%d.dat", slot);
+    sprintf(filename, "save%d.bin", slot);
 
     FILE *f = fopen(filename, "rb");
     if (!f) return false;  
@@ -114,26 +125,4 @@ void StartNewGame(SaveData *save) {
     save->wizardUnlocked = false;
 
     printf("Novo jogo iniciado!\n");
-}
-
-void SaveGold(int playerGold)
-{
-    FILE *f = fopen("save_gold.bin", "wb");
-    if (f == NULL) return;
-
-    fwrite(&playerGold, sizeof(int), 1, f);
-    fclose(f);
-}
-
-int LoadGold()
-{
-    FILE *f = fopen("save_gold.bin", "rb");
-    if (f == NULL)
-        return 0;
-
-    int playerGold = 0;
-    fread(&playerGold, sizeof(int), 1, f);
-    fclose(f);
-
-    return playerGold;
 }

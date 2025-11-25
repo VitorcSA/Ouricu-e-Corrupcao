@@ -15,6 +15,7 @@ typedef struct {
 
 } SaveData;
 
+void UpdateSave(SaveData *save, float barComida, float barPoder, float barSaude, int level, int tempoPassado);
 bool SaveNotEmpty(int slot);
 void SaveGame(SaveData *save, int slot);
 int LoadGame(SaveData *save, int slot);
