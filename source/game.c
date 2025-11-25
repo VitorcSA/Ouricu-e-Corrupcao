@@ -263,6 +263,7 @@ void funlojaAtiva(GameState *currentGameState,float *barsaude, float *barcomida,
     DrawRectangleRec(btnRight1, hovR1 ? (Color){60,60,90,255} : (Color){40,40,60,255});
     DrawRectangleLinesEx(btnRight1, 2, WHITE);
     DrawText("Investir em Saúde", btnRight1.x + 10, btnRight1.y + 15, 22, WHITE);
+    if(*barsaude > 1) barsaude = 1;
     int porcentagem = *barsaude * 100;
     DrawText(TextFormat("%d%%", porcentagem), btnRight1.x - 60, btnRight1.y + 15, 22, WHITE);
 

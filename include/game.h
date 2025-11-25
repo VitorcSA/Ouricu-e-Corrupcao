@@ -1,6 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include "player.h"
 
 typedef struct {
     int number;             // número da horda
@@ -19,6 +20,20 @@ typedef enum {
     GAME_STATE,
     PAUSE_STATE,
 } GameState;    
+
+typedef struct {
+    int levelAtual;
+    int gold;
+    
+    bool wizardUnlocked;
+    bool cannonUnlocked;
+
+    float barsaude;
+    float barcomida;
+    float barpoder;
+
+} SaveData;
+
 
 extern float level;
 
