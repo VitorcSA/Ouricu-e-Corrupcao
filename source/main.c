@@ -91,6 +91,13 @@ int main() {
     }
 
     playerGold = save.gold;
+    barcomida = save.barcomida;
+    barpoder = save.barpoder;
+    barsaude = save.barsaude;
+    cannonUnlocked = save.cannonUnlocked;
+    wizardUnlocked = save.wizardUnlocked;
+    level = save.levelAtual;
+    tempoPassado = save.tempoPassado;
 
     bool borderless = false;
     bool isGameOver = false;

@@ -97,7 +97,7 @@ void UpdateSave(SaveData *save, float barComida, float barPoder, float barSaude,
     save->barsaude = barSaude;
     save->cannonUnlocked = cannonUnlocked;
     save->wizardUnlocked = wizardUnlocked;
-    save->tempoPassado += tempoPassado; 
+    save->tempoPassado = tempoPassado; 
 }
 
 bool SaveNotEmpty(int slot) {
