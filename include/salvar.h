@@ -19,7 +19,7 @@ void UpdateSave(SaveData *save, float barComida, float barPoder, float barSaude,
 bool SaveNotEmpty(int slot);
 void SaveGame(SaveData *save, int slot);
 int LoadGame(SaveData *save, int slot);
-int SelectSaveSlotMenu(const char *titulo);
+int SelectSaveSlotMenu(const char *titulo, bool *isNovoJogo);
 void StartNewGame(SaveData *save);
 void SaveGold(int playerGold);
 int LoadGold(void);

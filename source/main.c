@@ -78,8 +78,9 @@ int main() {
     TelaTitulo(titulo, fundo);
 
     //Parte de saves
-    int slot = SelectSaveSlotMenu("Escolha o save:");
-    if (SaveNotEmpty(slot)) {
+    bool isNovoJogo;
+    int slot = SelectSaveSlotMenu("Escolha o save:", &isNovoJogo);
+    if (SaveNotEmpty(slot) && !isNovoJogo) {
         printf("oi\n");
         LoadGame(&save, slot);
         printf("Save carregado!\n");

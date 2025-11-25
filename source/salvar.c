@@ -50,7 +50,7 @@ bool SaveExists(int slot) {
     return true;
 }
 
-int SelectSaveSlotMenu(const char *titulo) {
+int SelectSaveSlotMenu(const char *titulo, bool *isNovoJogo) {
     int selected = -1;
 
     while (!WindowShouldClose()) {
@@ -58,6 +58,7 @@ int SelectSaveSlotMenu(const char *titulo) {
         ClearBackground(BLACK);
 
         DrawText(titulo, 260, 80, 30, WHITE);
+        DrawText("Aperte o botao direito do mouse para substituir um save", 260, 120, 20, WHITE);
 
         for (int i = 0; i < 3; i++) {
             Rectangle r = { 300, 180 + i * 70, 200, 50 };
@@ -69,7 +70,11 @@ int SelectSaveSlotMenu(const char *titulo) {
             else DrawText(TextFormat("Slot %d (vazio)", i), r.x + 20, r.y + 15, 20, WHITE);
 
             if (CheckCollisionPointRec(GetMousePosition(), r) &&
-                IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+                (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) || IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))) {
+
+                if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))*isNovoJogo = false;
+                else *isNovoJogo = true;
+
                 selected = i;
                 EndDrawing();
                 return selected;
@@ -81,7 +86,7 @@ int SelectSaveSlotMenu(const char *titulo) {
         EndDrawing();
     }
 
-    return 1; 
+    return -1; 
 }
 
 void UpdateSave(SaveData *save, float barComida, float barPoder, float barSaude, int level, int tempoPassado) {
