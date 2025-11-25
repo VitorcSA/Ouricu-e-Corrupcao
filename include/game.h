@@ -21,21 +21,8 @@ typedef enum {
     PAUSE_STATE,
 } GameState;    
 
-typedef struct {
-    int levelAtual;
-    int gold;
-    
-    bool wizardUnlocked;
-    bool cannonUnlocked;
-
-    float barsaude;
-    float barcomida;
-    float barpoder;
-
-} SaveData;
-
-
 extern float level;
+extern int tempoPassado;
 
 void StartNewWave(EnemyWave *wave);
 void UpdateWaves(GameState *currentGameState, EnemyWave *wave, unsigned char *mapTower, float cellWidth, float cellHeight, float deltaTime);

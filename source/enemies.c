@@ -83,6 +83,21 @@ void InitEnemy(Enemy *enemy, float health, int maxEnemys){
     }
 }
 
+bool TodosInimigosMortos(Enemy *enemies, int maxEnemies) {
+    for (int i = 0; i < maxEnemies; i++) {
+        if (enemies[i].active) { 
+            return false;
+        }
+    }
+    return true; // nenhum ativo → todos mortos
+}
+
+void ResetEnemies(Enemy *enemies, int maxEnemies) {
+    for (int i = 0; i < maxEnemies; i++) {
+        enemies[i].active = false;
+    }
+}
+
 void SpawnEnemy(Enemy *enemy, unsigned char *map, float tileWidth, float tileHeight, int i) {
     Vector2 startTile = FindStart(map);
 

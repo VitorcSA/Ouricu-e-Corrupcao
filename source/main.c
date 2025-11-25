@@ -56,9 +56,8 @@ int main() {
 
     GoldHUD goldHUD;
     EnemyWave wave = {0};
+    SaveData save;
     GameState currentGameState;
-
-    playerGold = LoadGold();
 
     //Iniciar Textura do rei
     Image rei = LoadImage("assets/rei.png");
@@ -66,19 +65,34 @@ int main() {
     Texture2D reiTextura = LoadTextureFromImage(rei);
     UnloadImage(rei);
 
+    //Iniciar outras texturas
     Texture2D fundo = LoadTexture("assets/fundotitulo.png");
     Texture2D titulo = LoadTexture("assets/titulo.png");
     Texture2D reinoFundo = LoadTexture("assets/reino.png");
 
+    //Ubucuabdi posição do rei
     Vector2 posicaoRei;
 
+    //Tela de inicio do reino
+    //TelaLogo(logo);
     TelaTitulo(titulo, fundo);
 
+    //Parte de saves
+    bool isNovoJogo;
+    int slot = SelectSaveSlotMenu("Escolha o save:", &isNovoJogo);
+    if (SaveNotEmpty(slot) && !isNovoJogo) {
+        printf("oi\n");
+        LoadGame(&save, slot);
+        printf("Save carregado!\n");
+    } 
+    else {
+        StartNewGame(&save);
+        printf("Novo jogo criado no slot %d\n", slot);
+    }
+
+    playerGold = save.gold;
+
     bool borderless = false;
-    bool tutorialAtivo = true;
-    bool jogoIniciado = false;
-    bool pauseMenu = false;
-    bool lojaAtiva = false;
     bool isGameOver = false;
 
     vidaPortao = 3;
@@ -110,6 +124,7 @@ int main() {
     InitRanking();
 
     while (!WindowShouldClose() && !isGameOver) {
+        UpdateSave(&save, barcomida, barpoder, barsaude, level, tempoPassado);
         int screenWidth = GetScreenWidth();
         int screenHeight = GetScreenHeight();
         float cellWidth = screenWidth / (float)COLS;
@@ -309,7 +324,7 @@ int main() {
         EndDrawing();
     }
 
-    SaveGold(playerGold);
+    SaveGame(&save, slot);
     UnloadTexture(titulo);
     UnloadTexture(fundo);
     UnloadImage(logo);

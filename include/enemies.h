@@ -43,5 +43,11 @@ void SpawnOrcs(Vector2 pathStart);
 void UpdateEnemy2(Enemy *enemy, unsigned char *map, float tileWidth, float tileHeight, float delta, int *vidaPortao);
 void UpdateOrcs(float dt, Vector2 pathStart, Vector2 pathEnd);
 void UnloadEnemies(void);
+void ResetEnemies(Enemy *enemies, int maxEnemies);
+
+bool TodosInimigosMortos(Enemy *enemies, int maxEnemies);
+    
+
+
 
 #endif
