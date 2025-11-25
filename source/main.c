@@ -56,9 +56,8 @@ int main() {
 
     GoldHUD goldHUD;
     EnemyWave wave = {0};
+    SaveData save;
     GameState currentGameState;
-
-    playerGold = LoadGold();
 
     //Iniciar Textura do rei
     Image rei = LoadImage("assets/rei.png");
@@ -66,13 +65,21 @@ int main() {
     Texture2D reiTextura = LoadTextureFromImage(rei);
     UnloadImage(rei);
 
+    //Iniciar outras texturas
     Texture2D fundo = LoadTexture("assets/fundotitulo.png");
     Texture2D titulo = LoadTexture("assets/titulo.png");
     Texture2D reinoFundo = LoadTexture("assets/reino.png");
 
+    //Ubucuabdi posição do rei
     Vector2 posicaoRei;
 
+    //Tela de inicio do reino
+    //TelaLogo(logo);
     TelaTitulo(titulo, fundo);
+    int slot = SelectSaveSlotMenu("Escolha o save:");
+    LoadGame(&save, slot);
+    if(!SaveNotEmpty(slot)) StartNewGame(&save);
+    SaveGame(&save, slot);
 
     bool borderless = false;
     bool tutorialAtivo = true;
@@ -308,6 +315,7 @@ int main() {
         EndDrawing();
     }
 
+    SaveGame(&save, slot);
     SaveGold(playerGold);
     UnloadTexture(titulo);
     UnloadTexture(fundo);

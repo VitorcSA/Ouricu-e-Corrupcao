@@ -10,6 +10,7 @@ static float timeBetweenWaves = 3.0f;   // intervalo entre hordas
 static float waveCooldown = 0.0f;       // contador do cooldown
 
 static int enemyIndex = 0;
+int tempoPassado = 0;
 
 void StartNewWave(EnemyWave *wave) {
     wave->number++;
@@ -36,21 +37,6 @@ void ResetWaves(EnemyWave *wave) {
     wave->totalWaves = 3 + (int)level * 2; 
 }
 
-bool TodosInimigosMortos(Enemy *enemies, int maxEnemies) {
-    for (int i = 0; i < maxEnemies; i++) {
-        if (enemies[i].active) { 
-            return false;
-        }
-    }
-    return true; // nenhum ativo → todos mortos
-}
-
-void ResetEnemies(Enemy *enemies, int maxEnemies) {
-    for (int i = 0; i < maxEnemies; i++) {
-        enemies[i].active = false;
-    }
-}
-
 void UpdateWaves(GameState *currentGameState, EnemyWave *wave, unsigned char *mapTower, float cellWidth, float cellHeight, float deltaTime) {
 
     if ((wave->number >= wave->totalWaves && !wave->active) && TodosInimigosMortos(enemies, MAX_ENEMIES)) {
@@ -61,6 +47,8 @@ void UpdateWaves(GameState *currentGameState, EnemyWave *wave, unsigned char *ma
 
         ResetWaves(wave);
         ResetEnemies(enemies, MAX_ENEMIES);
+
+        tempoPassado += 1;
 
         *currentGameState = MENU_STATE;
         return;
