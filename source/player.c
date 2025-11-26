@@ -133,7 +133,7 @@ void AddTower(Vector2 pos, int screenWidth, int screenHeight)
     towers[towerCount].active = true;
 
     towerCount++;
-    ownedTowers--;
+    playerGold -= 10;
 }
 
 void AddPlayer(Players *player, Vector2 pos, int max, int *playerCount, int screenWidth, int screenHeight){
@@ -533,23 +533,19 @@ void drawProjects(Projects *project, Texture2D projectTexture, bool hasFrames, i
     }
 }
 
-void resetTower(Tower *towers, int maxTowers){
+void resetTower(Tower *towers, int *towerCount, int maxTowers){
     for(int i = 0; i < maxTowers; i++){
         towers[i].active = false;
     }
+    *towerCount = 0;
 }
 
-void resetPlayer(Players *player, int maxPlayer){
+void resetPlayer(Players *player, int *playerCount, int maxPlayer){
     
     for(int i = 0; i < maxPlayer; i++){
         player[i].active = false;
-        /*player[i].basePos = (Vector2){0,0};
-        player[i].frame = 0;
-        player[i].frameTime = 0;
-        player[i].isShooting = false;
-        player[i].pos = (Vector2){0,0};
-        player[i].size = 0;*/
     }
+    *playerCount = 0;
 }
 
 void resetProjects(Projects *project, int maxProjects){
@@ -559,11 +555,11 @@ void resetProjects(Projects *project, int maxProjects){
 }
 
 void resetAll(){
-    resetTower(towers, MAX_TOWERS);
+    resetTower(towers, &towerCount, MAX_TOWERS);
     
-    resetPlayer(archers, MAX_ARCHERS);
-    resetPlayer(cannons, MAX_CANNONS);
-    resetPlayer(wizards, MAX_WIZARDS);
+    resetPlayer(archers, &archerCount, MAX_ARCHERS);
+    resetPlayer(cannons, &cannonCount, MAX_CANNONS);
+    resetPlayer(wizards, &wizardCount, MAX_WIZARDS);
 
     resetProjects(arrows, MAX_ARROWS);
     resetProjects(cannonballs, MAX_CANNONBALLS);

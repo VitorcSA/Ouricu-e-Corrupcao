@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <enemies.h>
 #include <HUD.h>
+#include <string.h>
 
 float level = 0.0f;
 
@@ -89,6 +90,23 @@ void UpdateWaves(GameState *currentGameState, EnemyWave *wave, unsigned char *ma
 
         printf("Horda %d concluída!\n", wave->number);
     }
+}
+
+void btnInvestimento(Vector2 mouseRight, Color corNormal, Color corHover, const char *tipoDeInvestimento, float *barra, int rightX, int by, int rightW, int rightH){
+    Rectangle btnRight1 = { rightX, by, rightW, rightH };
+    bool hovR1 = CheckCollisionPointRec(mouseRight, btnRight1);
+
+    DrawRectangleRec(btnRight1, hovR1 ? corNormal : corHover);
+
+    DrawRectangleLinesEx(btnRight1, 2, WHITE);
+    
+    char *text = "Investir em ";
+    strcat(text, tipoDeInvestimento);
+
+    DrawText(text, btnRight1.x + 10, btnRight1.y + 15, 22, WHITE);
+
+    int porcentagem = *barra * 100;
+    DrawText(TextFormat("%d%%", porcentagem), btnRight1.x - 60, btnRight1.y + 15, 22, WHITE);
 }
 
 void funlojaAtiva(GameState *currentGameState,float *barsaude, float *barcomida, float *barpoder, bool *cannonUnlocked, bool *wizardUnlocked, int *prevGold, int *ownedTowers, int *archerCount, int *playerGold, int screenWidth, int screenHeight){
@@ -209,7 +227,7 @@ void funlojaAtiva(GameState *currentGameState,float *barsaude, float *barcomida,
 
     }
 
-    int rightX = screenWidth - (bw + 100);
+    int rightX = screenWidth - (bw + 100);   // distância da borda direita
     int rightW = bw;
     int rightH = bh;
 
