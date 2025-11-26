@@ -120,7 +120,7 @@ bool IsTowerOnPath(Vector2 gridPos, unsigned char *mapa){
 
 void AddTower(Vector2 pos, int screenWidth, int screenHeight)
 {
-    if (ownedTowers <= 0) return;
+    if (ownedTowers <= 0 || playerGold < 10) return;
 
     float cellWidth  = (float)screenWidth / (float)COLS;
     float cellHeight = (float)screenHeight / (float)ROWS;
