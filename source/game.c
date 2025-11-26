@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <enemies.h>
 #include <HUD.h>
+#include <string.h>
 
 float level = 0.0f;
 
@@ -89,6 +90,23 @@ void UpdateWaves(GameState *currentGameState, EnemyWave *wave, unsigned char *ma
 
         printf("Horda %d concluída!\n", wave->number);
     }
+}
+
+void btnInvestimento(Vector2 mouseRight, Color corNormal, Color corHover, const char *tipoDeInvestimento, float *barra, int rightX, int by, int rightW, int rightH){
+    Rectangle btnRight1 = { rightX, by, rightW, rightH };
+    bool hovR1 = CheckCollisionPointRec(mouseRight, btnRight1);
+
+    DrawRectangleRec(btnRight1, hovR1 ? corNormal : corHover);
+
+    DrawRectangleLinesEx(btnRight1, 2, WHITE);
+    
+    char *text = "Investir em ";
+    strcat(text, tipoDeInvestimento);
+
+    DrawText(text, btnRight1.x + 10, btnRight1.y + 15, 22, WHITE);
+
+    int porcentagem = *barra * 100;
+    DrawText(TextFormat("%d%%", porcentagem), btnRight1.x - 60, btnRight1.y + 15, 22, WHITE);
 }
 
 void funlojaAtiva(GameState *currentGameState,float *barsaude, float *barcomida, float *barpoder, bool *cannonUnlocked, bool *wizardUnlocked, int *prevGold, int *ownedTowers, int *archerCount, int *playerGold, int screenWidth, int screenHeight){
@@ -203,42 +221,6 @@ void funlojaAtiva(GameState *currentGameState,float *barsaude, float *barcomida,
         DrawText("Canhão (Desbloqueado)", btnBuyCannon.x + 10, btnBuyCannon.y + 10, 22, WHITE);
 
     }
-
-    Rectangle btnBuyTower = { (screenWidth - bw) / 2,
-                               by + 390,
-                               bw,
-                               bh };
-
-    bool hovTor = CheckCollisionPointRec(mouseBuy, btnBuyTower);
-
-    DrawRectangleRec(btnBuyTower, hovTor ? (Color){70,70,70,255} : (Color){100,100,100,255});
-    DrawRectangleLinesEx(btnBuyTower, 2, BLACK);
-
-    DrawText ( "Comprar Torre", 
-                btnBuyTower.x + 10, 
-                btnBuyTower.y + 10, 
-                22, 
-                WHITE );
-
-    DrawText ( TextFormat("Preço: %d", priceTower), 
-                btnBuyTower.x + 10, 
-                btnBuyTower.y + 35, 
-                20, 
-                YELLOW );
-
-    if (hovTor && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-        if (*playerGold >= priceTower) {
-            *playerGold -= priceTower;
-            *ownedTowers += 1;
-            UpdateBars(*playerGold, prevGold);
-        }
-    }
-
-    DrawText ( TextFormat( "Torres: %d", *ownedTowers), 
-                btnBuyTower.x + 85, 
-                btnBuyTower.y + 20 + btnBuyTower.height + 10, 
-                20, 
-                WHITE );
 
     int rightX = screenWidth - (bw + 100);   // distância da borda direita
     int rightW = bw;
