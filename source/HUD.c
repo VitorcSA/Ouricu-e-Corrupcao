@@ -95,6 +95,7 @@ void HUD_Update(void) {
         Rectangle archerBtn = { hudPos.x, hudPos.y, hudWidth, section };
         Rectangle wizardBtn = { hudPos.x, hudPos.y + section, hudWidth, section };
         Rectangle cannonBtn = { hudPos.x, hudPos.y + 2 * section, hudWidth, section };
+        Rectangle hud = { hudPos.x, hudPos.y, hudWidth, hudHeight };
 
         if (CheckCollisionPointRec(mouse, archerBtn)) {
             if(playerGold >= 20){
@@ -102,22 +103,24 @@ void HUD_Update(void) {
                 playerGold -= 20;
                 hudVisible = false;
             }
-    }
+        }
 
         if (CheckCollisionPointRec(mouse, wizardBtn)) {
-            if (wizardUnlocked) {
+            if (wizardUnlocked && playerGold >= 20) {
                 chosenUnit = UNIT_WIZARD;
                 playerGold -= 20;
                 hudVisible = false;
-    }
-}
+            }
+        }
         else if (CheckCollisionPointRec(mouse, cannonBtn)) {
-            if (cannonUnlocked) {
+            if (cannonUnlocked && playerGold >= 20) {
                 chosenUnit = UNIT_CANNON;
                 playerGold -= 20;
                 hudVisible = false;
-    }
-}
+            }
+        }else if (!CheckCollisionPointRec(mouse, hud)) {
+            hudVisible = false;
+        }
     }
 }
 
@@ -350,7 +353,7 @@ void DrawSideHUDBig(float v1, float v2, float v3)
     DrawText("PODER", startX + 350, startY + 3, 17, WHITE);
 }
 
-void UpdateBars(int playerGold, int *prevGold, int slot, Texture2D fundo, GameState *currentGameState, EnemyWave *wave) {
+void UpdateBars(int playerGold, int *prevGold, int slot, bool diminuirBarras, Texture2D fundo, GameState *currentGameState, EnemyWave *wave) {
 
     if (playerGold > *prevGold) {
         *prevGold = playerGold;
@@ -358,22 +361,25 @@ void UpdateBars(int playerGold, int *prevGold, int slot, Texture2D fundo, GameSt
 
     int delta = *prevGold - playerGold;
 
-    if (delta >= 10) {
+    if (delta >= 10 && diminuirBarras) {
         int steps = delta / 10;
 
         barsaude -= steps * 0.05f;
-        if (barsaude < 0.0f) barsaude = 0.0f;
-        if (barsaude > 1.0f) barsaude = 1.0f;
-        
-        barcomida -= steps * 0.08f;
-        if (barcomida < 0.0f) barcomida = 0.0f;
-        if (barcomida > 1.0f) barcomida = 1.0f;
+                      
+        barcomida -= steps * 0.08f;    
         
         barpoder -= steps * 0.02f;
-        if (barpoder < 0.0f) barpoder = 0.0f;
-        if (barpoder > 1.0f) barpoder = 1.0f;
-        
+                      
     }
+
+    if (barsaude < 0.0f) barsaude = 0.0f;
+    if (barsaude > 1.0f) barsaude = 1.0f;
+    
+    if (barcomida < 0.0f) barcomida = 0.0f;
+    if (barcomida > 1.0f) barcomida = 1.0f;
+
+    if (barpoder < 0.0f) barpoder = 0.0f;
+    if (barpoder > 1.0f) barpoder = 1.0f;
 
     if(barsaude == 0 || barcomida == 0 || barpoder == 0){
         ResetWaves(wave);

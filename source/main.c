@@ -210,7 +210,7 @@ int main() {
         //Parte da loja
         case LOJA_STATE:
             funlojaAtiva(&currentGameState, &barsaude, &barcomida, &barpoder, &cannonUnlocked, &wizardUnlocked, &prevGold, &ownedTowers, &archerCount, &playerGold, screenWidth, screenHeight);
-            UpdateBars(playerGold, &prevGold, slot, fundo, &currentGameState, &wave);
+            UpdateBars(playerGold, &prevGold, slot, false, fundo, &currentGameState, &wave);
         break;
 
         //Parte do jogo
@@ -245,7 +245,7 @@ int main() {
             DrawSideHUDBig(barsaude, barcomida, barpoder);
             DrawGoldHUDAt(&goldHUD, 20, 20);
             HUD_Draw();
-            UpdateBars(playerGold, &prevGold, slot, fundo, &currentGameState, &wave);
+            UpdateBars(playerGold, &prevGold, slot, true, fundo, &currentGameState, &wave);
             if(vidaPortao <= 0){
                 ResetWaves(&wave);
                 ResetEnemies(enemies, MAX_ENEMIES);

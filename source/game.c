@@ -253,11 +253,8 @@ void funlojaAtiva(GameState *currentGameState,float *barsaude, float *barcomida,
         if (hovR1){
             if(*playerGold >= 15 && *barsaude < 1.0f){
                 *barsaude += 0.1f;
-        
-                *barcomida += manterValor * 0.08f;
-                *barpoder += manterValor * 0.02f;
-
                 *playerGold -= 15;
+
                 if (*barsaude > 1.0f){
                     *barsaude = 1.0f;
                 }
@@ -267,11 +264,8 @@ void funlojaAtiva(GameState *currentGameState,float *barsaude, float *barcomida,
         if (hovR2){
             if(*playerGold >= 15 && *barcomida < 1.0f){
                 *barcomida += 0.1f;
-
-                *barsaude += manterValor * 0.05f;
-                *barpoder += manterValor * 0.02f;
-
                 *playerGold -= 15;
+                
                 if (*barcomida > 1.0f){
                     *barcomida = 1.0f;
                 }
@@ -281,11 +275,8 @@ void funlojaAtiva(GameState *currentGameState,float *barsaude, float *barcomida,
         if (hovR3){
             if(*playerGold >= 15 && *barpoder < 1.0f){
                 *barpoder += 0.1f;
-
-                *barcomida += manterValor * 0.08f;
-                *barsaude += manterValor * 0.05f;
-
                 *playerGold -= 15;
+                
                 if (*barpoder > 1.0f){
                     *barpoder = 1.0f;
                 }

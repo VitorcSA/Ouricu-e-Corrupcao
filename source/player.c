@@ -52,39 +52,39 @@ void InitPlayer()
     torreTexture = LoadTextureFromImage(torre);
     UnloadImage(torre);
 
-    Image arqueiro = LoadImage("assets/inimigosAnimation/Shot.png");
+    Image arqueiro = LoadImage("assets/InimigosAnimation/Shot.png");
     archerTexture = LoadTextureFromImage(arqueiro);
     UnloadImage(arqueiro);
 
-    Image arqueiroIdele = LoadImage("assets/inimigosAnimation/Idle.png");
+    Image arqueiroIdele = LoadImage("assets/InimigosAnimation/Idle.png");
     archerIdeleTexture = LoadTextureFromImage(arqueiroIdele);
     UnloadImage(arqueiroIdele);
 
-    Image arrow = LoadImage("assets/inimigosAnimation/Arrow.png");
+    Image arrow = LoadImage("assets/InimigosAnimation/Arrow.png");
     arrowTexture = LoadTextureFromImage(arrow);
     UnloadImage(arrow);
 
-    Image wizard = LoadImage("assets/inimigosAnimation/ShotWizard.png");
+    Image wizard = LoadImage("assets/InimigosAnimation/ShotWizard.png");
     wizardTexture = LoadTextureFromImage(wizard);
     UnloadImage(wizard);
 
-    Image idlewizard = LoadImage("assets/inimigosAnimation/IdleWizard.png");
+    Image idlewizard = LoadImage("assets/InimigosAnimation/IdleWizard.png");
     idlewizardTexture = LoadTextureFromImage(idlewizard);
     UnloadImage(idlewizard);
 
-    Image fireball = LoadImage("assets/inimigosAnimation/Fireball.png");
+    Image fireball = LoadImage("assets/InimigosAnimation/Fireball.png");
     fireballTexture = LoadTextureFromImage(fireball);
     UnloadImage(fireball);
 
-    Image cannonIdle = LoadImage("assets/inimigosAnimation/idlecannon.png");
+    Image cannonIdle = LoadImage("assets/InimigosAnimation/idlecannon.png");
     cannonTextureIdle = LoadTextureFromImage(cannonIdle);
     UnloadImage(cannonIdle);
 
-    Image cannonShot = LoadImage("assets/inimigosAnimation/shotcannon.png");
+    Image cannonShot = LoadImage("assets/InimigosAnimation/shotcannon.png");
     cannonTextureShot = LoadTextureFromImage(cannonShot);
     UnloadImage(cannonShot);
 
-    Image cannonball = LoadImage("assets/inimigosAnimation/cannonball.png");
+    Image cannonball = LoadImage("assets/InimigosAnimation/cannonball.png");
     cannonballTexture = LoadTextureFromImage(cannonball);
     UnloadImage(cannonball);
 }
@@ -134,6 +134,7 @@ void AddTower(Vector2 pos, int screenWidth, int screenHeight)
 
     towerCount++;
     playerGold -= 10;
+    if (playerGold < 0)  playerGold = 0;
 }
 
 void AddPlayer(Players *player, Vector2 pos, int max, int *playerCount, int screenWidth, int screenHeight){
@@ -333,6 +334,7 @@ void UpdatePlayer(unsigned char *mapa, int screenWidth, int screenHeight)
 {
     float dt = GetFrameTime();
     Vector2 mousePos = GetMousePosition();
+    if (playerGold < 0)  playerGold = 0;
 
     //hud para adicionar personagem
     if (HUD_IsActive()) {

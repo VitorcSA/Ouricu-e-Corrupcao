@@ -92,5 +92,6 @@ void criarBotao(GameState *currentGameState, GameState STATE, Color corBotao, Co
 
 void DrawHorizontalBar(float x, float y, float width, float height, float value);
 void DrawSideHUDBig(float v1, float v2, float v3);
-void UpdateBars(int playerGold, int *prevGold, int slot, Texture2D fundo, GameState *currentGameState, EnemyWave *wave);
+void UpdateBars(int playerGold, int *prevGold, int slot, bool diminuirBarras, Texture2D fundo, GameState *currentGameState, EnemyWave *wave);
+
 #endif
