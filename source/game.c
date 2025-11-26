@@ -52,7 +52,7 @@ void UpdateWaves(GameState *currentGameState, EnemyWave *wave, unsigned char *ma
         tempoPassado += 1;
 
         *currentGameState = WAVE_COMPLETE_STATE;
-        return;
+        return; 
     }
 
     // Se a wave não está ativa, inicia o cooldown
