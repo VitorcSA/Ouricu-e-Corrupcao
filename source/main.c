@@ -223,7 +223,6 @@ int main() {
             drawLinesMap(mapTower);
             float dt = GetFrameTime();
 
-            UpdateBars(playerGold, &prevGold);
             UpdateWaves(&currentGameState, &wave, mapTower, cellWidth, cellHeight, dt);
 
             UpdateEnemy2(enemies, mapTower, cellWidth, cellHeight, dt, &vidaPortao);
