@@ -3,6 +3,7 @@
 #include "player.h"
 #include <stdio.h>
 #include "game.h"
+#include "telas.h"
 
 static bool hudVisible = false;
 static Vector2 hudPos;
@@ -344,7 +345,7 @@ void DrawSideHUDBig(float v1, float v2, float v3)
     DrawText("PODER", startX + 350, startY + 3, 17, WHITE);
 }
 
-void UpdateBars(int playerGold, int *prevGold) {
+void UpdateBars(int playerGold, int *prevGold, Texture2D fundo, GameState *currentGameState) {
 
     if (playerGold > *prevGold) {
         *prevGold = playerGold;
@@ -367,6 +368,11 @@ void UpdateBars(int playerGold, int *prevGold) {
         if(barpoder < 0.0f){
             barpoder = 0.0f;
         }
+    }
+
+    if(barsaude == 0 || barcomida == 0 || barpoder == 0){
+        TelaGameOver(fundo);
+        *currentGameState = SAVE_STATE;
     }
     *prevGold = playerGold;
 }
