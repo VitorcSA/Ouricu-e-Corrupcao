@@ -42,7 +42,7 @@ void UpdateWaves(GameState *currentGameState, EnemyWave *wave, unsigned char *ma
     if ((wave->number >= wave->totalWaves && !wave->active) && TodosInimigosMortos(enemies, MAX_ENEMIES)) {
         printf("TODAS AS WAVES COMPLETAS! Voltando ao menu...\n");
 
-        level += 0.5f;
+        level += 1.0f;
         if(level > 6.0f) level = 6.0f;
 
         ResetWaves(wave);
