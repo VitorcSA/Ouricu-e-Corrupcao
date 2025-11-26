@@ -533,6 +533,43 @@ void drawProjects(Projects *project, Texture2D projectTexture, bool hasFrames, i
     }
 }
 
+void resetTower(Tower *towers, int maxTowers){
+    for(int i = 0; i < maxTowers; i++){
+        towers[i].active = false;
+    }
+}
+
+void resetPlayer(Players *player, int maxPlayer){
+    
+    for(int i = 0; i < maxPlayer; i++){
+        player[i].active = false;
+        /*player[i].basePos = (Vector2){0,0};
+        player[i].frame = 0;
+        player[i].frameTime = 0;
+        player[i].isShooting = false;
+        player[i].pos = (Vector2){0,0};
+        player[i].size = 0;*/
+    }
+}
+
+void resetProjects(Projects *project, int maxProjects){
+    for(int i = 0; i < maxProjects; i++){
+        project[i].active = false;
+    }
+}
+
+void resetAll(){
+    resetTower(towers, MAX_TOWERS);
+    
+    resetPlayer(archers, MAX_ARCHERS);
+    resetPlayer(cannons, MAX_CANNONS);
+    resetPlayer(wizards, MAX_WIZARDS);
+
+    resetProjects(arrows, MAX_ARROWS);
+    resetProjects(cannonballs, MAX_CANNONBALLS);
+    resetProjects(fireballs, MAX_FIREBALLS);
+}
+
 void recenterPlayers(Players *player, int playerCount, int newWidth, int newHeight ){
     float scaleX = (float)newWidth;
     float scaleY = (float)newHeight;

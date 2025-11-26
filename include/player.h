@@ -117,6 +117,7 @@ void RecenterTowers(int newWidth, int newHeight);
 void drawProjects(Projects *project, Texture2D projectTexture, bool hasFrames, int max, int quantFrames);
 void DrawPlayer(Players *player, Texture2D playerIdleTexture, Texture2D playerShootingTexture, int playerCount, int quantFrameShot, int quantFrameIdle);
 void DrawPlayerInvertido(Players *player, Texture2D playerIdleTexture, Texture2D playerShootingTexture, int playerCount, int quantFrameShot, int quantFrameIdle);
+void resetAll(void);
 
 void AddPlayer(Players *player, Vector2 pos, int max, int *playerCount, int screenWidth, int screenHeight);
 void shotProject(Projects *project, Vector2 start, Vector2 target, float speed, int enemyIndex, int max, bool hasFrames);

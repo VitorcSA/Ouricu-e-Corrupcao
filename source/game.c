@@ -47,11 +47,12 @@ void UpdateWaves(GameState *currentGameState, EnemyWave *wave, unsigned char *ma
 
         ResetWaves(wave);
         ResetEnemies(enemies, MAX_ENEMIES);
+        resetAll();
 
         tempoPassado += 1;
 
-        *currentGameState = MENU_STATE;
-        return;
+        *currentGameState = WAVE_COMPLETE_STATE;
+        return; 
     }
 
     // Se a wave não está ativa, inicia o cooldown
