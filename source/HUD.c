@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include "game.h"
 #include "telas.h"
+#include "enemies.h"
+#include "salvar.h"
 
 static bool hudVisible = false;
 static Vector2 hudPos;
@@ -347,7 +349,7 @@ void DrawSideHUDBig(float v1, float v2, float v3)
     DrawText("PODER", startX + 350, startY + 3, 17, WHITE);
 }
 
-void UpdateBars(int playerGold, int *prevGold, Texture2D fundo, GameState *currentGameState) {
+void UpdateBars(int playerGold, int *prevGold, int slot, Texture2D fundo, GameState *currentGameState, EnemyWave *wave) {
 
     if (playerGold > *prevGold) {
         *prevGold = playerGold;
@@ -373,6 +375,10 @@ void UpdateBars(int playerGold, int *prevGold, Texture2D fundo, GameState *curre
     }
 
     if(barsaude == 0 || barcomida == 0 || barpoder == 0){
+        ResetWaves(wave);
+        ResetEnemies(enemies, MAX_ENEMIES);
+        resetAll();
+        DeleteSave(slot);
         TelaGameOver(fundo);
         *currentGameState = SAVE_STATE;
     }
@@ -409,13 +415,17 @@ void writeLevel(int screenHeight){
     float textX = pos.x + size + 10;
     float textY = pos.y + size/2 - 15;
 
-    const char* niveis[] = {
-    "NÍVEL 1", "NÍVEL 2", "NÍVEL 3", "NÍVEL 4", "NÍVEL 5",
-    "NÍVEL 6", "NÍVEL 7", "NÍVEL 8", "NÍVEL 9", "NÍVEL 10",
-    "NÍVEL 11", "NÍVEL 12 - MAXIMO"
-    };
-    int i = level * 2 + 1;
+    int nivel = (int)(level * 2) + 1;
+    if(nivel > 12) nivel = 12;
 
-    if(i < 12)  DrawText(niveis[i], textX, textY, 30, WHITE);
-    else DrawText(niveis[11], textX, textY, 30, WHITE);
+    char *texto = malloc(32 * sizeof(char));
+
+    if (nivel < 12)
+        sprintf(texto, "NÍVEL %d", nivel);
+    else
+        sprintf(texto, "NÍVEL 12 - MAXIMO");
+
+    DrawText(texto, textX, textY, 30, WHITE);
+
+    free(texto);
 }

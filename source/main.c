@@ -243,7 +243,7 @@ int main() {
 
             DrawGoldHUDAt(&goldHUD, 20, 20);
             HUD_Draw();
-            UpdateBars(playerGold, &prevGold, fundo, &currentGameState);
+            UpdateBars(playerGold, &prevGold, slot, fundo, &currentGameState, &wave);
             if(vidaPortao <= 0){
                 ResetWaves(&wave);
                 ResetEnemies(enemies, MAX_ENEMIES);
