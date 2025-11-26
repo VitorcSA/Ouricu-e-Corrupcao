@@ -210,10 +210,12 @@ int main() {
         //Parte da loja
         case LOJA_STATE:
             funlojaAtiva(&currentGameState, &barsaude, &barcomida, &barpoder, &cannonUnlocked, &wizardUnlocked, &prevGold, &ownedTowers, &archerCount, &playerGold, screenWidth, screenHeight);
+            UpdateBars(playerGold, &prevGold, slot, fundo, &currentGameState, &wave);
         break;
 
         //Parte do jogo
         case GAME_STATE:
+            
 
             if (IsKeyPressed(KEY_ESCAPE)) {
                 currentGameState = PAUSE_STATE;
@@ -228,7 +230,6 @@ int main() {
             UpdateEnemy2(enemies, mapTower, cellWidth, cellHeight, dt, &vidaPortao);
             UpdatePlayer(mapTower, screenWidth, screenHeight);
             UpdateGoldHUD(&goldHUD, playerGold);
-
             ClearBackground((Color){20, 20, 30, 255});
             DrawEnemies2(enemies, walkTexture, MAX_ENEMIES);
             DrawTowers();

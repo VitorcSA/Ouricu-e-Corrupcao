@@ -362,17 +362,17 @@ void UpdateBars(int playerGold, int *prevGold, int slot, Texture2D fundo, GameSt
         int steps = delta / 10;
 
         barsaude -= steps * 0.05f;
-        if (barsaude < 0.0f){
-            barsaude = 0.0f;
-        }
+        if (barsaude < 0.0f) barsaude = 0.0f;
+        if (barsaude > 1.0f) barsaude = 1.0f;
+        
         barcomida -= steps * 0.08f;
-        if (barcomida < 0.0f){
-            barcomida = 0.0f;
-        }
+        if (barcomida < 0.0f) barcomida = 0.0f;
+        if (barcomida > 1.0f) barcomida = 1.0f;
+        
         barpoder -= steps * 0.02f;
-        if(barpoder < 0.0f){
-            barpoder = 0.0f;
-        }
+        if (barpoder < 0.0f) barpoder = 0.0f;
+        if (barpoder > 1.0f) barpoder = 1.0f;
+        
     }
 
     if(barsaude == 0 || barcomida == 0 || barpoder == 0){
