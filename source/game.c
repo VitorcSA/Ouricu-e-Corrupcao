@@ -103,6 +103,11 @@ void funlojaAtiva(GameState *currentGameState,float *barsaude, float *barcomida,
                 40, 
                 40, 
                 YELLOW );
+    
+    int hudX = (GetScreenWidth() - goldHUD.width) / 2;
+    int hudY = (GetScreenHeight() - goldHUD.height) / 2;
+
+    DrawGoldHUDAt(&goldHUD, hudX - 100, hudY + 100);
 
     int priceArcher = 0;
     int priceWizard = 250;
@@ -204,43 +209,7 @@ void funlojaAtiva(GameState *currentGameState,float *barsaude, float *barcomida,
 
     }
 
-    Rectangle btnBuyTower = { (screenWidth - bw) / 2,
-                               by + 390,
-                               bw,
-                               bh };
-
-    bool hovTor = CheckCollisionPointRec(mouseBuy, btnBuyTower);
-
-    DrawRectangleRec(btnBuyTower, hovTor ? (Color){70,70,70,255} : (Color){100,100,100,255});
-    DrawRectangleLinesEx(btnBuyTower, 2, BLACK);
-
-    DrawText ( "Comprar Torre", 
-                btnBuyTower.x + 10, 
-                btnBuyTower.y + 10, 
-                22, 
-                WHITE );
-
-    DrawText ( TextFormat("Preço: %d", priceTower), 
-                btnBuyTower.x + 10, 
-                btnBuyTower.y + 35, 
-                20, 
-                YELLOW );
-
-    if (hovTor && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-        if (*playerGold >= priceTower) {
-            *playerGold -= priceTower;
-            *ownedTowers += 1;
-            UpdateBars(*playerGold, prevGold);
-        }
-    }
-
-    DrawText ( TextFormat( "Torres: %d", *ownedTowers), 
-                btnBuyTower.x + 85, 
-                btnBuyTower.y + 20 + btnBuyTower.height + 10, 
-                20, 
-                WHITE );
-
-    int rightX = screenWidth - (bw + 100);   // distância da borda direita
+    int rightX = screenWidth - (bw + 100);
     int rightW = bw;
     int rightH = bh;
 
@@ -251,7 +220,8 @@ void funlojaAtiva(GameState *currentGameState,float *barsaude, float *barcomida,
     bool hovR1 = CheckCollisionPointRec(mouseRight, btnRight1);
     DrawRectangleRec(btnRight1, hovR1 ? (Color){60,60,90,255} : (Color){40,40,60,255});
     DrawRectangleLinesEx(btnRight1, 2, WHITE);
-    DrawText("Investir em Saúde", btnRight1.x + 10, btnRight1.y + 15, 22, WHITE);
+    DrawText("Investir em Saúde", btnRight1.x + 10, btnRight1.y + 10, 22, WHITE);
+    DrawText("Preço: 15", btnRight1.x + 10, btnRight1.y + 35, 18, YELLOW);
     int porcentagem = *barsaude * 100;
     DrawText(TextFormat("%d%%", porcentagem), btnRight1.x - 60, btnRight1.y + 15, 22, WHITE);
 
@@ -260,7 +230,8 @@ void funlojaAtiva(GameState *currentGameState,float *barsaude, float *barcomida,
     bool hovR2 = CheckCollisionPointRec(mouseRight, btnRight2);
     DrawRectangleRec(btnRight2, hovR2 ? (Color){60,60,90,255} : (Color){40,40,60,255});
     DrawRectangleLinesEx(btnRight2, 2, WHITE);
-    DrawText("Investir em Comida", btnRight2.x + 10, btnRight2.y + 15, 22, WHITE);
+    DrawText("Investir em Comida", btnRight2.x + 10, btnRight2.y + 10, 22, WHITE);
+    DrawText("Preço: 15", btnRight2.x + 10, btnRight2.y + 35, 18, YELLOW);
     int pct = *barcomida * 100;
     DrawText(TextFormat("%d%%", pct), btnRight2.x - 60, btnRight2.y + 15, 22, WHITE);
 
@@ -269,24 +240,40 @@ void funlojaAtiva(GameState *currentGameState,float *barsaude, float *barcomida,
     bool hovR3 = CheckCollisionPointRec(mouseRight, btnRight3);
     DrawRectangleRec(btnRight3, hovR3 ? (Color){60,60,90,255} : (Color){40,40,60,255});
     DrawRectangleLinesEx(btnRight3, 2, WHITE);
-    DrawText("Investir em Poder", btnRight3.x + 10, btnRight3.y + 15, 22, WHITE);
+    DrawText("Investir em Poder", btnRight3.x + 10, btnRight3.y + 10, 22, WHITE);
+    DrawText("Preço: 15", btnRight3.x + 10, btnRight3.y + 35, 18, YELLOW);
     int porcent = *barpoder * 100;
     DrawText(TextFormat("%d%%", porcent), btnRight3.x - 60, btnRight3.y + 15, 22, WHITE);
 
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-        if (hovR1) *barsaude += 0.1f;
-        if (*barsaude > 1.0f){
-            *barsaude = 1.0f;
+        if (hovR1){
+            if(*playerGold >= 15 && *barsaude < 1.0f){
+                *barsaude += 0.1f;
+                *playerGold -= 15;
+                if (*barsaude > 1.0f){
+                    *barsaude = 1.0f;
+                }
+            }
         }
 
-        if (hovR2) *barcomida += 0.1f;
-        if (*barcomida > 1.0f){
-            *barcomida = 1.0f;
+        if (hovR2){
+            if(*playerGold >= 15 && *barcomida < 1.0f){
+                *barcomida += 0.1f;
+                *playerGold -= 15;
+                if (*barcomida > 1.0f){
+                    *barcomida = 1.0f;
+                }
+            }
         }
 
-        if (hovR3) *barpoder += 0.1f;
-        if (*barpoder > 1.0f){
-            *barpoder = 1.0f;
+        if (hovR3){
+            if(*playerGold >= 15 && *barpoder < 1.0f){
+                *barpoder += 0.1f;
+                *playerGold -= 15;
+                if (*barpoder > 1.0f){
+                    *barpoder = 1.0f;
+                }
+            }
         }
     }
 

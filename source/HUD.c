@@ -15,6 +15,7 @@ float barsaude = 1.0f;
 float barcomida = 1.0f;
 float barpoder = 1.0f;
 
+GoldHUD goldHUD;
 Texture2D cobreTexture;
 Texture2D ferroTexture;
 Texture2D bronzeTexture;
@@ -93,18 +94,21 @@ void HUD_Update(void) {
 
         if (CheckCollisionPointRec(mouse, archerBtn)) {
                 chosenUnit = UNIT_ARCHER;
+                playerGold -= 20;
                 hudVisible = false;
     }
 
         if (CheckCollisionPointRec(mouse, wizardBtn)) {
             if (wizardUnlocked) {
                 chosenUnit = UNIT_WIZARD;
+                playerGold -= 20;
                 hudVisible = false;
     }
 }
         else if (CheckCollisionPointRec(mouse, cannonBtn)) {
             if (cannonUnlocked) {
                 chosenUnit = UNIT_CANNON;
+                playerGold -= 20;
                 hudVisible = false;
     }
 }
@@ -124,17 +128,22 @@ void HUD_Draw(void) {
     DrawRectangleLines(hudPos.x, hudPos.y + 2 * section, hudWidth, section, DARKGRAY);
 
     DrawText("Archer", hudPos.x + 10, hudPos.y + 10, 20, BLACK);
+    DrawText("20 Gold", hudPos.x + 120, hudPos.y + 10, 20, YELLOW);
 
-if (wizardUnlocked)
+if (wizardUnlocked){
     DrawText("Wizard", hudPos.x + 10, hudPos.y + section + 10, 20, BLACK);
-else
+    DrawText("20 Gold", hudPos.x + 120, hudPos.y + section + 10, 20, YELLOW);
+}
+else{
     DrawText("Wizard (Bloqueado)", hudPos.x + 10, hudPos.y + section + 10, 20, RED);
-
-if (cannonUnlocked)
+}
+if (cannonUnlocked){
     DrawText("Cannon", hudPos.x + 10, hudPos.y + 2*section + 10, 20, BLACK);
-else
+    DrawText("20 Gold", hudPos.x + 120, hudPos.y + 2*section + 10, 20, YELLOW);
+}
+else{
     DrawText("Cannon (Bloqueado)", hudPos.x + 10, hudPos.y + 2*section + 10, 20, RED);
-
+}
 }
 
 void InitGoldHUD(GoldHUD *hud)
@@ -156,9 +165,7 @@ void UpdateGoldHUD(GoldHUD *hud, int playerGold)
     hud->gold = playerGold;
 }
 
-void DrawGoldHUDAt(GoldHUD *hud) {
-    float x = 20;
-    float y = 20;
+void DrawGoldHUDAt(GoldHUD *hud, float x, float y) {
     float width = 220;
     float height = 60;
 
@@ -348,15 +355,15 @@ void UpdateBars(int playerGold, int *prevGold) {
     if (delta >= 10) {
         int steps = delta / 10;
 
-        barsaude -= steps * 0.2f;
+        barsaude -= steps * 0.05f;
         if (barsaude < 0.0f){
             barsaude = 0.0f;
         }
-        barcomida -= steps * 0.3f;
+        barcomida -= steps * 0.08f;
         if (barcomida < 0.0f){
             barcomida = 0.0f;
         }
-        barpoder -= steps * 0.1f;
+        barpoder -= steps * 0.02f;
         if(barpoder < 0.0f){
             barpoder = 0.0f;
         }

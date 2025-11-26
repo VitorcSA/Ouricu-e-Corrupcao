@@ -52,8 +52,11 @@ typedef struct {
     int gold;
     Rectangle rect;
     Texture2D coinTexture;
+    int width;
+    int height;
 } GoldHUD;
 
+extern GoldHUD goldHUD;
 extern Texture2D cobreTexture;
 extern Texture2D ferroTexture;
 extern Texture2D bronzeTexture;
@@ -75,7 +78,7 @@ int HUD_GetSelectedTower(void);
 
 void InitGoldHUD(GoldHUD *hud);
 void UpdateGoldHUD(GoldHUD *hud, int gold);
-void DrawGoldHUDAt(GoldHUD *hud);
+void DrawGoldHUDAt(GoldHUD *hud, float x, float y);
 
 void InitRanking(void);
 void RankingHUD(int screenHeight);

@@ -54,7 +54,6 @@ int main() {
     int prevGold = -1;
     extern int playerGold;
 
-    GoldHUD goldHUD;
     EnemyWave wave = {0};
     SaveData save;
     GameState currentGameState;
@@ -204,7 +203,7 @@ int main() {
             criarBotao(&currentGameState, LOJA_STATE, BTN_LOJA_COR, BTN_LOJA_COR_HOVER, BTN_LOJA_LINES_COR, 
                         fundoHeight, true, textoBtnLoja, screenWidth, BTN_LOJA_WIDTH, BTN_LOJA_HEIGHT, BTN_LOJA_X, BTN_LOJA_Y, BTN_LOJA_FONTE);
 
-            DrawGoldHUDAt(&goldHUD);
+            DrawGoldHUDAt(&goldHUD, 20, 20);
 
         break;
 
@@ -242,8 +241,9 @@ int main() {
             drawProjects(cannonballs, cannonballTexture, false, MAX_CANNONBALLS, CANNONBALL_QT_FRAMES);
             drawProjects(fireballs, fireballTexture, true, MAX_FIREBALLS, FIREBALL_QT_FRAMES);
 
-            DrawGoldHUDAt(&goldHUD);
+            DrawGoldHUDAt(&goldHUD, 20, 20);
             HUD_Draw();
+            UpdateBars(playerGold, &prevGold);
             if(vidaPortao <= 0){
                 ResetWaves(&wave);
                 ResetEnemies(enemies, MAX_ENEMIES);
@@ -270,7 +270,7 @@ int main() {
             drawProjects(cannonballs, cannonballTexture, false, MAX_CANNONBALLS, CANNONBALL_QT_FRAMES);
             drawProjects(fireballs, fireballTexture, true, MAX_FIREBALLS, FIREBALL_QT_FRAMES);
 
-            DrawGoldHUDAt(&goldHUD);
+            DrawGoldHUDAt(&goldHUD, 20, 20);
             HUD_Draw();
 
             //deixa parte atras do pause transparente cinza
