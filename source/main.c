@@ -41,7 +41,7 @@ void DrawTutorial(void) {
         y += 40;
     }
 }
-
+float waveCompleteTimer = 0.0f;
 int main() {
     //Configuração da janela
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
@@ -80,7 +80,7 @@ int main() {
 
     bool borderless = false;
 
-    int slot;
+    int slot = 4;
     vidaPortao = 3;
     currentGameState = SAVE_STATE;
     wave.totalWaves = 3 + level * 2;
@@ -109,7 +109,6 @@ int main() {
     InitRanking();
 
     while (!WindowShouldClose()) {
-        UpdateSave(&save, barcomida, barpoder, barsaude, level, tempoPassado);
         int screenWidth = GetScreenWidth();
         int screenHeight = GetScreenHeight();
         float cellWidth = screenWidth / (float)COLS;
@@ -171,7 +170,6 @@ int main() {
 
         //Parte do reino
         case MENU_STATE:
-            SaveGame(&save, slot);
             vidaPortao = 3;
 
             float fundoHeight = screenHeight - hudHeight;
@@ -247,6 +245,9 @@ int main() {
             DrawGoldHUDAt(&goldHUD);
             HUD_Draw();
             if(vidaPortao <= 0){
+                ResetWaves(&wave);
+                ResetEnemies(enemies, MAX_ENEMIES);
+                resetAll();
                 DeleteSave(slot);
                 TelaGameOver(fundo);
                 currentGameState = SAVE_STATE;
@@ -311,12 +312,47 @@ int main() {
                         fundoHeight, false, textoBtnVoltarReino, screenWidth, BTN_VOLTAR_REINO_WIDTH, BTN_VOLTAR_REINO_HEIGHT, BTN_VOLTAR_REINO_X, BTN_VOLTAR_REINO_Y, BTN_VOLTAR_REINO_FONTE);
 
         break;
+        case WAVE_COMPLETE_STATE: {
+            DrawRectangle(0, 0, screenWidth, screenHeight, (Color){20, 20, 30, 255});
+
+            const char *msg = "Horda concluida";
+            const char *sub = "Pressione ENTER para voltar ao reino";
+
+            int msgFont = 40;
+            int subFont = 24;
+
+            int msgWidth = MeasureText(msg, msgFont);
+            int subWidth = MeasureText(sub, subFont);
+
+            DrawText(
+                msg,
+                (screenWidth - msgWidth) / 2,
+                screenHeight / 2 - 40,
+                msgFont,
+                YELLOW
+            );
+
+            DrawText(
+                sub,
+                (screenWidth - subWidth) / 2,
+                screenHeight / 2 + 20,
+                subFont,
+                LIGHTGRAY
+            );
+
+            waveCompleteTimer += GetFrameTime();
+
+            if (IsKeyPressed(KEY_ENTER)) {
+                waveCompleteTimer = 0.0f;
+                currentGameState = MENU_STATE;
+            }
+        } break;
 
         }
 
         EndDrawing();
     }
-
+    UpdateSave(&save, barcomida, barpoder, barsaude, level, tempoPassado);
     SaveGame(&save, slot);
     UnloadTexture(titulo);
     UnloadTexture(fundo);

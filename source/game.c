@@ -47,10 +47,11 @@ void UpdateWaves(GameState *currentGameState, EnemyWave *wave, unsigned char *ma
 
         ResetWaves(wave);
         ResetEnemies(enemies, MAX_ENEMIES);
+        resetAll();
 
         tempoPassado += 1;
 
-        *currentGameState = MENU_STATE;
+        *currentGameState = WAVE_COMPLETE_STATE;
         return;
     }
 
@@ -59,7 +60,8 @@ void UpdateWaves(GameState *currentGameState, EnemyWave *wave, unsigned char *ma
         waveCooldown += deltaTime;
 
         // Quando o cooldown acabar, inicia nova wave
-        if (waveCooldown >= timeBetweenWaves) {
+        if (waveCooldown >= timeBetweenWaves && TodosInimigosMortos(enemies, MAX_ENEMIES)) {
+            enemyIndex = 0;
             waveCooldown = 0;
             StartNewWave(wave);
         }

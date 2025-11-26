@@ -20,6 +20,7 @@ typedef enum {
     GAME_STATE,
     PAUSE_STATE,
     SAVE_STATE,
+    WAVE_COMPLETE_STATE,
 } GameState;    
 
 extern float level;
@@ -28,5 +29,6 @@ extern int tempoPassado;
 void StartNewWave(EnemyWave *wave);
 void UpdateWaves(GameState *currentGameState, EnemyWave *wave, unsigned char *mapTower, float cellWidth, float cellHeight, float deltaTime);
 void funlojaAtiva(GameState *currentGameState,float *barsaude, float *barcomida, float *barpoder, bool *cannonUnlocked, bool *wizardUnlocked, int *prevGold, int *ownedTowers, int *archerCount, int *playerGold, int screenWidth, int screenHeight);
+void ResetWaves(EnemyWave *wave);
 
 #endif
