@@ -536,6 +536,7 @@ void drawProjects(Projects *project, Texture2D projectTexture, bool hasFrames, i
 void resetTower(Tower *towers, int *towerCount, int maxTowers){
     for(int i = 0; i < maxTowers; i++){
         towers[i].active = false;
+        towers[i].hasDefender = false;
     }
     *towerCount = 0;
 }
@@ -544,6 +545,12 @@ void resetPlayer(Players *player, int *playerCount, int maxPlayer){
     
     for(int i = 0; i < maxPlayer; i++){
         player[i].active = false;
+        player[i].basePos = (Vector2){0, 0};
+        player[i].frame = 0;
+        player[i].frameTime = 0;
+        player[i].pos = (Vector2){0,0};
+        player[i].shotTimer = 0;
+        player[i].size = 0;
     }
     *playerCount = 0;
 }
