@@ -59,7 +59,8 @@ void UpdateWaves(GameState *currentGameState, EnemyWave *wave, unsigned char *ma
         waveCooldown += deltaTime;
 
         // Quando o cooldown acabar, inicia nova wave
-        if (waveCooldown >= timeBetweenWaves) {
+        if (waveCooldown >= timeBetweenWaves && TodosInimigosMortos(enemies, MAX_ENEMIES)) {
+            enemyIndex = 0;
             waveCooldown = 0;
             StartNewWave(wave);
         }

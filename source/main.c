@@ -80,7 +80,7 @@ int main() {
 
     bool borderless = false;
 
-    int slot;
+    int slot = 4;
     vidaPortao = 3;
     currentGameState = SAVE_STATE;
     wave.totalWaves = 3 + level * 2;
@@ -109,7 +109,6 @@ int main() {
     InitRanking();
 
     while (!WindowShouldClose()) {
-        UpdateSave(&save, barcomida, barpoder, barsaude, level, tempoPassado);
         int screenWidth = GetScreenWidth();
         int screenHeight = GetScreenHeight();
         float cellWidth = screenWidth / (float)COLS;
@@ -171,7 +170,6 @@ int main() {
 
         //Parte do reino
         case MENU_STATE:
-            SaveGame(&save, slot);
             vidaPortao = 3;
 
             float fundoHeight = screenHeight - hudHeight;
@@ -316,7 +314,7 @@ int main() {
 
         EndDrawing();
     }
-
+    UpdateSave(&save, barcomida, barpoder, barsaude, level, tempoPassado);
     SaveGame(&save, slot);
     UnloadTexture(titulo);
     UnloadTexture(fundo);
