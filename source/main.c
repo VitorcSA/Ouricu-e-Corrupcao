@@ -245,6 +245,9 @@ int main() {
             DrawGoldHUDAt(&goldHUD);
             HUD_Draw();
             if(vidaPortao <= 0){
+                ResetWaves(&wave);
+                ResetEnemies(enemies, MAX_ENEMIES);
+                resetAll();
                 DeleteSave(slot);
                 TelaGameOver(fundo);
                 currentGameState = SAVE_STATE;
