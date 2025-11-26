@@ -54,7 +54,7 @@ int main() {
     int prevGold = -1;
     extern int playerGold;
 
-    EnemyWave wave = {0};
+    WaveList waves;
     SaveData save;
     GameState currentGameState;
 
@@ -82,7 +82,7 @@ int main() {
     int slot = 4;
     vidaPortao = 3;
     currentGameState = SAVE_STATE;
-    wave.totalWaves = 3 + level * 2;
+    CreateWaveList(&waves, 3 + (int)level * 2);
 
     const char *arquivoMapaTowerDefense = "assets/mapa/mapaTowerDefense";
     char *textoBtnStart = "JOGAR";
@@ -210,7 +210,7 @@ int main() {
         //Parte da loja
         case LOJA_STATE:
             funlojaAtiva(&currentGameState, &barsaude, &barcomida, &barpoder, &cannonUnlocked, &wizardUnlocked, &prevGold, &ownedTowers, &archerCount, &playerGold, screenWidth, screenHeight);
-            UpdateBars(playerGold, &prevGold, slot, false, fundo, &currentGameState, &wave);
+            UpdateBars(playerGold, &prevGold, slot, false, fundo, &currentGameState, &waves);
         break;
 
         //Parte do jogo
@@ -225,11 +225,15 @@ int main() {
             drawLinesMap(mapTower);
             float dt = GetFrameTime();
 
-            UpdateWaves(&currentGameState, &wave, mapTower, cellWidth, cellHeight, dt);
+            UpdateWaves(&currentGameState, &waves, mapTower, cellWidth, cellHeight, dt);
 
             UpdateEnemy2(enemies, mapTower, cellWidth, cellHeight, dt, &vidaPortao);
             UpdatePlayer(mapTower, screenWidth, screenHeight);
+
             UpdateGoldHUD(&goldHUD, playerGold);
+
+            UpdateBars(playerGold, &prevGold, slot, true, fundo, &currentGameState, &waves);
+
             ClearBackground((Color){20, 20, 30, 255});
             DrawEnemies2(enemies, walkTexture, MAX_ENEMIES);
             DrawTowers();
@@ -245,9 +249,8 @@ int main() {
             DrawSideHUDBig(barsaude, barcomida, barpoder);
             DrawGoldHUDAt(&goldHUD, 20, 20);
             HUD_Draw();
-            UpdateBars(playerGold, &prevGold, slot, true, fundo, &currentGameState, &wave);
             if(vidaPortao <= 0){
-                ResetWaves(&wave);
+                ResetWaveList(&waves);
                 ResetEnemies(enemies, MAX_ENEMIES);
                 resetAll();
                 DeleteSave(slot);

@@ -4,6 +4,7 @@
 #include <enemies.h>
 #include <HUD.h>
 #include <string.h>
+#include <stdlib.h>
 
 float level = 0.0f;
 
@@ -13,82 +14,123 @@ static float waveCooldown = 0.0f;       // contador do cooldown
 static int enemyIndex = 0;
 int tempoPassado = 0;
 
-void StartNewWave(EnemyWave *wave) {
-    wave->number++;
-    wave->enemiesToSpawn = 5 + wave->number * 2;   // cada horda tem mais inimigos
-    wave->enemiesSpawned = 0;
-    wave->spawnInterval = 1.0f - (wave->number * 0.02f); // spawn mais rápido
-    if (wave->spawnInterval < 0.1f) wave->spawnInterval = 0.1f;
+EnemyWave *CreateWave(int number) {
+    EnemyWave *w = malloc(sizeof(EnemyWave));
 
-    wave->spawnTimer = 0.0f;
-    wave->active = true;
+    w->number = number;
+    w->enemiesToSpawn = 5 + number * 2; // cada horda tem mais inimigos
+    w->enemiesSpawned = 0;
+
+    w->spawnInterval = 1.0f - (number * 0.02f); // spawn mais rápido
+    if (w->spawnInterval < 0.1f)
+        w->spawnInterval = 0.1f;
+
+    w->spawnTimer = 0;
+    w->active = false;
+    w->next = NULL;
+
+    return w;
+}
+
+void CreateWaveList(WaveList *waves, int totalWaves) {
+    waves->totalWaves = totalWaves;
+    waves->head = NULL;
+    waves->current = NULL;
+
+    EnemyWave *prev = NULL;
+
+    for (int i = 1; i <= totalWaves; i++) {
+        EnemyWave *newWave = CreateWave(i);
+
+        if (waves->head == NULL) {
+            waves->head = newWave;
+        } else {
+            prev->next = newWave;
+        }
+
+        prev = newWave;
+    }
+
+    waves->current = waves->head;
+}
+
+void ResetWaveList(WaveList *waves) {
+    EnemyWave *cur = waves->head;
+
+    while (cur != NULL) {
+        EnemyWave *next = cur->next;
+        free(cur);
+        cur = next;
+    }
+
+    waves->head = NULL;
+    waves->current = NULL;
+}
+
+void StartWave(EnemyWave *w) {
+    w->active = true;
+    w->spawnTimer = 0;
 
     printf("Iniciando horda %d com %d inimigos\n",
-           wave->number, wave->enemiesToSpawn);
+           w->number, w->enemiesToSpawn);
 }
 
-void ResetWaves(EnemyWave *wave) {
-    wave->number = 0;
-    wave->enemiesToSpawn = 0;
-    wave->enemiesSpawned = 0;
-    wave->spawnInterval = 0;
-    wave->spawnTimer = 0;
-    wave->active = false;
+void UpdateWaves(GameState *currentGameState, WaveList *waves, unsigned char *mapTower, float cellWidth, float cellHeight, float deltaTime) {
 
-    wave->totalWaves = 3 + (int)level * 2; 
-}
+    EnemyWave *wave = waves->current;
 
-void UpdateWaves(GameState *currentGameState, EnemyWave *wave, unsigned char *mapTower, float cellWidth, float cellHeight, float deltaTime) {
-
-    if ((wave->number >= wave->totalWaves && !wave->active) && TodosInimigosMortos(enemies, MAX_ENEMIES)) {
+    if (wave == NULL && TodosInimigosMortos(enemies, MAX_ENEMIES)) {
         printf("TODAS AS WAVES COMPLETAS! Voltando ao menu...\n");
 
         level += 0.5f;
-        if(level > 6.0f) level = 6.0f;
+        if (level > 6.0f) level = 6.0f;
 
-        ResetWaves(wave);
+        ResetWaveList(waves);
+        CreateWaveList(waves, 3 + (int)level * 2);
         ResetEnemies(enemies, MAX_ENEMIES);
         resetAll();
 
         tempoPassado += 1;
 
         *currentGameState = WAVE_COMPLETE_STATE;
-        return; 
-    }
-
-    // Se a wave não está ativa, inicia o cooldown
-    if (!wave->active) {
-        waveCooldown += deltaTime;
-
-        // Quando o cooldown acabar, inicia nova wave
-        if (waveCooldown >= timeBetweenWaves && TodosInimigosMortos(enemies, MAX_ENEMIES)) {
-            enemyIndex = 0;
-            waveCooldown = 0;
-            StartNewWave(wave);
-        }
         return;
     }
 
-    // Atualiza timer interno da wave
+    if (!wave->active) {
+        waveCooldown += deltaTime;
+
+        if (waveCooldown >= timeBetweenWaves &&
+            TodosInimigosMortos(enemies, MAX_ENEMIES)) {
+
+            waveCooldown = 0;
+            StartWave(wave);
+        }
+
+        return;
+    }
+
     wave->spawnTimer += deltaTime;
 
-    // Pode spawnar o próximo inimigo?
-    if (wave->spawnTimer >= wave->spawnInterval
-        && wave->enemiesSpawned < wave->enemiesToSpawn) {
+    if (wave->spawnTimer >= wave->spawnInterval &&
+        wave->enemiesSpawned < wave->enemiesToSpawn) {
 
-        SpawnEnemy(enemies, mapTower, cellWidth, cellHeight, enemyIndex);
-        enemyIndex += 1;
-        printf("%d\n", enemyIndex); 
+        SpawnEnemy(enemies, mapTower, cellWidth, cellHeight, wave->enemiesSpawned);
+
         wave->enemiesSpawned++;
         wave->spawnTimer = 0;
     }
 
-    // Se todos foram spawnados e todos morreram → wave acabou
-    if (wave->enemiesSpawned == wave->enemiesToSpawn ) {
+    if (wave->enemiesSpawned == wave->enemiesToSpawn &&
+    TodosInimigosMortos(enemies, MAX_ENEMIES)) {
 
         wave->active = false;
 
         printf("Horda %d concluída!\n", wave->number);
+
+        // Ir para a próxima wave
+        waves->current = wave->next;
+
+        
     }
 }
 
@@ -276,7 +318,7 @@ void funlojaAtiva(GameState *currentGameState,float *barsaude, float *barcomida,
             if(*playerGold >= 15 && *barpoder < 1.0f){
                 *barpoder += 0.1f;
                 *playerGold -= 15;
-                
+
                 if (*barpoder > 1.0f){
                     *barpoder = 1.0f;
                 }

@@ -353,7 +353,7 @@ void DrawSideHUDBig(float v1, float v2, float v3)
     DrawText("PODER", startX + 350, startY + 3, 17, WHITE);
 }
 
-void UpdateBars(int playerGold, int *prevGold, int slot, bool diminuirBarras, Texture2D fundo, GameState *currentGameState, EnemyWave *wave) {
+void UpdateBars(int playerGold, int *prevGold, int slot, bool diminuirBarras, Texture2D fundo, GameState *currentGameState, WaveList *waves) {
 
     if (playerGold > *prevGold) {
         *prevGold = playerGold;
@@ -382,7 +382,7 @@ void UpdateBars(int playerGold, int *prevGold, int slot, bool diminuirBarras, Te
     if (barpoder > 1.0f) barpoder = 1.0f;
 
     if(barsaude == 0 || barcomida == 0 || barpoder == 0){
-        ResetWaves(wave);
+        ResetWaveList(waves);
         ResetEnemies(enemies, MAX_ENEMIES);
         resetAll();
         DeleteSave(slot);
