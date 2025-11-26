@@ -7,5 +7,6 @@
 void TelaLogo(Texture2D logo);
 
 void TelaTitulo(Texture2D titulo, Texture2D fundo);
+void TelaGameOver(Texture2D fundo);
 
 #endif

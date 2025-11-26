@@ -20,6 +20,7 @@ bool SaveNotEmpty(int slot);
 void SaveGame(SaveData *save, int slot);
 int LoadGame(SaveData *save, int slot);
 int SelectSaveSlotMenu(const char *titulo, bool *isNovoJogo);
+void DrawSaveMenuSprites(Texture2D archerTexture);
 void StartNewGame(SaveData *save);
 void SaveGold(int playerGold);
 int LoadGold(void);

@@ -89,7 +89,7 @@ bool TodosInimigosMortos(Enemy *enemies, int maxEnemies) {
             return false;
         }
     }
-    return true; // nenhum ativo → todos mortos
+    return true;
 }
 
 void ResetEnemies(Enemy *enemies, int maxEnemies) {
@@ -108,10 +108,10 @@ void SpawnEnemy(Enemy *enemy, unsigned char *map, float tileWidth, float tileHei
                                               startTile.y * tileHeight + tileHeight/2 };
             enemy[i].target = GetNextTile(startTile, startTile, map);
             enemy[i].lastTarget = startTile;
-            enemy[i].speed = 2.0f; // inimigo anda 3 tiles por segundo
+            enemy[i].speed = 2.0f;
             enemy[i].frame = 0;
             enemy[i].frameTime = 0;
-            enemy[i]. currentHealth = 10;
+            enemy[i]. currentHealth = 30;
         }
 }
 

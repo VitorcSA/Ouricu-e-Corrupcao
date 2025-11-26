@@ -104,8 +104,8 @@ void funlojaAtiva(GameState *currentGameState,float *barsaude, float *barcomida,
                 YELLOW );
 
     int priceArcher = 0;
-    int priceWizard = 0;
-    int priceCannon = 0;
+    int priceWizard = 250;
+    int priceCannon = 500;
     int priceTower = 10;
 
     int bx = 100;

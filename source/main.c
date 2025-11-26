@@ -76,6 +76,7 @@ int main() {
     //Tela de inicio do reino
     //TelaLogo(logo);
     TelaTitulo(titulo, fundo);
+    InitPlayer();
 
     //Parte de saves
     bool isNovoJogo;
@@ -118,7 +119,6 @@ int main() {
 
     InitEnemiesTexture();
     InitEnemy(enemies, MAX_NORMAL_ENEMIES_HEALTH, MAX_ENEMIES);
-    InitPlayer();
     initTiles();
     InitGoldHUD(&goldHUD);
     InitRanking();
@@ -257,6 +257,7 @@ int main() {
             HUD_Draw();
             if(vidaPortao <= 0){
                 isGameOver = true;
+                TelaGameOver(fundo);
             }
 
         break;

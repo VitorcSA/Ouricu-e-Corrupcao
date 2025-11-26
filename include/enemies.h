@@ -11,7 +11,7 @@
 
 #define ENEMY_QT_FRAMES 8
 
-#define MAX_NORMAL_ENEMIES_HEALTH 10.0f
+#define MAX_NORMAL_ENEMIES_HEALTH 30.0f
 
 typedef struct {
     Vector2 pos;        // posição atual em tiles
