@@ -107,7 +107,7 @@ int main() {
     InitGoldHUD(&goldHUD);
     InitRanking();
 
-    while (!WindowShouldClose()) {
+    while (!WindowShouldClose() && slot != -1) {
         int screenWidth = GetScreenWidth();
         int screenHeight = GetScreenHeight();
         float cellWidth = screenWidth / (float)COLS;
