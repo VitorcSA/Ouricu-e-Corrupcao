@@ -41,7 +41,7 @@ void DrawTutorial(void) {
         y += 40;
     }
 }
-
+float waveCompleteTimer = 0.0f;
 int main() {
     //Configuração da janela
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
@@ -54,7 +54,6 @@ int main() {
     int prevGold = -1;
     extern int playerGold;
 
-    GoldHUD goldHUD;
     EnemyWave wave = {0};
     SaveData save;
     GameState currentGameState;
@@ -204,7 +203,7 @@ int main() {
             criarBotao(&currentGameState, LOJA_STATE, BTN_LOJA_COR, BTN_LOJA_COR_HOVER, BTN_LOJA_LINES_COR, 
                         fundoHeight, true, textoBtnLoja, screenWidth, BTN_LOJA_WIDTH, BTN_LOJA_HEIGHT, BTN_LOJA_X, BTN_LOJA_Y, BTN_LOJA_FONTE);
 
-            DrawGoldHUDAt(&goldHUD);
+            DrawGoldHUDAt(&goldHUD, 20, 20);
 
         break;
 
@@ -243,8 +242,9 @@ int main() {
             drawProjects(cannonballs, cannonballTexture, false, MAX_CANNONBALLS, CANNONBALL_QT_FRAMES);
             drawProjects(fireballs, fireballTexture, true, MAX_FIREBALLS, FIREBALL_QT_FRAMES);
 
-            DrawGoldHUDAt(&goldHUD);
+            DrawGoldHUDAt(&goldHUD, 20, 20);
             HUD_Draw();
+            UpdateBars(playerGold, &prevGold);
             if(vidaPortao <= 0){
                 ResetWaves(&wave);
                 ResetEnemies(enemies, MAX_ENEMIES);
@@ -271,7 +271,7 @@ int main() {
             drawProjects(cannonballs, cannonballTexture, false, MAX_CANNONBALLS, CANNONBALL_QT_FRAMES);
             drawProjects(fireballs, fireballTexture, true, MAX_FIREBALLS, FIREBALL_QT_FRAMES);
 
-            DrawGoldHUDAt(&goldHUD);
+            DrawGoldHUDAt(&goldHUD, 20, 20);
             HUD_Draw();
 
             //deixa parte atras do pause transparente cinza
@@ -313,6 +313,41 @@ int main() {
                         fundoHeight, false, textoBtnVoltarReino, screenWidth, BTN_VOLTAR_REINO_WIDTH, BTN_VOLTAR_REINO_HEIGHT, BTN_VOLTAR_REINO_X, BTN_VOLTAR_REINO_Y, BTN_VOLTAR_REINO_FONTE);
 
         break;
+        case WAVE_COMPLETE_STATE: {
+            DrawRectangle(0, 0, screenWidth, screenHeight, (Color){20, 20, 30, 255});
+
+            const char *msg = "Horda concluida";
+            const char *sub = "Pressione ENTER para voltar ao reino";
+
+            int msgFont = 40;
+            int subFont = 24;
+
+            int msgWidth = MeasureText(msg, msgFont);
+            int subWidth = MeasureText(sub, subFont);
+
+            DrawText(
+                msg,
+                (screenWidth - msgWidth) / 2,
+                screenHeight / 2 - 40,
+                msgFont,
+                YELLOW
+            );
+
+            DrawText(
+                sub,
+                (screenWidth - subWidth) / 2,
+                screenHeight / 2 + 20,
+                subFont,
+                LIGHTGRAY
+            );
+
+            waveCompleteTimer += GetFrameTime();
+
+            if (IsKeyPressed(KEY_ENTER)) {
+                waveCompleteTimer = 0.0f;
+                currentGameState = MENU_STATE;
+            }
+        } break;
 
         }
 

@@ -20,6 +20,7 @@ typedef enum {
     GAME_STATE,
     PAUSE_STATE,
     SAVE_STATE,
+    WAVE_COMPLETE_STATE,
 } GameState;    
 
 extern float level;

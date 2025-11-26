@@ -12,6 +12,8 @@ Texture2D walkTexture;
 Texture2D OrcTexture;
 
 int vidaPortao;
+float baseEnemyHealth = 0.0f;   
+extern float level;  
 
 Vector2 FindStart(unsigned char *map) {
     for (int x = 0; x < ROWS; x++) {
@@ -68,7 +70,7 @@ void InitEnemy(Enemy *enemy, float health, int maxEnemys){
     float cellHeight = (float)GetScreenHeight() / (float)ROWS;
 
     float s = (cellWidth < cellHeight) ? cellWidth : cellHeight;
-
+    baseEnemyHealth = health;
     for (int i = 0; i < maxEnemys; i++) {
         enemy[i].active = false;
         enemy[i].pos = (Vector2){0, 0};
@@ -101,18 +103,35 @@ void ResetEnemies(Enemy *enemies, int maxEnemies) {
 void SpawnEnemy(Enemy *enemy, unsigned char *map, float tileWidth, float tileHeight, int i) {
     Vector2 startTile = FindStart(map);
 
-        if (!enemy[i].active) {
-            enemy[i].active = true;
-            enemy[i].pos = startTile;
-            enemy[i].pixelPos = (Vector2){ startTile.x * tileWidth + tileWidth/2,
-                                              startTile.y * tileHeight + tileHeight/2 };
-            enemy[i].target = GetNextTile(startTile, startTile, map);
-            enemy[i].lastTarget = startTile;
-            enemy[i].speed = 2.0f;
-            enemy[i].frame = 0;
-            enemy[i].frameTime = 0;
-            enemy[i]. currentHealth = 30;
-        }
+    if (!enemy[i].active) {
+        enemy[i].active = true;
+        enemy[i].pos = startTile;
+        enemy[i].pixelPos = (Vector2){
+            startTile.x * tileWidth + tileWidth / 2,
+            startTile.y * tileHeight + tileHeight / 2
+        };
+        enemy[i].target = GetNextTile(startTile, startTile, map);
+        enemy[i].lastTarget = startTile;
+        enemy[i].speed = 2.0f;
+        enemy[i].frame = 0;
+        enemy[i].frameTime = 0;
+
+        // vida escalando por nivel 
+        float effectiveLevel = level;
+
+       
+        if (effectiveLevel < 0.0f) effectiveLevel = 0.0f;
+
+        // 25 de vida extra por ponto de level
+        float bonusPerLevel = 25.0f;
+
+        
+        float scaledHealth = baseEnemyHealth + effectiveLevel * bonusPerLevel;
+
+        enemy[i].health = scaledHealth;
+        enemy[i].currentHealth = scaledHealth;
+    
+    }
 }
 
 void UpdateEnemy2(Enemy *enemy, unsigned char *map, float tileWidth, float tileHeight, float delta, int *vidaPortao) {
