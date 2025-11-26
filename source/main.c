@@ -241,6 +241,7 @@ int main() {
             drawProjects(cannonballs, cannonballTexture, false, MAX_CANNONBALLS, CANNONBALL_QT_FRAMES);
             drawProjects(fireballs, fireballTexture, true, MAX_FIREBALLS, FIREBALL_QT_FRAMES);
 
+            DrawSideHUDBig(barsaude, barcomida, barpoder);
             DrawGoldHUDAt(&goldHUD, 20, 20);
             HUD_Draw();
             UpdateBars(playerGold, &prevGold, slot, fundo, &currentGameState, &wave);

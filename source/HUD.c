@@ -6,6 +6,7 @@
 #include "telas.h"
 #include "enemies.h"
 #include "salvar.h"
+#include <stdlib.h>
 
 static bool hudVisible = false;
 static Vector2 hudPos;
