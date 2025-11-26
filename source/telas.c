@@ -1,6 +1,6 @@
 #include <raylib.h>
 #include <math.h>
-#include "telaInicio.h"
+#include "telas.h"
 
 void TelaLogo(Texture2D logo)
 {

@@ -1,5 +1,5 @@
-#ifndef telaInicio_H
-#define telaInicio_H
+#ifndef TELAS_H
+#define TELAS_H
 
 #include <raylib.h>
 #include <math.h>

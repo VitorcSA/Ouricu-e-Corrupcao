@@ -22,5 +22,7 @@ int LoadGame(SaveData *save, int slot);
 int SelectSaveSlotMenu(const char *titulo, bool *isNovoJogo);
 void DrawSaveMenuSprites(Texture2D archerTexture);
 void StartNewGame(SaveData *save);
+int saveSelection(SaveData *save, float *barcomida, float *barpoder, float *barsaude, float *level, int *tempoPassado);
+void DeleteSave(int slot);
 
 #endif

@@ -173,6 +173,41 @@ bool SaveNotEmpty(int slot) {
     return true;   
 }
 
+int saveSelection(SaveData *save, float *barcomida, float *barpoder, float *barsaude, float *level, int *tempoPassado){
+    bool isNovoJogo;
+    int slot = SelectSaveSlotMenu("Escolha o save:", &isNovoJogo);
+    if (SaveNotEmpty(slot) && !isNovoJogo) {
+        LoadGame(save, slot);
+        printf("Save carregado!\n");
+    } 
+    else {
+        StartNewGame(save);
+        printf("Novo jogo criado no slot %d\n", slot);
+    }
+
+    playerGold = save->gold;
+    *barcomida = save->barcomida;
+    *barpoder = save->barpoder;
+    *barsaude = save->barsaude;
+    cannonUnlocked = save->cannonUnlocked;
+    wizardUnlocked = save->wizardUnlocked;
+    *level = save->levelAtual;
+    *tempoPassado = save->tempoPassado;
+
+    return slot;
+}
+
+void DeleteSave(int slot) {
+    char filename[64];
+    sprintf(filename, "save%d.bin", slot);
+
+    if (remove(filename) == 0) {
+        printf("Save %d deletado!\n", slot);
+    } else {
+        printf("Erro ao deletar o save %d.\n", slot);
+    }
+}
+
 
 void StartNewGame(SaveData *save) {
     save->levelAtual = 0;

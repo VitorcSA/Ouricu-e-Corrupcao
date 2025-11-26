@@ -2,7 +2,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include "HUD.h"
-#include "telaInicio.h"
+#include "telas.h"
 #include "enemies.h"
 #include "player.h"
 #include "mapa.h"
@@ -78,33 +78,11 @@ int main() {
     TelaTitulo(titulo, fundo);
     InitPlayer();
 
-    //Parte de saves
-    bool isNovoJogo;
-    int slot = SelectSaveSlotMenu("Escolha o save:", &isNovoJogo);
-    if (SaveNotEmpty(slot) && !isNovoJogo) {
-        printf("oi\n");
-        LoadGame(&save, slot);
-        printf("Save carregado!\n");
-    } 
-    else {
-        StartNewGame(&save);
-        printf("Novo jogo criado no slot %d\n", slot);
-    }
-
-    playerGold = save.gold;
-    barcomida = save.barcomida;
-    barpoder = save.barpoder;
-    barsaude = save.barsaude;
-    cannonUnlocked = save.cannonUnlocked;
-    wizardUnlocked = save.wizardUnlocked;
-    level = save.levelAtual;
-    tempoPassado = save.tempoPassado;
-
     bool borderless = false;
-    bool isGameOver = false;
 
+    int slot;
     vidaPortao = 3;
-    currentGameState = TUTORIAL_STATE;
+    currentGameState = SAVE_STATE;
     wave.totalWaves = 3 + level * 2;
 
     const char *arquivoMapaTowerDefense = "assets/mapa/mapaTowerDefense";
@@ -130,7 +108,7 @@ int main() {
     InitGoldHUD(&goldHUD);
     InitRanking();
 
-    while (!WindowShouldClose() && !isGameOver) {
+    while (!WindowShouldClose()) {
         UpdateSave(&save, barcomida, barpoder, barsaude, level, tempoPassado);
         int screenWidth = GetScreenWidth();
         int screenHeight = GetScreenHeight();
@@ -173,6 +151,10 @@ int main() {
         switch (currentGameState)
         {
 
+        case SAVE_STATE:
+            slot = saveSelection(&save, &barcomida, &barpoder, &barsaude, &level, &tempoPassado);
+            currentGameState = TUTORIAL_STATE;
+
         //Parte do tutorial
         case TUTORIAL_STATE:
 
@@ -189,6 +171,8 @@ int main() {
 
         //Parte do reino
         case MENU_STATE:
+            SaveGame(&save, slot);
+            vidaPortao = 3;
 
             float fundoHeight = screenHeight - hudHeight;
             float scaleX = (float)screenWidth / reinoFundo.width;
@@ -263,8 +247,9 @@ int main() {
             DrawGoldHUDAt(&goldHUD);
             HUD_Draw();
             if(vidaPortao <= 0){
-                isGameOver = true;
+                DeleteSave(slot);
                 TelaGameOver(fundo);
+                currentGameState = SAVE_STATE;
             }
 
         break;

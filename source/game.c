@@ -57,7 +57,6 @@ void UpdateWaves(GameState *currentGameState, EnemyWave *wave, unsigned char *ma
     // Se a wave não está ativa, inicia o cooldown
     if (!wave->active) {
         waveCooldown += deltaTime;
-        enemyIndex = 0;
 
         // Quando o cooldown acabar, inicia nova wave
         if (waveCooldown >= timeBetweenWaves) {
