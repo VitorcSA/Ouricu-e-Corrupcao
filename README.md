@@ -12,6 +12,7 @@ Suas ações influenciam diretamente o futuro do trono: um governante justo pode
 
 🐧 Instalação e Execução no Linux
 1. Instalar dependências:
+
 sudo apt update
 
 sudo apt install build-essential make git libraylib-dev
