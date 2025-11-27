@@ -8,4 +8,28 @@
 
 Durante o jogo, o jogador precisa equilibrar seus gastos dividindo-os em investimentos pro reino e pras suas defesas, enquanto decide como lidar com crises e invasões dentro do castelo.
 
-Suas ações influenciam diretamente o futuro do trono: um governante justo pode trazer prosperidade e paz, enquanto um rei autoritário pode mergulhar o reino na corrupção e no medo.</p>
+Suas ações influenciam diretamente o futuro do trono: um governante justo pode trazer prosperidade e paz, enquanto um rei autoritário pode mergulhar o reino na corrupção e no medo.
+
+🐧 Instalação e Execução no Linux
+1. Instalar dependências:
+sudo apt update
+sudo apt install build-essential make git libraylib-dev
+
+
+Caso libraylib-dev não esteja disponível, instale a Raylib seguindo:
+https://github.com/raysan5/raylib/wiki/Working-on-GNU-Linux
+
+2. Clonar o repositório:
+git clone https://github.com/Henriquewbg/Poder-e-Corrupcao.git
+cd Poder-e-Corrupcao
+
+3. Compilar:
+make
+
+4. Executar:
+./main
+
+O Makefile original usa bibliotecas do Windows (-lgdi32 e -lwinmm).
+No Linux, use apenas:
+
+-lraylib -lm -ldl -lpthread</p>
