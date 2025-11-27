@@ -106,14 +106,14 @@ void HUD_Update(Tower *tower) {
             }
         }
 
-        if (CheckCollisionPointRec(mouse, wizardBtn)) {
+        if (CheckCollisionPointRec(mouse, wizardBtn) && !tower[index].hasDefender) {
             if (wizardUnlocked && playerGold >= 30) {
                 chosenUnit = UNIT_WIZARD;
                 playerGold -= 30;
                 hudVisible = false;
             }
         }
-        else if (CheckCollisionPointRec(mouse, cannonBtn)) {
+        else if (CheckCollisionPointRec(mouse, cannonBtn) && !tower[index].hasDefender) {
             if (cannonUnlocked && playerGold >= 40) {
                 chosenUnit = UNIT_CANNON;
                 playerGold -= 40;
