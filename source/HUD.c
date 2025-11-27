@@ -79,7 +79,7 @@ bool HUD_IsActive(void) { return hudVisible; }
 int HUD_GetSelectedTower(void) { return selectedTower; }
 UnitType HUD_GetSelectedUnit(void) { return chosenUnit; }
 
-void HUD_Update(void) {
+void HUD_Update(Tower *tower) {
     if (!hudVisible) return;
 
     int screenW = GetScreenWidth();
@@ -97,7 +97,8 @@ void HUD_Update(void) {
         Rectangle cannonBtn = { hudPos.x, hudPos.y + 2 * section, hudWidth, section };
         Rectangle hud = { hudPos.x, hudPos.y, hudWidth, hudHeight };
 
-        if (CheckCollisionPointRec(mouse, archerBtn)) {
+        int index = HUD_GetSelectedTower();
+        if (CheckCollisionPointRec(mouse, archerBtn) && !tower[index].hasDefender) {
             if(playerGold >= 20){
                 chosenUnit = UNIT_ARCHER;
                 playerGold -= 20;

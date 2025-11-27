@@ -351,7 +351,7 @@ void UpdatePlayer(unsigned char *mapa, int screenWidth, int screenHeight)
 
     //hud para adicionar personagem
     if (HUD_IsActive()) {
-        HUD_Update();
+        HUD_Update(towers);
         UnitType selected = HUD_GetSelectedUnit();
         int selTower = HUD_GetSelectedTower();
 
