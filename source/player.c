@@ -336,6 +336,19 @@ void UpdatePlayer(unsigned char *mapa, int screenWidth, int screenHeight)
     Vector2 mousePos = GetMousePosition();
     if (playerGold < 0)  playerGold = 0;
 
+    //verifica se deve botar a torre no mapa
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && !HUD_IsActive()) putTowerOnGrid(mousePos, mapa, screenWidth, screenHeight);
+
+    //faz a hud aparecer
+    if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT) && !HUD_IsActive()) {
+        for (int i = 0; i < towerCount; i++) {
+            if (towers[i].active && CheckCollisionPointCircle(mousePos, towers[i].pos, towers[i].size / 2)) {
+                HUD_ShowAt(towers[i].pos, i);
+                return;
+            }
+        }
+    }
+
     //hud para adicionar personagem
     if (HUD_IsActive()) {
         HUD_Update();
@@ -343,20 +356,6 @@ void UpdatePlayer(unsigned char *mapa, int screenWidth, int screenHeight)
         int selTower = HUD_GetSelectedTower();
 
         selectUnity(selected, selTower, screenWidth, screenHeight);
-        return; //retorna por conta de poder selecionar outras torres
-    }
-
-    //verifica se deve botar a torre no mapa
-    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) putTowerOnGrid(mousePos, mapa, screenWidth, screenHeight);
-
-    //faz a hud aparecer
-    if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
-        for (int i = 0; i < towerCount; i++) {
-            if (towers[i].active && CheckCollisionPointCircle(mousePos, towers[i].pos, towers[i].size / 2)) {
-                HUD_ShowAt(towers[i].pos, i);
-                return;
-            }
-        }
     }
 
     for (int i = 0; i < archerCount; i++) {

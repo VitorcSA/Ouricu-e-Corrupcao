@@ -106,16 +106,16 @@ void HUD_Update(void) {
         }
 
         if (CheckCollisionPointRec(mouse, wizardBtn)) {
-            if (wizardUnlocked && playerGold >= 20) {
+            if (wizardUnlocked && playerGold >= 30) {
                 chosenUnit = UNIT_WIZARD;
-                playerGold -= 20;
+                playerGold -= 30;
                 hudVisible = false;
             }
         }
         else if (CheckCollisionPointRec(mouse, cannonBtn)) {
-            if (cannonUnlocked && playerGold >= 20) {
+            if (cannonUnlocked && playerGold >= 40) {
                 chosenUnit = UNIT_CANNON;
-                playerGold -= 20;
+                playerGold -= 40;
                 hudVisible = false;
             }
         }else if (!CheckCollisionPointRec(mouse, hud)) {
@@ -141,14 +141,14 @@ void HUD_Draw(void) {
 
 if (wizardUnlocked){
     DrawText("Wizard", hudPos.x + 10, hudPos.y + section + 10, 20, BLACK);
-    DrawText("20 Gold", hudPos.x + 120, hudPos.y + section + 10, 20, YELLOW);
+    DrawText("30 Gold", hudPos.x + 120, hudPos.y + section + 10, 20, YELLOW);
 }
 else{
     DrawText("Wizard (Bloqueado)", hudPos.x + 10, hudPos.y + section + 10, 20, RED);
 }
 if (cannonUnlocked){
     DrawText("Cannon", hudPos.x + 10, hudPos.y + 2*section + 10, 20, BLACK);
-    DrawText("20 Gold", hudPos.x + 120, hudPos.y + 2*section + 10, 20, YELLOW);
+    DrawText("40 Gold", hudPos.x + 120, hudPos.y + 2*section + 10, 20, YELLOW);
 }
 else{
     DrawText("Cannon (Bloqueado)", hudPos.x + 10, hudPos.y + 2*section + 10, 20, RED);
