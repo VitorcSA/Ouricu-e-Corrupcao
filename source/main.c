@@ -48,12 +48,14 @@ int main() {
     InitWindow(1280, 720, "Poder e Corrupcao");
     Image logo = LoadImage("assets/logo.png");
     SetWindowIcon(logo);
+    Texture2D logoText = LoadTextureFromImage(logo);
+    UnloadImage(logo);
     SetExitKey(KEY_NULL);
     SetTargetFPS(60);
     InitAudioDevice(); 
 
     Music music = LoadMusicStream("assets/cinematic-documentary-epic-dramatic-fallen-kingdom-short-ver-191717.mp3");
-    SetMusicVolume(music, 0.5f); // 50%
+    SetMusicVolume(music, 0.5f); 
     PlayMusicStream(music);
 
     int prevGold = -1;
@@ -74,11 +76,10 @@ int main() {
     Texture2D titulo = LoadTexture("assets/titulo.png");
     Texture2D reinoFundo = LoadTexture("assets/reino.png");
 
-    //Ubucuabdi posição do rei
     Vector2 posicaoRei;
 
     //Tela de inicio do reino
-    //TelaLogo(logo);
+    TelaLogo(logoText);
     TelaTitulo(titulo, fundo);
     InitPlayer();
 

@@ -241,9 +241,6 @@ void DrawSaveMenuSprites(Texture2D archerTexture) {
 
     float size = screenH * 0.6f;  
 
-    //-----------------------------
-    // * Primeiro arqueiro (normal)
-    //-----------------------------
     Rectangle dstShot = {
         screenW * 0.25f - size / 2.0f,
         screenH * 0.50f - size / 2.0f,
