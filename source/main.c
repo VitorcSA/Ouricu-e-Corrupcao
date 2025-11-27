@@ -50,6 +50,11 @@ int main() {
     SetWindowIcon(logo);
     SetExitKey(KEY_NULL);
     SetTargetFPS(60);
+    InitAudioDevice(); 
+
+    Music music = LoadMusicStream("assets/cinematic-documentary-epic-dramatic-fallen-kingdom-short-ver-191717.mp3");
+    SetMusicVolume(music, 0.5f); // 50%
+    PlayMusicStream(music);
 
     int prevGold = -1;
     extern int playerGold;
@@ -108,6 +113,10 @@ int main() {
     InitRanking();
 
     while (!WindowShouldClose() && slot != -1) {
+        if (!IsMusicStreamPlaying(music)) {
+            PlayMusicStream(music); // replay
+        }
+        UpdateMusicStream(music);
         int screenWidth = GetScreenWidth();
         int screenHeight = GetScreenHeight();
         float cellWidth = screenWidth / (float)COLS;
@@ -357,6 +366,8 @@ int main() {
 
         EndDrawing();
     }
+    UnloadMusicStream(music);
+    CloseAudioDevice();
     UpdateSave(&save, barcomida, barpoder, barsaude, level, tempoPassado);
     SaveGame(&save, slot);
     UnloadTexture(titulo);
