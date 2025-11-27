@@ -30,8 +30,3 @@ make
 
 4. Executar:
 ./main
-
-O Makefile original usa bibliotecas do Windows (-lgdi32 e -lwinmm).
-No Linux, use apenas:
-
--lraylib -lm -ldl -lpthread</p>
