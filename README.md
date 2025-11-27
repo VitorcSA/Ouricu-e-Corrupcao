@@ -30,3 +30,6 @@ make
 
 4. Executar:
 ./main
+
+Screencast:
+https://drive.google.com/file/d/1hwGtNpubMSduqXPSM7APqUMbq9WkFuLW/view?usp=sharing
