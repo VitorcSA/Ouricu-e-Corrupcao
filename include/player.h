@@ -37,7 +37,7 @@
 #define FIREBALL_DAMAGE 15
 #define CANNONBALL_DAMAGE 20
 
-#define GOLD_FOR_ENEMY 15
+#define GOLD_FOR_ENEMY 20
 #define GOLD_FOR_ORC 50
 
 typedef struct 
