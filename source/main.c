@@ -179,6 +179,7 @@ int main() {
 
         //Parte do reino
         case MENU_STATE:
+            if(IsKeyPressed(KEY_ESCAPE)) currentGameState = SAVE_STATE;
             vidaPortao = 3;
 
             float fundoHeight = screenHeight - hudHeight;
