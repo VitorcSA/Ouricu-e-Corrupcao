@@ -10,6 +10,13 @@
 #include "game.h"
 #include "salvar.h"
 
+void ResetTudo(WaveList *waves){
+    ResetWaveList(waves);
+    CreateWaveList(waves, 3);
+    ResetEnemies(enemies, MAX_ENEMIES);
+    resetAll();
+}
+
 void DrawTutorial(void) {
     const int fontSize = 24;
     int screenWidth = GetScreenWidth();
@@ -261,10 +268,7 @@ int main() {
             DrawGoldHUDAt(&goldHUD, 20, 20);
             HUD_Draw();
             if(vidaPortao <= 0){
-                ResetWaveList(&waves);
-                CreateWaveList(&waves, 3);
-                ResetEnemies(enemies, MAX_ENEMIES);
-                resetAll();
+                ResetTudo(&waves);
                 DeleteSave(slot);
                 TelaGameOver(fundo);
                 currentGameState = SAVE_STATE;
@@ -358,6 +362,8 @@ int main() {
             );
 
             waveCompleteTimer += GetFrameTime();
+            UpdateSave(&save, barcomida, barpoder, barsaude, level, tempoPassado);
+            SaveGame(&save, slot);
 
             if (IsKeyPressed(KEY_ENTER)) {
                 waveCompleteTimer = 0.0f;
@@ -371,8 +377,6 @@ int main() {
     }
     UnloadMusicStream(music);
     CloseAudioDevice();
-    UpdateSave(&save, barcomida, barpoder, barsaude, level, tempoPassado);
-    SaveGame(&save, slot);
     UnloadTexture(titulo);
     UnloadTexture(fundo);
     UnloadImage(logo);

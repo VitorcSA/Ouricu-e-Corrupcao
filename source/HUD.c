@@ -384,6 +384,7 @@ void UpdateBars(int playerGold, int *prevGold, int slot, bool diminuirBarras, Te
 
     if(barsaude == 0 || barcomida == 0 || barpoder == 0){
         ResetWaveList(waves);
+        CreateWaveList(waves, 3);
         ResetEnemies(enemies, MAX_ENEMIES);
         resetAll();
         DeleteSave(slot);
