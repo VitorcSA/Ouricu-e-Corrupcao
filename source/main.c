@@ -72,6 +72,14 @@ int main() {
     WaveList waves;
     SaveData save;
     GameState currentGameState;
+    Dialog perguntas[100];
+    int total = carregarPerguntas("dialogo.txt", perguntas, 100);
+
+    DialogType tipoAtual;
+    bool dialogoAtivo = false;
+
+    Dialog perguntaAtual;
+    int opcaoSelecionada = 1;
 
     //Iniciar Textura do rei
     Image rei = LoadImage("assets/rei.png");
@@ -235,7 +243,6 @@ int main() {
         //Parte do jogo
         case GAME_STATE:
             
-
             if (IsKeyPressed(KEY_ESCAPE)) {
                 currentGameState = PAUSE_STATE;
             }
@@ -334,6 +341,7 @@ int main() {
                         fundoHeight, false, textoBtnVoltarReino, screenWidth, BTN_VOLTAR_REINO_WIDTH, BTN_VOLTAR_REINO_HEIGHT, BTN_VOLTAR_REINO_X, BTN_VOLTAR_REINO_Y, BTN_VOLTAR_REINO_FONTE);
 
         break;
+
         case WAVE_COMPLETE_STATE: 
             DrawRectangle(0, 0, screenWidth, screenHeight, (Color){20, 20, 30, 255});
 
@@ -368,12 +376,66 @@ int main() {
 
             if (IsKeyPressed(KEY_ENTER)) {
                 waveCompleteTimer = 0.0f;
+                perguntaAtual = escolherPerguntaAleatoria(perguntas, totalPerguntas);
+
+                if (perguntaAtual.numOpcoes == 1)
+                    tipoAtual = DIALOG_SIMPLE;
+                else
+                    tipoAtual = DIALOG_CHOICES;
+
+                opcaoSelecionada = 1;
+                dialogoAtivo = true;
+
                 currentGameState = DIALOGO_STATE;
             }
         break;
 
         case DIALOGO_STATE:
-            DrawDialogBox("teste teste", screenWidth, screenHeight);
+        if (dialogoAtivo) {
+
+        // Seleção de opções
+        if (tipoAtual == DIALOG_CHOICES) {
+            if (IsKeyPressed(KEY_LEFT)) opcaoSelecionada = 1;
+            if (IsKeyPressed(KEY_RIGHT) && perguntaAtual.numOpcoes == 2) opcaoSelecionada = 2;
+        }
+
+        // Confirmação
+        if (IsKeyPressed(KEY_ENTER)) {
+            if (tipoAtual == DIALOG_SIMPLE) {
+                // Apenas fechar o diálogo
+                dialogoAtivo = false;
+            } else {
+                // Aqui você faz algo com a opção escolhida
+                if (opcaoSelecionada == 1) {
+                    // efeito da opção 1
+                } else {
+                    // efeito da opção 2
+                }
+
+                dialogoAtivo = false;
+            }
+        }
+    }
+
+    DrawDialogBox(perguntaAtual.pergunta, screenWidth, screenHeight);
+
+    if (tipoAtual == DIALOG_CHOICES) {
+        bool opcao1_good = (opcaoSelecionada == 1);
+        bool opcao2_good = (opcaoSelecionada == 2);
+
+        botoes(DIALOG_CHOICES,
+               opcao1_good,
+               opcao2_good,
+               screenWidth,
+               screenHeight);
+    } else {
+        botoes(DIALOG_SIMPLE,
+               true,
+               false,
+               screenWidth,
+               screenHeight);
+    }
+
         break;
 
         }

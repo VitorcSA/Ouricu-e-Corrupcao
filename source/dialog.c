@@ -1,5 +1,7 @@
 #include "dialog.h"
 #include "raylib.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 int carregarPerguntas(const char *arquivo, Dialog *lista, int maxPerguntas) {
     FILE *f = fopen(arquivo, "r");
@@ -7,7 +9,7 @@ int carregarPerguntas(const char *arquivo, Dialog *lista, int maxPerguntas) {
 
     int count = 0;
     while (!feof(f) && count < maxPerguntas) {
-        Pergunta p;
+        Dialog p;
         char buffer[512];
 
         if (fgets(buffer, sizeof(buffer), f)) {
