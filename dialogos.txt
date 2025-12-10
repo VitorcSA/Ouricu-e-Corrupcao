@@ -1,0 +1,3 @@
+1|Quantos inimigos você deseja gerar?|2|Poucos|Muitos
+2|Deseja restaurar a vida?|1|Sim
+3|O que fazer agora?|2|Atacar|Defender

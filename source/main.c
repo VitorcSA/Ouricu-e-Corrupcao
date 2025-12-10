@@ -9,6 +9,7 @@
 #include "criadorMapa.h"
 #include "game.h"
 #include "salvar.h"
+#include "dialog.h"
 
 void ResetTudo(WaveList *waves){
     ResetWaveList(waves);
@@ -333,7 +334,7 @@ int main() {
                         fundoHeight, false, textoBtnVoltarReino, screenWidth, BTN_VOLTAR_REINO_WIDTH, BTN_VOLTAR_REINO_HEIGHT, BTN_VOLTAR_REINO_X, BTN_VOLTAR_REINO_Y, BTN_VOLTAR_REINO_FONTE);
 
         break;
-        case WAVE_COMPLETE_STATE: {
+        case WAVE_COMPLETE_STATE: 
             DrawRectangle(0, 0, screenWidth, screenHeight, (Color){20, 20, 30, 255});
 
             const char *msg = "Horda concluida";
@@ -367,9 +368,13 @@ int main() {
 
             if (IsKeyPressed(KEY_ENTER)) {
                 waveCompleteTimer = 0.0f;
-                currentGameState = MENU_STATE;
+                currentGameState = DIALOGO_STATE;
             }
-        } break;
+        break;
+
+        case DIALOGO_STATE:
+            DrawDialogBox("teste teste", screenWidth, screenHeight);
+        break;
 
         }
 

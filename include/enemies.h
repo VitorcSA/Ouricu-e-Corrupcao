@@ -47,7 +47,4 @@ void ResetEnemies(Enemy *enemies, int maxEnemies);
 
 bool TodosInimigosMortos(Enemy *enemies, int maxEnemies);
     
-
-
-
 #endif
