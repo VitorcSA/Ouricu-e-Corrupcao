@@ -262,6 +262,7 @@ int main() {
             HUD_Draw();
             if(vidaPortao <= 0){
                 ResetWaveList(&waves);
+                CreateWaveList(&waves, 3);
                 ResetEnemies(enemies, MAX_ENEMIES);
                 resetAll();
                 DeleteSave(slot);
