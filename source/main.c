@@ -342,53 +342,83 @@ int main() {
 
         break;
 
-        case WAVE_COMPLETE_STATE: 
-            DrawRectangle(0, 0, screenWidth, screenHeight, (Color){20, 20, 30, 255});
+        case WAVE_COMPLETE_STATE: {
+            // Fundo escurecido com transparência
+            DrawRectangle(0, 0, screenWidth, screenHeight, (Color){10, 10, 20, 220});
 
-            const char *msg = "Horda concluida";
-            const char *sub = "Pressione ENTER para voltar ao reino";
+            // Card central
+            float panelWidth  = screenWidth * 0.45f;
+            float panelHeight = screenHeight * 0.40f;
+            float panelX = (screenWidth  - panelWidth)  / 2.0f;
+            float panelY = (screenHeight - panelHeight) / 2.0f;
 
-            int msgFont = 40;
-            int subFont = 24;
+            Rectangle panel = { panelX, panelY, panelWidth, panelHeight };
 
-            int msgWidth = MeasureText(msg, msgFont);
-            int subWidth = MeasureText(sub, subFont);
+            // Fundo do card
+            DrawRectangleRounded(panel, 0.18f, 16, (Color){25, 25, 60, 255});
+            // Borda dourada
+            DrawRectangleRoundedLines(panel, 0.18f, 16, (Color){255, 215, 0, 200});
+          
+            Rectangle topBar = { panelX, panelY, panelWidth, panelHeight * 0.22f };
+            DrawRectangleRounded(topBar, 0.18f, 16, (Color){35, 40, 90, 255});
 
-            DrawText(
-                msg,
-                (screenWidth - msgWidth) / 2,
-                screenHeight / 2 - 40,
-                msgFont,
-                YELLOW
-            );
+            // Título
+            const char *msg = "Horda concluída!";
+            int titleFont = 36;
+            int titleWidth = MeasureText(msg, titleFont);
+            int titleX = (int)(panelX + (panelWidth - titleWidth) / 2.0f);
+            int titleY = (int)(panelY + panelHeight * 0.06f);
 
-            DrawText(
-                sub,
-                (screenWidth - subWidth) / 2,
-                screenHeight / 2 + 20,
-                subFont,
-                LIGHTGRAY
-            );
+            DrawText(msg, titleX, titleY, titleFont, GOLD);
+
+            char levelText[64];
+            snprintf(levelText, sizeof(levelText), "Level atual: %.1f", level);
+
+            int infoFont = 24;
+            int infoWidth = MeasureText(levelText, infoFont);
+            int infoX = (int)(panelX + (panelWidth - infoWidth) / 2.0f);
+            int infoY = (int)(panelY + panelHeight * 0.30f);
+
+            DrawText(levelText, infoX, infoY, infoFont, RAYWHITE);
+
+            // Mensagem explicando
+            const char *sub1 = "Você completou todas as hordas deste ciclo.";
+            const char *sub2 = "Recompensas já foram aplicadas ao reino.";
+
+            int subFont = 20;
+            int sub1Width = MeasureText(sub1, subFont);
+            int sub2Width = MeasureText(sub2, subFont);
+
+            int sub1X = (int)(panelX + (panelWidth - sub1Width) / 2.0f);
+            int sub2X = (int)(panelX + (panelWidth - sub2Width) / 2.0f);
+
+            int sub1Y = infoY + 40;
+            int sub2Y = sub1Y + 28;
+
+            DrawText(sub1, sub1X, sub1Y, subFont, (Color){200, 200, 220, 255});
+            DrawText(sub2, sub2X, sub2Y, subFont, (Color){180, 200, 230, 255});
+
+                    
+            const char *press = "Pressione ENTER para voltar ao reino";
+
+            float t = GetTime();
+            unsigned char alpha = (unsigned char)(150 + 80 * sinf(t * 3.0f));
+            Color pressColor = (Color){255, 255, 255, alpha};
+
+            int pressFont = 22;
+            int pressWidth = MeasureText(press, pressFont);
+            int pressX = (int)(panelX + (panelWidth - pressWidth) / 2.0f);
+            int pressY = (int)(panelY + panelHeight - 60);
+
+            DrawText(press, pressX, pressY, pressFont, pressColor);
 
             waveCompleteTimer += GetFrameTime();
-            UpdateSave(&save, barcomida, barpoder, barsaude, level, tempoPassado);
-            SaveGame(&save, slot);
 
             if (IsKeyPressed(KEY_ENTER)) {
                 waveCompleteTimer = 0.0f;
-                perguntaAtual = escolherPerguntaAleatoria(perguntas, totalPerguntas);
-
-                if (perguntaAtual.numOpcoes == 1)
-                    tipoAtual = DIALOG_SIMPLE;
-                else
-                    tipoAtual = DIALOG_CHOICES;
-
-                opcaoSelecionada = 1;
-                dialogoAtivo = true;
-
-                currentGameState = DIALOGO_STATE;
+                currentGameState = MENU_STATE;
             }
-        break;
+        } break;
 
         case DIALOGO_STATE:
         if (dialogoAtivo) {
