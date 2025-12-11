@@ -10,7 +10,8 @@ static Texture2D groundEnemyDireitaSuperior;
 static Texture2D groundEnemyDireitaInferior;
 static Texture2D groundEnemyEsquerdaSuperior;
 static Texture2D groundEnemyEsquerdaInferior;
-static Texture2D buildable;
+static Texture2D buildable1;
+static Texture2D buildable2;
 static Texture2D parede;
 static Texture2D portaInferiorDireita;
 static Texture2D portaInferiorEsquerda;
@@ -70,9 +71,13 @@ void initTiles(){
     groundEnemyVertical = LoadTextureFromImage(imgroundEnemyV);
     UnloadImage(imgroundEnemyV);
 
-    Image imBuildable = LoadImage("assets/mapa/buildable1.png");
-    buildable = LoadTextureFromImage(imBuildable);
-    UnloadImage(imBuildable);
+    Image imBuildable1 = LoadImage("assets/mapa/buildable1.png");
+    buildable1 = LoadTextureFromImage(imBuildable1);
+    UnloadImage(imBuildable1);
+
+    Image imBuildable2 = LoadImage("assets/mapa/buildable2.png");
+    buildable2 = LoadTextureFromImage(imBuildable2);
+    UnloadImage(imBuildable2);
 
     Image imParede = LoadImage("assets/mapa/parede.png");
     parede = LoadTextureFromImage(imParede);
@@ -97,7 +102,7 @@ void initTiles(){
 
 Texture2D CheckTile(unsigned char tile) {
     switch (tile) {
-        case 0: return buildable;
+        case 0: return buildable1;
         case 1: return groundEnemyHorizontal;
         case 2: return groundEnemyDireitaInferior;
         case 3: return groundEnemyVertical;
@@ -109,7 +114,8 @@ Texture2D CheckTile(unsigned char tile) {
         case 9: return portaSuperiorEsquerda;
         case 10: return portaInferiorDireita;
         case 11: return portaSuperiorDireita;
-        default: return buildable;
+        case 12: return buildable2;
+        default: return buildable1;
     }
 }
 
@@ -117,27 +123,32 @@ void DrawMap(unsigned char *self) {
     int screenWidth = GetScreenWidth();
     int screenHeight = GetScreenHeight();
 
-    // Calcular tamanho das células para preencher a tela
-    float cellWidth = (float)screenWidth / GRID_WIDTH;
+    float cellWidth  = (float)screenWidth  / GRID_WIDTH;
     float cellHeight = (float)screenHeight / GRID_HEIGHT;
 
     for (int y = 0; y < GRID_HEIGHT; y++) {
         for (int x = 0; x < GRID_WIDTH; x++) {
-            
+
             unsigned char tile = self[y * GRID_WIDTH + x];
+            Texture2D texture;
 
-            Texture2D texture = CheckTile(tile);
+            // grama com 2 tipos
+            if (tile == 0) {
+                int choice = (x + y) % 2;
+                texture = (choice == 0) ? buildable1 : buildable2;
+            } else {
+                texture = CheckTile(tile);
+            }
 
-            Rectangle dest = { x * cellWidth, y * cellHeight, cellWidth, cellHeight };
-            Rectangle source = { 0, 0, (float)texture.width, (float)texture.height };
-
-            Vector2 origin = { 0, 0 };
+            Rectangle dest   = (Rectangle){ x * cellWidth, y * cellHeight, cellWidth, cellHeight };
+            Rectangle source = (Rectangle){ 0, 0, (float)texture.width, (float)texture.height };
+            Vector2   origin = (Vector2){ 0, 0 };
 
             DrawTexturePro(texture, source, dest, origin, 0.0f, WHITE);
-    
         }
     }
 }
+
 
 void drawLinesMap(unsigned char *mapa){
     int screenWidth = GetScreenWidth();
