@@ -72,14 +72,7 @@ int main() {
     WaveList waves;
     SaveData save;
     GameState currentGameState;
-    Dialog perguntas[100];
-    int total = carregarPerguntas("dialogo.txt", perguntas, 100);
-
-    DialogType tipoAtual;
-    bool dialogoAtivo = false;
-
-    Dialog perguntaAtual;
-    int opcaoSelecionada = 1;
+    Dialog *dialogo = NULL;
 
     //Iniciar Textura do rei
     Image rei = LoadImage("assets/rei.png");
@@ -195,8 +188,12 @@ int main() {
 
         //Parte do reino
         case MENU_STATE:
+            if (dialogo != NULL) {
+                free(dialogo);
+                dialogo = NULL;
+            }
+            
             if(IsKeyPressed(KEY_ESCAPE)) currentGameState = SAVE_STATE;
-            vidaPortao = 3;
 
             float fundoHeight = screenHeight - hudHeight;
             float scaleX = (float)screenWidth / reinoFundo.width;
@@ -345,6 +342,7 @@ int main() {
         case WAVE_COMPLETE_STATE: {
             // Fundo escurecido com transparência
             DrawRectangle(0, 0, screenWidth, screenHeight, (Color){10, 10, 20, 220});
+            vidaPortao = 3;
 
             // Card central
             float panelWidth  = screenWidth * 0.45f;
@@ -416,57 +414,47 @@ int main() {
 
             if (IsKeyPressed(KEY_ENTER)) {
                 waveCompleteTimer = 0.0f;
-                currentGameState = MENU_STATE;
+                currentGameState = DIALOGO_STATE;
             }
         } break;
 
         case DIALOGO_STATE:
-        if (dialogoAtivo) {
+           if (dialogo != NULL && dialogo->active) {
+                DrawDialogScreen(dialogo, screenWidth, screenHeight);
+                int escolha = CheckDialogClick(dialogo, screenWidth, screenHeight);
 
-        // Seleção de opções
-        if (tipoAtual == DIALOG_CHOICES) {
-            if (IsKeyPressed(KEY_LEFT)) opcaoSelecionada = 1;
-            if (IsKeyPressed(KEY_RIGHT) && perguntaAtual.numOpcoes == 2) opcaoSelecionada = 2;
-        }
+                if (escolha == 1) {
+                    printf("Opção 1 selecionada: %s\n", dialogo->option1);
 
-        // Confirmação
-        if (IsKeyPressed(KEY_ENTER)) {
-            if (tipoAtual == DIALOG_SIMPLE) {
-                // Apenas fechar o diálogo
-                dialogoAtivo = false;
-            } else {
-                // Aqui você faz algo com a opção escolhida
-                if (opcaoSelecionada == 1) {
-                    // efeito da opção 1
-                } else {
-                    // efeito da opção 2
+                    free(dialogo);
+                    dialogo = NULL;
+                    currentGameState = MENU_STATE;
+                }
+                else if (escolha == 2) {
+                    printf("Opção 2 selecionada: %s\n", dialogo->option2);
+
+                    free(dialogo);
+                    dialogo = NULL;
+                    currentGameState = MENU_STATE;
                 }
 
-                dialogoAtivo = false;
+                break;
             }
-        }
-    }
 
-    DrawDialogBox(perguntaAtual.pergunta, screenWidth, screenHeight);
+            printf("dialogo não ativo\n");
 
-    if (tipoAtual == DIALOG_CHOICES) {
-        bool opcao1_good = (opcaoSelecionada == 1);
-        bool opcao2_good = (opcaoSelecionada == 2);
+            int id = GetRandomValue(1, NUM_MAX_PERGUNTAS);
 
-        botoes(DIALOG_CHOICES,
-               opcao1_good,
-               opcao2_good,
-               screenWidth,
-               screenHeight);
-    } else {
-        botoes(DIALOG_SIMPLE,
-               true,
-               false,
-               screenWidth,
-               screenHeight);
-    }
+            dialogo = carregarPergunta("dialogos.txt", id);
 
-        break;
+            if (dialogo == NULL) {
+                printf("Erro: pergunta nao encontrada.\n");
+                break;
+            }
+
+            dialogo->active = true;
+
+            break;
 
         }
 

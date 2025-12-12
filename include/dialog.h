@@ -4,13 +4,6 @@
 #include <stdbool.h>
 
 
-typedef struct {
-    EffectType type;
-    float value;      // quanto altera (ex: +20% ou -10%)
-    int duration;     // em quantas ondas dura
-    bool active;
-} ActiveEffect;
-
 typedef enum {
     EFFECT_NONE = 0,
     EFFECT_TOWER_DAMAGE_UP,
@@ -25,24 +18,26 @@ typedef enum {
     EFFECT_HURT_PLAYER
 } EffectType;
 
-typedef enum {
-    DIALOG_SIMPLE,
-    DIALOG_CHOICES
-} DialogType;
+typedef struct {
+    EffectType type;
+    float value;      // quanto altera (ex: +20% ou -10%)
+    int duration;     // em quantas ondas dura
+    bool active;
+} ActiveEffect;
 
 typedef struct {
+    int numOpcoes;
     int id;
     char text[256];
     char option1[128];
     char option2[128];
-    DialogType type;
     bool active;
 } Dialog;
 
-#define MAX_ACTIVE_EFFECTS 20
-ActiveEffect efeitosAtivos[MAX_ACTIVE_EFFECTS];
+#define NUM_MAX_PERGUNTAS 3
 
-
-void DrawDialogBox(const char *text, int screenWidth, int screenHeight);
+Dialog *carregarPergunta(const char *arquivo, int numAleatorio);
+void DrawDialogScreen(Dialog *dialogo, int screenWidth, int screenHeight);
+int CheckDialogClick(Dialog *dialogo, int screenWidth, int screenHeight);
 
 #endif
