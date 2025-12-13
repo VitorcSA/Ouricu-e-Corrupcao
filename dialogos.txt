@@ -1,50 +1,50 @@
-1 | Os arqueiros exigem flechas de aço valiriano para perfurar armaduras. | 2 | Comprar Melhoria | EFFECT_ARCHER_BONUS_DAMAGE | 20 | 5 | Recusar Pedido | EFFECT_PODER_PENALTY | 5 | 0
+1 | Os arqueiros exigem flechas de aço valiriano para perfurar armaduras. | 2 | Comprar Melhoria | EFFECT_ARCHER_BONUS_DAMAGE | 20 | 5 | Recusar Pedido | EFFECT_PODER_PENALTY | 0.05 | 0
 2 | Uma guilda de magos oferece proteção mística em troca de isenção fiscal. | 2 | Aceitar Pacto | EFFECT_WIZARD_BONUS_DAMAGE | 15 | 4 | Cobrar Impostos | EFFECT_GOLD_BONUS | 150 | 0
 3 | Os engenheiros descobriram uma falha nos canhões, mas o reparo é caro. | 2 | Consertar Agora | EFFECT_CANNON_PENALTY_DAMAGE | -10 | 0 | Ignorar Falha | EFFECT_CANNON_PENALTY_DAMAGE | 20 | 3
-4 | Uma seca severa atinge as fazendas do sul. O povo passa fome. | 2 | Abrir Celeiros | EFFECT_COMIDA_BONUS | 30 | 0 | Racionar Comida | EFFECT_SAUDE_PENALTY | 15 | 0
-5 | Mercadores estrangeiros trazem materiais de construção baratos. | 2 | Comprar Lote | EFFECT_TOWER_PRICE_BONUS | 20 | 3 | Desconfiar | EFFECT_PODER_BONUS | 5 | 0
-6 | Um nobre corrupto oferece ouro para ignorar seus crimes. | 2 | Aceitar Suborno | EFFECT_GOLD_BONUS | 300 | 0 | Prender Nobre | EFFECT_PODER_BONUS | 10 | 0
-7 | Espiões relatam que os Orcs carregam mais ouro que o normal. | 2 | Emboscar | EFFECT_GOLD_BONUS_ORC | 50 | 5 | Fortificar Muros | EFFECT_SAUDE_BONUS | 10 | 0
-8 | A população está doente devido à falta de saneamento. | 2 | Contratar Médicos | EFFECT_GOLD_PENALTY | 100 | 0 | Ignorar Peste | EFFECT_SAUDE_PENALTY | 20 | 0
-9 | O sindicato dos construtores entra em greve por melhores salários. | 2 | Pagar Aumento | EFFECT_TOWER_PRICE_PENALTY | 15 | 5 | Oprimir Greve | EFFECT_PODER_BONUS | 15 | 0
-10 | Um alquimista louco oferece uma poção para seus soldados. | 2 | Testar Poção | EFFECT_SAUDE_BONUS | 25 | 3 | Expulsar Louco | EFFECT_WIZARD_PENALTY_DAMAGE | 10 | 2
-11 | Bandidos estão roubando o ouro dos inimigos mortos no campo. | 2 | Enviar Guarda | EFFECT_GOLD_BONUS_ENEMY | 20 | 4 | Deixar Roubarem | EFFECT_PODER_PENALTY | 10 | 0
-12 | Uma celebração real pode aumentar o moral, mas custa caro. | 2 | Dar Festa | EFFECT_SAUDE_BONUS | 15 | 0 | Economizar | EFFECT_PODER_PENALTY | 5 | 0
+4 | Uma seca severa atinge as fazendas do sul. O povo passa fome. | 2 | Abrir Celeiros | EFFECT_COMIDA_BONUS | 0.30 | 0 | Racionar Comida | EFFECT_SAUDE_PENALTY | 0.15 | 0
+5 | Mercadores estrangeiros trazem materiais de construção baratos. | 2 | Comprar Lote | EFFECT_TOWER_PRICE_BONUS | 20 | 3 | Desconfiar | EFFECT_PODER_BONUS | 0.5 | 0
+6 | Um nobre corrupto oferece ouro para ignorar seus crimes. | 2 | Aceitar Suborno | EFFECT_GOLD_BONUS | 300 | 0 | Prender Nobre | EFFECT_PODER_BONUS | 0.10 | 0
+7 | Espiões relatam que os Orcs carregam mais ouro que o normal. | 2 | Emboscar | EFFECT_GOLD_BONUS_ORC | 50 | 5 | Fortificar Muros | EFFECT_SAUDE_BONUS | 0.10 | 0
+8 | A população está doente devido à falta de saneamento. | 2 | Contratar Médicos | EFFECT_GOLD_PENALTY | 100 | 0 | Ignorar Peste | EFFECT_SAUDE_PENALTY | 0.20 | 0
+9 | O sindicato dos construtores entra em greve por melhores salários. | 2 | Pagar Aumento | EFFECT_TOWER_PRICE_PENALTY | 15 | 5 | Oprimir Greve | EFFECT_PODER_BONUS | 0.15 | 0
+10 | Um alquimista louco oferece uma poção para seus soldados. | 2 | Testar Poção | EFFECT_SAUDE_BONUS | 0.25 | 3 | Expulsar Louco | EFFECT_WIZARD_PENALTY_DAMAGE | 10 | 2
+11 | Bandidos estão roubando o ouro dos inimigos mortos no campo. | 2 | Enviar Guarda | EFFECT_GOLD_BONUS_ENEMY | 20 | 4 | Deixar Roubarem | EFFECT_PODER_PENALTY | 0.10 | 0
+12 | Uma celebração real pode aumentar o moral, mas custa caro. | 2 | Dar Festa | EFFECT_SAUDE_BONUS | 0.15 | 0 | Economizar | EFFECT_PODER_PENALTY | 0.05 | 0
 13 | A pólvora estocada está úmida. | 2 | Secar ao Sol | EFFECT_CANNON_PENALTY_DAMAGE | 15 | 2 | Comprar Nova | EFFECT_GOLD_PENALTY | 120 | 0
-14 | Os magos querem drenar a vitalidade do povo para aumentar seu poder. | 2 | Permitir Ritual | EFFECT_WIZARD_BONUS_DAMAGE | 40 | 3 | Proibir Magia | EFFECT_SAUDE_PENALTY | 10 | 0
+14 | Os magos querem drenar a vitalidade do povo para aumentar seu poder. | 2 | Permitir Ritual | EFFECT_WIZARD_BONUS_DAMAGE | 40 | 3 | Proibir Magia | EFFECT_SAUDE_PENALTY | 0.10 | 0
 15 | Arqueiros veteranos se oferecem para treinar novatos. | 2 | Financiar Treino | EFFECT_ARCHER_BONUS_DAMAGE | 10 | 99 | Dispensar | EFFECT_GOLD_BONUS | 50 | 0
-16 | Uma mina de ouro foi descoberta nas terras do reino. | 2 | Explorar Mina | EFFECT_GOLD_BONUS | 500 | 0 | Proteger Natureza | EFFECT_COMIDA_BONUS | 20 | 0
-17 | O povo exige representação nas decisões do castelo. | 2 | Criar Conselho | EFFECT_PODER_PENALTY | 10 | 0 | Reinar Absoluto | EFFECT_PODER_BONUS | 20 | 0
+16 | Uma mina de ouro foi descoberta nas terras do reino. | 2 | Explorar Mina | EFFECT_GOLD_BONUS | 500 | 0 | Proteger Natureza | EFFECT_COMIDA_BONUS | 0.20 | 0
+17 | O povo exige representação nas decisões do castelo. | 2 | Criar Conselho | EFFECT_PODER_PENALTY | 0.10 | 0 | Reinar Absoluto | EFFECT_PODER_BONUS | 0.20 | 0
 18 | Mercenários oferecem caçar inimigos por uma porcentagem. | 2 | Contratar | EFFECT_GOLD_BONUS_ENEMY | 30 | 5 | Recusar | EFFECT_GOLD_BONUS | 0 | 0
 19 | Uma praga de ratos comeu parte dos suprimentos. | 2 | Queimar Estoque | EFFECT_COMIDA_PENALTY | 20 | 0 | Importar Comida | EFFECT_GOLD_PENALTY | 150 | 0
-20 | A igreja quer abençoar as torres, mas exige dízimo. | 2 | Pagar Dízimo | EFFECT_TOWER_PRICE_PENALTY | 10 | 3 | Recusar Bênção | EFFECT_PODER_PENALTY | 5 | 0
-21 | O general sugere usar táticas de terra arrasada contra Orcs. | 2 | Autorizar | EFFECT_CANNON_BONUS_DAMAGE | 30 | 3 | Negar Tática | EFFECT_COMIDA_BONUS | 10 | 0
+20 | A igreja quer abençoar as torres, mas exige dízimo. | 2 | Pagar Dízimo | EFFECT_TOWER_PRICE_PENALTY | 10 | 3 | Recusar Bênção | EFFECT_PODER_PENALTY | 0.05 | 0
+21 | O general sugere usar táticas de terra arrasada contra Orcs. | 2 | Autorizar | EFFECT_CANNON_BONUS_DAMAGE | 30 | 3 | Negar Tática | EFFECT_COMIDA_BONUS | 0.10 | 0
 22 | Um carregamento de varinhas mágicas foi interceptado. | 2 | Usar Varinhas | EFFECT_WIZARD_BONUS_DAMAGE | 20 | 3 | Vender Varinhas | EFFECT_GOLD_BONUS | 200 | 0
 23 | A inflação atingiu o reino, tudo está mais caro. | 2 | Subsidiar Preços | EFFECT_GOLD_PENALTY | 200 | 0 | Ajustar Mercado | EFFECT_TOWER_PRICE_PENALTY | 25 | 4
-24 | Soldados reclamam da qualidade da comida. | 2 | Melhorar Ração | EFFECT_SAUDE_BONUS | 10 | 5 | Ignorar Queixas | EFFECT_ARCHER_PENALTY_DAMAGE | 10 | 3
-25 | Inimigos ricos estão no campo de batalha. | 2 | Focar no Saque | EFFECT_GOLD_BONUS_ENEMY | 50 | 3 | Focar na Defesa | EFFECT_SAUDE_BONUS | 20 | 0
-26 | O rei vizinho oferece um tratado de paz comercial. | 2 | Assinar Tratado | EFFECT_GOLD_BONUS | 400 | 0 | Preparar Guerra | EFFECT_PODER_BONUS | 15 | 0
+24 | Soldados reclamam da qualidade da comida. | 2 | Melhorar Ração | EFFECT_SAUDE_BONUS | 0.10 | 5 | Ignorar Queixas | EFFECT_ARCHER_PENALTY_DAMAGE | 10 | 3
+25 | Inimigos ricos estão no campo de batalha. | 2 | Focar no Saque | EFFECT_GOLD_BONUS_ENEMY | 50 | 3 | Focar na Defesa | EFFECT_SAUDE_BONUS | 0.20 | 0
+26 | O rei vizinho oferece um tratado de paz comercial. | 2 | Assinar Tratado | EFFECT_GOLD_BONUS | 400 | 0 | Preparar Guerra | EFFECT_PODER_BONUS | 0.15 | 0
 27 | As torres de vigia precisam de reparos estruturais. | 2 | Reforçar | EFFECT_TOWER_PRICE_PENALTY | 10 | 2 | Adiar Obras | EFFECT_ARCHER_PENALTY_DAMAGE | 15 | 2
-28 | Um culto sombrio promete poder em troca de sacrifícios. | 2 | Sacrificar Aldeão | EFFECT_WIZARD_BONUS_DAMAGE | 50 | 5 | Executar Culto | EFFECT_PODER_BONUS | 10 | 0
+28 | Um culto sombrio promete poder em troca de sacrifícios. | 2 | Sacrificar Aldeão | EFFECT_WIZARD_BONUS_DAMAGE | 50 | 5 | Executar Culto | EFFECT_PODER_BONUS | 0.10 | 0
 29 | Os ferreiros descobriram uma nova liga metálica para canhões. | 2 | Investir na Liga | EFFECT_CANNON_BONUS_DAMAGE | 25 | 99 | Manter Ferro | EFFECT_GOLD_BONUS | 100 | 0
 30 | Orcs estão saqueando as caravanas de ouro. | 2 | Escolta Armada | EFFECT_GOLD_BONUS_ORC | 30 | 0 | Rota Segura | EFFECT_GOLD_PENALTY_ORC | 20 | 0
-31 | A população protesta contra os gastos militares. | 2 | Reduzir Gastos | EFFECT_TOWER_PRICE_BONUS | 15 | 3 | Reprimir Protesto | EFFECT_PODER_PENALTY | 15 | 0
-32 | Um inverno rigoroso se aproxima. | 2 | Estocar Lenha | EFFECT_SAUDE_BONUS | 10 | 0 | Vender Excedente | EFFECT_COMIDA_PENALTY | 20 | 0
+31 | A população protesta contra os gastos militares. | 2 | Reduzir Gastos | EFFECT_TOWER_PRICE_BONUS | 15 | 3 | Reprimir Protesto | EFFECT_PODER_PENALTY | 0.15 | 0
+32 | Um inverno rigoroso se aproxima. | 2 | Estocar Lenha | EFFECT_SAUDE_BONUS | 0.10 | 0 | Vender Excedente | EFFECT_COMIDA_PENALTY | 20 | 0
 33 | Ladrões invadiram o tesouro real! | 2 | Aumentar Guarda | EFFECT_GOLD_PENALTY | 50 | 0 | Investigar Depois | EFFECT_GOLD_PENALTY | 200 | 0
-34 | Arqueiros estão cansados das batalhas constantes. | 2 | Dar Descanso | EFFECT_ARCHER_PENALTY_DAMAGE | 20 | 2 | Forçar Marcha | EFFECT_SAUDE_PENALTY | 10 | 0
+34 | Arqueiros estão cansados das batalhas constantes. | 2 | Dar Descanso | EFFECT_ARCHER_PENALTY_DAMAGE | 20 | 2 | Forçar Marcha | EFFECT_SAUDE_PENALTY | 0.10 | 0
 35 | Uma nova tecnologia de construção reduz custos. | 2 | Implementar | EFFECT_TOWER_PRICE_BONUS | 30 | 5 | Vender Patente | EFFECT_GOLD_BONUS | 300 | 0
 36 | Magos exigem cristais de mana mais puros. | 2 | Comprar Cristais | EFFECT_GOLD_PENALTY | 100 | 0 | Usar Sintéticos | EFFECT_WIZARD_PENALTY_DAMAGE | 15 | 3
-37 | Refugiados de guerra pedem abrigo no castelo. | 2 | Acolher | EFFECT_COMIDA_PENALTY | 15 | 0 | Expulsar | EFFECT_PODER_PENALTY | 10 | 0
+37 | Refugiados de guerra pedem abrigo no castelo. | 2 | Acolher | EFFECT_COMIDA_PENALTY | 15 | 0 | Expulsar | EFFECT_PODER_PENALTY | 0.10 | 0
 38 | Um dragão foi avistado, os arqueiros tremem de medo. | 2 | Discurso Motivador | EFFECT_ARCHER_BONUS_DAMAGE | 15 | 2 | Contratar Caçador | EFFECT_GOLD_PENALTY | 250 | 0
-39 | O bobo da corte fez uma piada ofensiva sobre o Rei. | 2 | Rir Junto | EFFECT_PODER_PENALTY | 5 | 0 | Executar Bobo | EFFECT_PODER_BONUS | 10 | 0
+39 | O bobo da corte fez uma piada ofensiva sobre o Rei. | 2 | Rir Junto | EFFECT_PODER_PENALTY | 0.5 | 0 | Executar Bobo | EFFECT_PODER_BONUS | 0.10 | 0
 40 | Canhões experimentais podem explodir ou destruir tudo. | 2 | Arriscar | EFFECT_CANNON_BONUS_DAMAGE | 60 | 2 | Jogar Seguro | EFFECT_CANNON_PENALTY_DAMAGE | 10 | 2
-41 | Uma colheita recorde encheu os celeiros. | 2 | Distribuir ao Povo | EFFECT_SAUDE_BONUS | 30 | 0 | Vender ao Vizinho | EFFECT_GOLD_BONUS | 250 | 0
+41 | Uma colheita recorde encheu os celeiros. | 2 | Distribuir ao Povo | EFFECT_SAUDE_BONUS | 0.30 | 0 | Vender ao Vizinho | EFFECT_GOLD_BONUS | 250 | 0
 42 | Inimigos estão usando armaduras douradas. | 2 | Roubar Armaduras | EFFECT_GOLD_BONUS_ENEMY | 40 | 3 | Derreter Depois | EFFECT_GOLD_BONUS | 100 | 0
-43 | O general exige mais disciplina (chicotadas). | 2 | Permitir | EFFECT_ARCHER_BONUS_DAMAGE | 10 | 3 | Proibir | EFFECT_PODER_PENALTY | 5 | 0
+43 | O general exige mais disciplina (chicotadas). | 2 | Permitir | EFFECT_ARCHER_BONUS_DAMAGE | 10 | 3 | Proibir | EFFECT_PODER_PENALTY | 0.5 | 0
 44 | A água do castelo foi envenenada por espiões. | 2 | Purificar (Magia) | EFFECT_WIZARD_PENALTY_DAMAGE | 20 | 2 | Comprar Antídoto | EFFECT_GOLD_PENALTY | 150 | 0
 45 | Orcs Berserkers ignoram dor, mas carregam pouco ouro. | 2 | Focar Dano | EFFECT_CANNON_BONUS_DAMAGE | 20 | 3 | Ignorar Saque | EFFECT_GOLD_PENALTY_ORC | 50 | 3
-46 | Um imposto de guerra é sugerido. | 2 | Cobrar Imposto | EFFECT_GOLD_BONUS | 600 | 0 | Manter Isenção | EFFECT_PODER_BONUS | 15 | 0
+46 | Um imposto de guerra é sugerido. | 2 | Cobrar Imposto | EFFECT_GOLD_BONUS | 600 | 0 | Manter Isenção | EFFECT_PODER_BONUS | 0.15 | 0
 47 | Construção de torres está demorando muito. | 2 | Trabalho Forçado | EFFECT_TOWER_PRICE_BONUS | 25 | 3 | Contratar Extras | EFFECT_GOLD_PENALTY | 100 | 0
 48 | Magos propõem um feitiço de "Midas" nos inimigos. | 2 | Encantar | EFFECT_GOLD_BONUS_ENEMY | 100 | 2 | Poupar Mana | EFFECT_WIZARD_BONUS_DAMAGE | 10 | 3
-49 | O Rei está ficando paranoico com traições. | 2 | Expurgo Interno | EFFECT_PODER_BONUS | 30 | 0 | Confiar no Povo | EFFECT_SAUDE_BONUS | 10 | 0
-50 | O fim do reinado se aproxima, o tesouro está vazio. | 2 | Vender a Coroa | EFFECT_GOLD_BONUS | 1000 | 0 | Lutar até o Fim | EFFECT_PODER_BONUS | 50 | 0
+49 | O Rei está ficando paranoico com traições. | 2 | Expurgo Interno | EFFECT_PODER_BONUS | 0.30 | 0 | Confiar no Povo | EFFECT_SAUDE_BONUS | 0.10 | 0
+50 | O fim do reinado se aproxima, o tesouro está vazio. | 2 | Vender a Coroa | EFFECT_GOLD_BONUS | 1000 | 0 | Lutar até o Fim | EFFECT_PODER_BONUS | 0.50 | 0
