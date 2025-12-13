@@ -1,15 +1,15 @@
 1 | Os arqueiros exigem flechas de aço valiriano para perfurar armaduras. | 2 | Comprar Melhoria | EFFECT_ARCHER_BONUS_DAMAGE | 20 | 5 | Recusar Pedido | EFFECT_PODER_PENALTY | 0.05 | 0
 2 | Uma guilda de magos oferece proteção mística em troca de isenção fiscal. | 2 | Aceitar Pacto | EFFECT_WIZARD_BONUS_DAMAGE | 15 | 4 | Cobrar Impostos | EFFECT_GOLD_BONUS | 150 | 0
-3 | Os engenheiros descobriram uma falha nos canhões, mas o reparo é caro. | 2 | Consertar Agora | EFFECT_CANNON_PENALTY_DAMAGE | -10 | 0 | Ignorar Falha | EFFECT_CANNON_PENALTY_DAMAGE | 20 | 3
+3 | Os engenheiros descobriram uma falha nos canhões, mas o reparo é caro. | 2 | Consertar Agora | EFFECT_CANNON_PENALTY_DAMAGE | 10 | 0 | Ignorar Falha | EFFECT_CANNON_PENALTY_DAMAGE | 15 | 3
 4 | Uma seca severa atinge as fazendas do sul. O povo passa fome. | 2 | Abrir Celeiros | EFFECT_COMIDA_BONUS | 0.30 | 0 | Racionar Comida | EFFECT_SAUDE_PENALTY | 0.15 | 0
-5 | Mercadores estrangeiros trazem materiais de construção baratos. | 2 | Comprar Lote | EFFECT_TOWER_PRICE_BONUS | 20 | 3 | Desconfiar | EFFECT_PODER_BONUS | 0.5 | 0
-6 | Um nobre corrupto oferece ouro para ignorar seus crimes. | 2 | Aceitar Suborno | EFFECT_GOLD_BONUS | 300 | 0 | Prender Nobre | EFFECT_PODER_BONUS | 0.10 | 0
-7 | Espiões relatam que os Orcs carregam mais ouro que o normal. | 2 | Emboscar | EFFECT_GOLD_BONUS_ORC | 50 | 5 | Fortificar Muros | EFFECT_SAUDE_BONUS | 0.10 | 0
+5 | Mercadores estrangeiros trazem materiais de construção baratos. | 2 | Comprar Lote | EFFECT_TOWER_PRICE_BONUS | 20 | 3 | Desconfiar | EFFECT_PODER_BONUS | 1.5 | 0
+6 | Um nobre corrupto oferece ouro para ignorar seus crimes. | 2 | Aceitar Suborno | EFFECT_GOLD_BONUS | 100 | 0 | Prender Nobre | EFFECT_PODER_BONUS | 1.10 | 0
+7 | Espiões relatam que os Orcs carregam mais ouro que o normal. | 2 | Emboscar | EFFECT_GOLD_BONUS_ORC | 50 | 5 | Fortificar Muros | EFFECT_SAUDE_BONUS | 1.10 | 0
 8 | A população está doente devido à falta de saneamento. | 2 | Contratar Médicos | EFFECT_GOLD_PENALTY | 100 | 0 | Ignorar Peste | EFFECT_SAUDE_PENALTY | 0.20 | 0
-9 | O sindicato dos construtores entra em greve por melhores salários. | 2 | Pagar Aumento | EFFECT_TOWER_PRICE_PENALTY | 15 | 5 | Oprimir Greve | EFFECT_PODER_BONUS | 0.15 | 0
-10 | Um alquimista louco oferece uma poção para seus soldados. | 2 | Testar Poção | EFFECT_SAUDE_BONUS | 0.25 | 3 | Expulsar Louco | EFFECT_WIZARD_PENALTY_DAMAGE | 10 | 2
-11 | Bandidos estão roubando o ouro dos inimigos mortos no campo. | 2 | Enviar Guarda | EFFECT_GOLD_BONUS_ENEMY | 20 | 4 | Deixar Roubarem | EFFECT_PODER_PENALTY | 0.10 | 0
-12 | Uma celebração real pode aumentar o moral, mas custa caro. | 2 | Dar Festa | EFFECT_SAUDE_BONUS | 0.15 | 0 | Economizar | EFFECT_PODER_PENALTY | 0.05 | 0
+9 | O sindicato dos construtores entra em greve por melhores salários. | 2 | Pagar Aumento | EFFECT_TOWER_PRICE_PENALTY | 15 | 5 | Oprimir Greve | EFFECT_PODER_BONUS | 1.15 | 0
+10 | Um alquimista louco oferece uma poção para seus soldados. | 2 | Testar Poção | EFFECT_SAUDE_BONUS | 1.25 | 3 | Expulsar Louco | EFFECT_WIZARD_PENALTY_DAMAGE | 5 | 2
+11 | Bandidos estão roubando o ouro dos inimigos mortos no campo. | 2 | Enviar Guarda | EFFECT_GOLD_BONUS_ENEMY | 5 | 4 | Deixar Roubarem | EFFECT_PODER_PENALTY | 0.10 | 0
+12 | Uma celebração real pode aumentar o moral, mas custa caro. | 2 | Dar Festa | EFFECT_SAUDE_BONUS | 1.15 | 0 | Economizar | EFFECT_PODER_PENALTY | 0.05 | 0
 13 | A pólvora estocada está úmida. | 2 | Secar ao Sol | EFFECT_CANNON_PENALTY_DAMAGE | 10 | 2 | Comprar Nova | EFFECT_GOLD_PENALTY | 120 | 0
 14 | Os magos querem drenar a vitalidade do povo para aumentar seu poder. | 2 | Permitir Ritual | EFFECT_WIZARD_BONUS_DAMAGE | 40 | 3 | Proibir Magia | EFFECT_SAUDE_PENALTY | 0.10 | 0
 15 | Arqueiros veteranos se oferecem para treinar novatos. | 2 | Financiar Treino | EFFECT_ARCHER_BONUS_DAMAGE | 10 | 99 | Dispensar | EFFECT_GOLD_BONUS | 100 | 0
