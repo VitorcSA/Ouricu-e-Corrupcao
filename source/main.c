@@ -98,7 +98,7 @@ int main() {
 
     int slot = 4;
     vidaPortao = 3;
-    currentGameState = DIALOGO_STATE;
+    currentGameState = SAVE_STATE;
     CreateWaveList(&waves, 3 + (int)level * 2);
 
     const char *arquivoMapaTowerDefense = "assets/mapa/mapaTowerDefense";
