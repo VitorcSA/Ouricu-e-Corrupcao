@@ -330,7 +330,7 @@ void updateProjects(Projects *project, bool hasFrames, float dt, float frameTime
     }
 }
 
-void UpdatePlayer(unsigned char *mapa, int screenWidth, int screenHeight)
+void UpdatePlayer(unsigned char *mapa, int screenWidth, int screenHeight, int bonus)
 {
     float dt = GetFrameTime();
     Vector2 mousePos = GetMousePosition();
@@ -379,7 +379,7 @@ void UpdatePlayer(unsigned char *mapa, int screenWidth, int screenHeight)
     for (int i = 0; i < MAX_ARROWS; i++) {
         if (!arrows[i].active) continue;
         
-        updateProjects(arrows, false, dt, 1, i, ARROW_DAMAGE, 1);
+        updateProjects(arrows, false, dt, 1, i, ARROW_DAMAGE + bonus, 1);
     }
 
     for (int i = 0; i < MAX_FIREBALLS; i++) {

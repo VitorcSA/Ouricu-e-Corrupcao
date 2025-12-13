@@ -253,7 +253,7 @@ int main() {
             UpdateWaves(&currentGameState, &waves, mapTower, cellWidth, cellHeight, dt);
 
             UpdateEnemy2(enemies, mapTower, cellWidth, cellHeight, dt, &vidaPortao);
-            UpdatePlayer(mapTower, screenWidth, screenHeight);
+            UpdatePlayer(mapTower, screenWidth, screenHeight, (int)(GetTotalModifier(EFFECT_ARCHER_BONUS_DAMAGE)));
 
             UpdateGoldHUD(&goldHUD, playerGold);
 

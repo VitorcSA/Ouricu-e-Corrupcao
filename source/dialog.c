@@ -151,7 +151,6 @@ void ApplyDialogEffect(Dialog *d, int option, int *gold, float *vida, float *com
         case EFFECT_SAUDE_PENALTY:
             *vida -= value;
             return;
-        // Adicione casos para Comida e Poder aqui...
         default:
             break; // Se não for imediato, segue para a lógica de duração
     }
