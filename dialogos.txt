@@ -33,20 +33,20 @@
 33 | Ladrões invadiram o tesouro real! | 2 | Aumentar Guarda | EFFECT_GOLD_PENALTY | 50 | 0 | Investigar Depois | EFFECT_GOLD_PENALTY | 200 | 0
 34 | Arqueiros estão cansados das batalhas constantes. | 2 | Dar Descanso | EFFECT_ARCHER_PENALTY_DAMAGE | 20 | 2 | Forçar Marcha | EFFECT_SAUDE_PENALTY | 0.10 | 0
 35 | Uma nova tecnologia de construção reduz custos. | 2 | Implementar | EFFECT_TOWER_PRICE_BONUS | 30 | 5 | Vender Patente | EFFECT_GOLD_BONUS | 300 | 0
-36 | Magos exigem cristais de mana mais puros. | 2 | Comprar Cristais | EFFECT_GOLD_PENALTY | 100 | 0 | Usar Sintéticos | EFFECT_WIZARD_PENALTY_DAMAGE | 15 | 3
+36 | Magos exigem cristais de mana mais puros. | 2 | Comprar Cristais | EFFECT_GOLD_PENALTY | 100 | 0 | Usar Sintéticos | EFFECT_WIZARD_PENALTY_DAMAGE | 5 | 3
 37 | Refugiados de guerra pedem abrigo no castelo. | 2 | Acolher | EFFECT_COMIDA_PENALTY | 0.15 | 0 | Expulsar | EFFECT_PODER_PENALTY | 0.10 | 0
-38 | Um dragão foi avistado, os arqueiros tremem de medo. | 2 | Discurso Motivador | EFFECT_ARCHER_BONUS_DAMAGE | 15 | 2 | Contratar Caçador | EFFECT_GOLD_PENALTY | 250 | 0
+38 | Um dragão foi avistado, os arqueiros tremem de medo. | 2 | Discurso Motivador | EFFECT_PODER_BONUS | 0.2 | 2 | Contratar Caçador | EFFECT_GOLD_PENALTY | 150 | 0
 39 | O bobo da corte fez uma piada ofensiva sobre o Rei. | 2 | Rir Junto | EFFECT_PODER_PENALTY | 0.5 | 0 | Executar Bobo | EFFECT_PODER_BONUS | 0.10 | 0
-40 | Canhões experimentais podem explodir ou destruir tudo. | 2 | Arriscar | EFFECT_CANNON_BONUS_DAMAGE | 60 | 2 | Jogar Seguro | EFFECT_CANNON_PENALTY_DAMAGE | 10 | 2
-41 | Uma colheita recorde encheu os celeiros. | 2 | Distribuir ao Povo | EFFECT_SAUDE_BONUS | 0.30 | 0 | Vender ao Vizinho | EFFECT_GOLD_BONUS | 250 | 0
-42 | Inimigos estão usando armaduras douradas. | 2 | Roubar Armaduras | EFFECT_GOLD_BONUS_ENEMY | 40 | 3 | Derreter Depois | EFFECT_GOLD_BONUS | 100 | 0
-43 | O general exige mais disciplina (chicotadas). | 2 | Permitir | EFFECT_ARCHER_BONUS_DAMAGE | 10 | 3 | Proibir | EFFECT_PODER_PENALTY | 0.5 | 0
-44 | A água do castelo foi envenenada por espiões. | 2 | Purificar (Magia) | EFFECT_WIZARD_PENALTY_DAMAGE | 20 | 2 | Comprar Antídoto | EFFECT_GOLD_PENALTY | 150 | 0
-45 | Orcs Berserkers ignoram dor, mas carregam pouco ouro. | 2 | Focar Dano | EFFECT_CANNON_BONUS_DAMAGE | 20 | 3 | Ignorar Saque | EFFECT_GOLD_PENALTY_ORC | 50 | 3
-46 | Um imposto de guerra é sugerido. | 2 | Cobrar Imposto | EFFECT_GOLD_BONUS | 600 | 0 | Manter Isenção | EFFECT_PODER_BONUS | 0.15 | 0
-47 | Construção de torres está demorando muito. | 2 | Trabalho Forçado | EFFECT_TOWER_PRICE_BONUS | 25 | 3 | Contratar Extras | EFFECT_GOLD_PENALTY | 100 | 0
-48 | Magos propõem um feitiço de "Midas" nos inimigos. | 2 | Encantar | EFFECT_GOLD_BONUS_ENEMY | 100 | 2 | Poupar Mana | EFFECT_WIZARD_BONUS_DAMAGE | 10 | 3
-49 | O Rei está ficando paranoico com traições. | 2 | Expurgo Interno | EFFECT_PODER_BONUS | 0.30 | 0 | Confiar no Povo | EFFECT_SAUDE_BONUS | 0.10 | 0
+40 | Canhões experimentais podem explodir ou destruir tudo. | 2 | Arriscar | EFFECT_CANNON_BONUS_DAMAGE | 5 | 2 | Jogar Seguro | EFFECT_CANNON_PENALTY_DAMAGE | 5 | 2
+41 | Uma colheita recorde encheu os celeiros. | 2 | Distribuir ao Povo | EFFECT_COMIDA_BONUS | 1.30 | 0 | Vender ao Vizinho | EFFECT_GOLD_BONUS | 250 | 0
+42 | Inimigos estão usando armaduras douradas. | 2 | Roubar Armaduras | EFFECT_GOLD_BONUS_ENEMY | 5 | 3 | Derreter Depois | EFFECT_GOLD_BONUS | 150 | 0
+43 | O general exige mais disciplina (chicotadas). | 2 | Permitir | EFFECT_ARCHER_BONUS_DAMAGE | 5 | 3 | Proibir | EFFECT_PODER_BONUS | 1.5 | 0
+44 | A água do castelo foi envenenada por espiões. | 2 | Purificar (Magia) | EFFECT_WIZARD_PENALTY_DAMAGE | 5 | 2 | Comprar Antídoto | EFFECT_GOLD_PENALTY | 50 | 0
+45 | Orcs Berserkers ignoram dor, mas carregam pouco ouro. | 2 | Focar Dano | EFFECT_CANNON_BONUS_DAMAGE | 5 | 3 | Ignorar Saque | EFFECT_GOLD_PENALTY_ORC | 50 | 3
+46 | Um imposto de guerra é sugerido. | 2 | Cobrar Imposto | EFFECT_GOLD_BONUS | 50 | 0 | Manter Isenção | EFFECT_PODER_BONUS | 1.15 | 0
+47 | Construção de torres está demorando muito. | 2 | Trabalho Forçado | EFFECT_TOWER_PRICE_PENALTY | 2 | 2 | Contratar Extras | EFFECT_GOLD_PENALTY | 50 | 0
+48 | Magos propõem um feitiço de "Midas" nos inimigos. | 2 | Encantar | EFFECT_GOLD_BONUS_ENEMY | 10 | 2 | Poupar Mana | EFFECT_WIZARD_BONUS_DAMAGE | 10 | 3
+49 | O Rei está ficando paranoico com traições. | 2 | Expurgo Interno | EFFECT_PODER_BONUS | 1.30 | 0 | Confiar no Povo | EFFECT_SAUDE_BONUS | 1.10 | 0
 50 | Seu povo precisa de ouro oque fazer ? | 2 | Vender a Coroa | EFFECT_GOLD_BONUS | 200 | 0 | investir em exercito | EFFECT_PODER_BONUS | 1.50 | 0
 51 | Bonus de Ouro! voce achou um bau | 1 | continuar | EFFECT_GOLD_BONUS | 100 | 0 | Lutar até o Fim | EFFECT_PODER_BONUS | 0.50 | 0
 51 | Bonus de Ouro! voce achou um bau | 1 | continuar | EFFECT_GOLD_BONUS | 100 | 0 | Lutar até o Fim | EFFECT_PODER_BONUS | 0.50 | 0
