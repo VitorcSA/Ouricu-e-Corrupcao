@@ -12,6 +12,8 @@
 #include "dialog.h"
 
 void ResetTudo(WaveList *waves){
+    resetEffects();
+    CleanupEffects();
     ResetWaveList(waves);
     CreateWaveList(waves, 3);
     ResetEnemies(enemies, MAX_ENEMIES);
@@ -88,7 +90,7 @@ int main() {
     Vector2 posicaoRei;
 
     //Tela de inicio do reino
-    TelaLogo(logoText);
+    //TelaLogo(logoText);
     TelaTitulo(titulo, fundo);
     InitPlayer();
 
@@ -370,7 +372,8 @@ int main() {
             DrawText(msg, titleX, titleY, titleFont, GOLD);
 
             char levelText[64];
-            snprintf(levelText, sizeof(levelText), "Level atual: %.1f", level);
+            int levelAtual = (int)(level * 2)+1;
+            snprintf(levelText, sizeof(levelText), "Level atual: %d", levelAtual);
 
             int infoFont = 24;
             int infoWidth = MeasureText(levelText, infoFont);
@@ -419,40 +422,34 @@ int main() {
         } break;
 
         case DIALOGO_STATE:
+            if (dialogo == NULL) {
+                int id = GetRandomValue(1, MAX_NUM_PERGUNTAS);
+                dialogo = carregarPergunta("dialogos.txt", id);
+                
+                if (dialogo) {
+                    dialogo->active = true;
+                } else {
+                    // Se falhar ao carregar, pula direto pro jogo pra não travar
+                    currentGameState = MENU_STATE; 
+                }
+            }
+
            if (dialogo != NULL && dialogo->active) {
                 DrawDialogScreen(dialogo, screenWidth, screenHeight);
                 int escolha = CheckDialogClick(dialogo, screenWidth, screenHeight);
 
-                if (escolha == 1) {
-                    printf("Opção 1 selecionada: %s\n", dialogo->option1);
+                if (escolha != 0) {
+                    printf("Opção %d selecionada:\n", escolha);
+                    
+                    ApplyDialogEffect(dialogo, escolha, &playerGold, &barsaude, &barcomida, &barpoder);
 
+                    printf("teste\n");
                     free(dialogo);
                     dialogo = NULL;
                     currentGameState = MENU_STATE;
                 }
-                else if (escolha == 2) {
-                    printf("Opção 2 selecionada: %s\n", dialogo->option2);
-
-                    free(dialogo);
-                    dialogo = NULL;
-                    currentGameState = MENU_STATE;
-                }
-
-                break;
+                
             }
-
-            printf("dialogo não ativo\n");
-
-            int id = GetRandomValue(1, NUM_MAX_PERGUNTAS);
-
-            dialogo = carregarPergunta("dialogos.txt", id);
-
-            if (dialogo == NULL) {
-                printf("Erro: pergunta nao encontrada.\n");
-                break;
-            }
-
-            dialogo->active = true;
 
             break;
 

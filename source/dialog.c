@@ -4,6 +4,12 @@
 #include <stdlib.h>
 #include <string.h>
 
+//Padrão do arquivo
+//ID | Pergunta | NumOpcoes | TextoOp1 | EffectTypeOp1 | ValorOp1 | DurationOp1 | TextoOp2 | EffectTypeOp2 | ValorOp2 | DurationOp2
+
+ActiveEffect activeEffects[MAX_EFFECT_ACTIVE];
+int activeCount = 0;
+
 Dialog *carregarPergunta(const char *arquivo, int numAleatorio) 
 {
     FILE *f = fopen(arquivo, "r");
@@ -32,6 +38,7 @@ Dialog *carregarPergunta(const char *arquivo, int numAleatorio)
                 fclose(f);
                 return NULL;
             }
+            memset(p, 0, sizeof(Dialog));
 
             p->id = id;
 
@@ -41,11 +48,21 @@ Dialog *carregarPergunta(const char *arquivo, int numAleatorio)
             token = strtok(NULL, "|");
             p->numOpcoes = token ? atoi(token) : 0;
 
+            //opção 1
             token = strtok(NULL, "|");
             strcpy(p->option1, token ? token : "");
+            p->effect1 = (EffectType)atoi(strtok(NULL, "|"));
+            p->effectValue1 = atof(strtok(NULL, "|"));
+            p->effectDuration1 = atoi(strtok(NULL, "|"));
 
-            token = strtok(NULL, "|");
-            strcpy(p->option2, token ? token : "");
+            //opção 2
+            if(p->numOpcoes == 2){
+                token = strtok(NULL, "|");
+                strcpy(p->option2, token ? token : "");
+                p->effect2 = (EffectType)atoi(strtok(NULL, "|"));
+                p->effectValue2 = atof(strtok(NULL, "|"));
+                p->effectDuration2 = atoi(strtok(NULL, "|"));
+            }
 
             fclose(f);
             return p;   // Achou e retorna imediatamente
@@ -54,6 +71,113 @@ Dialog *carregarPergunta(const char *arquivo, int numAleatorio)
 
     fclose(f);
     return NULL; // Caso não encontre
+}
+
+// Adicione ponteiros para os recursos que podem ser alterados imediatamente
+void ApplyDialogEffect(Dialog *d, int option, int *gold, float *vida, float *comida, float *poder)
+{
+    EffectType type;
+    float value;
+    int duration;
+
+    if (option == 1) {
+        type = d->effect1;
+        value = d->effectValue1;
+        duration = d->effectDuration1;
+    } else {
+        type = d->effect2;
+        value = d->effectValue2;
+        duration = d->effectDuration2;
+    }
+
+    // LÓGICA 1: Efeitos Imediatos (Duração irrelevante ou 0)
+    // Eles alteram a variável diretamente e não entram na lista de activeEffects
+    switch (type) {
+        case EFFECT_GOLD_BONUS:
+            *gold += (int)value;
+            printf("Ganhou %d de ouro!\n", (int)value);
+            return; // Retorna para não adicionar à lista
+        case EFFECT_GOLD_PENALTY:
+            *gold -= (int)value;
+            if (*gold < 0) *gold = 0;
+            return;
+        case EFFECT_SAUDE_BONUS:
+            *vida += value; // Assumindo que você trata o cap máximo depois
+            return;
+        case EFFECT_SAUDE_PENALTY:
+            *vida -= value;
+            return;
+        // Adicione casos para Comida e Poder aqui...
+        default:
+            break; // Se não for imediato, segue para a lógica de duração
+    }
+
+    // LÓGICA 2: Efeitos Duradouros (Buffs/Debuffs)
+    if (duration > 0) {
+        ActiveEffect newEffect;
+        newEffect.type = type;
+        newEffect.value = value;
+        newEffect.duration = duration;
+        newEffect.active = true;
+
+        if (activeCount < MAX_EFFECT_ACTIVE) {
+            activeEffects[activeCount++] = newEffect;
+            printf("Efeito %d aplicado por %d ondas.\n", type, duration);
+        }
+    }
+}
+
+void UpdateEffects()
+{
+    for (int i = 0; i < activeCount; i++)
+    {
+        if (!activeEffects[i].active)
+            continue;
+
+        // Diminui duração
+        if (activeEffects[i].duration > 0)
+            activeEffects[i].duration--;
+
+        // Quando chega a zero → desativa o efeito
+        if (activeEffects[i].duration == 0)
+        {
+            activeEffects[i].active = false;
+            printf("Efeito %d terminou.\n", activeEffects[i].type);
+        }
+    }
+}
+
+void resetEffects(){
+    for(int i = 0; i < activeCount; i++){
+        if(activeEffects[i].active) activeEffects[i].active = false;
+    }
+}
+
+void CleanupEffects()
+{
+    for (int i = 0; i < activeCount; i++)
+    {
+        if (!activeEffects[i].active)
+        {
+            activeEffects[i] = activeEffects[activeCount - 1];
+            activeCount--;
+            i--;
+        }
+    }
+}
+
+float GetTotalModifier(EffectType typeWanted)
+{
+    float total = 0;
+
+    for (int i = 0; i < activeCount; i++)
+    {
+        if (activeEffects[i].active && activeEffects[i].type == typeWanted)
+        {
+            total += activeEffects[i].value;
+        }
+    }
+    return total;
 }
 
 void DrawDialogBox(const char *pergunta, int screenWidth, int screenHeight) 

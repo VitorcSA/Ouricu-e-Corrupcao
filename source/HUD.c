@@ -7,6 +7,7 @@
 #include "enemies.h"
 #include "salvar.h"
 #include <stdlib.h>
+#include <dialog.h>
 
 static bool hudVisible = false;
 static Vector2 hudPos;
@@ -383,6 +384,8 @@ void UpdateBars(int playerGold, int *prevGold, int slot, bool diminuirBarras, Te
     if (barpoder > 1.0f) barpoder = 1.0f;
 
     if(barsaude == 0 || barcomida == 0 || barpoder == 0){
+        resetEffects();
+        CleanupEffects();
         ResetWaveList(waves);
         CreateWaveList(waves, 3);
         ResetEnemies(enemies, MAX_ENEMIES);

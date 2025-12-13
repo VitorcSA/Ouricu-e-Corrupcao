@@ -5,6 +5,7 @@
 #include <HUD.h>
 #include <string.h>
 #include <stdlib.h>
+#include <dialog.h>
 
 float level = 0.0f;
 
@@ -33,6 +34,8 @@ EnemyWave *CreateWave(int number) {
 }
 
 void CreateWaveList(WaveList *waves, int totalWaves) {
+    UpdateEffects();
+    CleanupEffects();
     waves->totalWaves = totalWaves;
     waves->head = NULL;
     waves->current = NULL;
