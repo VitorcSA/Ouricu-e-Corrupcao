@@ -171,6 +171,8 @@ int main() {
         {
 
         case SAVE_STATE:
+            resetEffects();
+            CleanupEffects();
             slot = saveSelection(&save, &barcomida, &barpoder, &barsaude, &level, &tempoPassado);
             currentGameState = TUTORIAL_STATE;
 
@@ -253,7 +255,8 @@ int main() {
             UpdateWaves(&currentGameState, &waves, mapTower, cellWidth, cellHeight, dt);
 
             UpdateEnemy2(enemies, mapTower, cellWidth, cellHeight, dt, &vidaPortao);
-            UpdatePlayer(mapTower, screenWidth, screenHeight, (int)(GetTotalModifier(EFFECT_ARCHER_BONUS_DAMAGE)));
+            UpdatePlayer(mapTower, screenWidth, screenHeight, (int)(GetTotalModifier(EFFECT_ARCHER_BONUS_DAMAGE)), (int)(GetTotalModifier(EFFECT_WIZARD_BONUS_DAMAGE)), (int)(GetTotalModifier(EFFECT_CANNON_BONUS_DAMAGE)),
+                (int)(GetTotalModifier(EFFECT_ARCHER_PENALTY_DAMAGE)), (int)(GetTotalModifier(EFFECT_WIZARD_PENALTY_DAMAGE)), (int)(GetTotalModifier(EFFECT_CANNON_PENALTY_DAMAGE)));
 
             UpdateGoldHUD(&goldHUD, playerGold);
 

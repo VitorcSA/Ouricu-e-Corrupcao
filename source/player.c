@@ -330,7 +330,7 @@ void updateProjects(Projects *project, bool hasFrames, float dt, float frameTime
     }
 }
 
-void UpdatePlayer(unsigned char *mapa, int screenWidth, int screenHeight, int bonus)
+void UpdatePlayer(unsigned char *mapa, int screenWidth, int screenHeight, int bonusArcherDamage, int bonusWizardDamage, int bonusCannonDamage, int penaltyArcherDamage, int penaltyWizardDamage, int penaltyCannonDamage)
 {
     float dt = GetFrameTime();
     Vector2 mousePos = GetMousePosition();
@@ -379,17 +379,17 @@ void UpdatePlayer(unsigned char *mapa, int screenWidth, int screenHeight, int bo
     for (int i = 0; i < MAX_ARROWS; i++) {
         if (!arrows[i].active) continue;
         
-        updateProjects(arrows, false, dt, 1, i, ARROW_DAMAGE + bonus, 1);
+        updateProjects(arrows, false, dt, 1, i, ARROW_DAMAGE + bonusArcherDamage - penaltyArcherDamage, 1);
     }
 
     for (int i = 0; i < MAX_FIREBALLS; i++) {
         if (!fireballs[i].active) continue;
-        updateProjects(fireballs, true, dt, 0.08f, i, FIREBALL_DAMAGE, FIREBALL_QT_FRAMES);
+        updateProjects(fireballs, true, dt, 0.08f, i, FIREBALL_DAMAGE + bonusWizardDamage - penaltyWizardDamage, FIREBALL_QT_FRAMES);
     }
 
     for (int i = 0; i < MAX_CANNONBALLS; i++) {
         if (!cannonballs[i].active) continue;
-        updateProjects(cannonballs, false, dt, 1, i, CANNONBALL_DAMAGE, 1);
+        updateProjects(cannonballs, false, dt, 1, i, CANNONBALL_DAMAGE + bonusCannonDamage - penaltyCannonDamage, 1);
     }
 }
 
