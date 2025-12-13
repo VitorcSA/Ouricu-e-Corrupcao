@@ -147,21 +147,33 @@ void ApplyDialogEffect(Dialog *d, int option, int *gold, float *vida, float *com
             return;
         case EFFECT_SAUDE_BONUS:
             *vida = *vida * value; // Assumindo que você trata o cap máximo depois
+            if(*vida > 1) *vida = 1;
+            if(*vida < 0) *vida = 0;
             return;
         case EFFECT_SAUDE_PENALTY:
             *vida = *vida * value;
+            if(*vida > 1) *vida = 1;
+            if(*vida < 0) *vida = 0;
             return;
         case EFFECT_PODER_BONUS:
             *poder = *poder * value; // Assumindo que você trata o cap máximo depois
+            if(*poder > 1) *poder = 1;
+            if(*poder < 0) *poder = 0;
             return;
         case EFFECT_PODER_PENALTY:
             *poder = *poder * value;
+            if(*poder > 1) *poder = 1;
+            if(*poder < 0) *poder = 0;
             return;
         case EFFECT_COMIDA_BONUS:
             *comida = *comida * value; // Assumindo que você trata o cap máximo depois
+            if(*comida > 1) *comida = 1;
+            if(*comida < 0) *comida = 0;
             return;
         case EFFECT_COMIDA_PENALTY:
             *comida = *comida * value;
+            if(*comida > 1) *comida = 1;
+            if(*comida < 0) *comida = 0;
             return;
         default:
             break; // Se não for imediato, segue para a lógica de duração

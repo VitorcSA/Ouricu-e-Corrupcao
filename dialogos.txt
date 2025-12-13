@@ -16,7 +16,7 @@
 16 | Uma mina de ouro foi descoberta nas terras do reino. | 2 | Explorar Mina | EFFECT_GOLD_BONUS | 500 | 0 | Proteger Natureza | EFFECT_COMIDA_BONUS | 0.20 | 0
 17 | O povo exige representação nas decisões do castelo. | 2 | Criar Conselho | EFFECT_PODER_PENALTY | 0.10 | 0 | Reinar Absoluto | EFFECT_PODER_BONUS | 0.20 | 0
 18 | Mercenários oferecem caçar inimigos por uma porcentagem. | 2 | Contratar | EFFECT_GOLD_BONUS_ENEMY | 30 | 5 | Recusar | EFFECT_GOLD_BONUS | 0 | 0
-19 | Uma praga de ratos comeu parte dos suprimentos. | 2 | Queimar Estoque | EFFECT_COMIDA_PENALTY | 20 | 0 | Importar Comida | EFFECT_GOLD_PENALTY | 150 | 0
+19 | Uma praga de ratos comeu parte dos suprimentos. | 2 | Queimar Estoque | EFFECT_COMIDA_PENALTY | 0.20 | 0 | Importar Comida | EFFECT_GOLD_PENALTY | 150 | 0
 20 | A igreja quer abençoar as torres, mas exige dízimo. | 2 | Pagar Dízimo | EFFECT_TOWER_PRICE_PENALTY | 10 | 3 | Recusar Bênção | EFFECT_PODER_PENALTY | 0.05 | 0
 21 | O general sugere usar táticas de terra arrasada contra Orcs. | 2 | Autorizar | EFFECT_CANNON_BONUS_DAMAGE | 30 | 3 | Negar Tática | EFFECT_COMIDA_BONUS | 0.10 | 0
 22 | Um carregamento de varinhas mágicas foi interceptado. | 2 | Usar Varinhas | EFFECT_WIZARD_BONUS_DAMAGE | 20 | 3 | Vender Varinhas | EFFECT_GOLD_BONUS | 200 | 0
@@ -29,12 +29,12 @@
 29 | Os ferreiros descobriram uma nova liga metálica para canhões. | 2 | Investir na Liga | EFFECT_CANNON_BONUS_DAMAGE | 25 | 99 | Manter Ferro | EFFECT_GOLD_BONUS | 100 | 0
 30 | Orcs estão saqueando as caravanas de ouro. | 2 | Escolta Armada | EFFECT_GOLD_BONUS_ORC | 30 | 0 | Rota Segura | EFFECT_GOLD_PENALTY_ORC | 20 | 0
 31 | A população protesta contra os gastos militares. | 2 | Reduzir Gastos | EFFECT_TOWER_PRICE_BONUS | 15 | 3 | Reprimir Protesto | EFFECT_PODER_PENALTY | 0.15 | 0
-32 | Um inverno rigoroso se aproxima. | 2 | Estocar Lenha | EFFECT_SAUDE_BONUS | 0.10 | 0 | Vender Excedente | EFFECT_COMIDA_PENALTY | 20 | 0
+32 | Um inverno rigoroso se aproxima. | 2 | Estocar Lenha | EFFECT_SAUDE_BONUS | 0.10 | 0 | Vender Excedente | EFFECT_COMIDA_PENALTY | 0.20 | 0
 33 | Ladrões invadiram o tesouro real! | 2 | Aumentar Guarda | EFFECT_GOLD_PENALTY | 50 | 0 | Investigar Depois | EFFECT_GOLD_PENALTY | 200 | 0
 34 | Arqueiros estão cansados das batalhas constantes. | 2 | Dar Descanso | EFFECT_ARCHER_PENALTY_DAMAGE | 20 | 2 | Forçar Marcha | EFFECT_SAUDE_PENALTY | 0.10 | 0
 35 | Uma nova tecnologia de construção reduz custos. | 2 | Implementar | EFFECT_TOWER_PRICE_BONUS | 30 | 5 | Vender Patente | EFFECT_GOLD_BONUS | 300 | 0
 36 | Magos exigem cristais de mana mais puros. | 2 | Comprar Cristais | EFFECT_GOLD_PENALTY | 100 | 0 | Usar Sintéticos | EFFECT_WIZARD_PENALTY_DAMAGE | 15 | 3
-37 | Refugiados de guerra pedem abrigo no castelo. | 2 | Acolher | EFFECT_COMIDA_PENALTY | 15 | 0 | Expulsar | EFFECT_PODER_PENALTY | 0.10 | 0
+37 | Refugiados de guerra pedem abrigo no castelo. | 2 | Acolher | EFFECT_COMIDA_PENALTY | 0.15 | 0 | Expulsar | EFFECT_PODER_PENALTY | 0.10 | 0
 38 | Um dragão foi avistado, os arqueiros tremem de medo. | 2 | Discurso Motivador | EFFECT_ARCHER_BONUS_DAMAGE | 15 | 2 | Contratar Caçador | EFFECT_GOLD_PENALTY | 250 | 0
 39 | O bobo da corte fez uma piada ofensiva sobre o Rei. | 2 | Rir Junto | EFFECT_PODER_PENALTY | 0.5 | 0 | Executar Bobo | EFFECT_PODER_BONUS | 0.10 | 0
 40 | Canhões experimentais podem explodir ou destruir tudo. | 2 | Arriscar | EFFECT_CANNON_BONUS_DAMAGE | 60 | 2 | Jogar Seguro | EFFECT_CANNON_PENALTY_DAMAGE | 10 | 2
@@ -47,4 +47,8 @@
 47 | Construção de torres está demorando muito. | 2 | Trabalho Forçado | EFFECT_TOWER_PRICE_BONUS | 25 | 3 | Contratar Extras | EFFECT_GOLD_PENALTY | 100 | 0
 48 | Magos propõem um feitiço de "Midas" nos inimigos. | 2 | Encantar | EFFECT_GOLD_BONUS_ENEMY | 100 | 2 | Poupar Mana | EFFECT_WIZARD_BONUS_DAMAGE | 10 | 3
 49 | O Rei está ficando paranoico com traições. | 2 | Expurgo Interno | EFFECT_PODER_BONUS | 0.30 | 0 | Confiar no Povo | EFFECT_SAUDE_BONUS | 0.10 | 0
-50 | O fim do reinado se aproxima, o tesouro está vazio. | 2 | Vender a Coroa | EFFECT_GOLD_BONUS | 1000 | 0 | Lutar até o Fim | EFFECT_PODER_BONUS | 0.50 | 0
+50 | Seu povo precisa de ouro oque fazer ? | 2 | Vender a Coroa | EFFECT_GOLD_BONUS | 200 | 0 | investir em exercito | EFFECT_PODER_BONUS | 1.50 | 0
+51 | Bonus de Ouro! voce achou um bau | 1 | continuar | EFFECT_GOLD_BONUS | 100 | 0 | Lutar até o Fim | EFFECT_PODER_BONUS | 0.50 | 0
+51 | Bonus de Ouro! voce achou um bau | 1 | continuar | EFFECT_GOLD_BONUS | 100 | 0 | Lutar até o Fim | EFFECT_PODER_BONUS | 0.50 | 0
+53 | Bonus de Ouro! voce achou um bau | 1 | continuar | EFFECT_GOLD_BONUS | 100 | 0 | Lutar até o Fim | EFFECT_PODER_BONUS | 0.50 | 0
+54 | Bonus de Ouro! voce achou um bau | 1 | continuar | EFFECT_GOLD_BONUS | 100 | 0 | Lutar até o Fim | EFFECT_PODER_BONUS | 0.50 | 0
