@@ -5,6 +5,7 @@
 #include <raymath.h>
 #include "HUD.h"
 #include <stdio.h>
+#include <dialog.h>
 
 #define ATTACK_RANGE_ARCHER 225.0f
 #define ATTACK_RANGE_WIZARD 135.0f
@@ -118,7 +119,7 @@ bool IsTowerOnPath(Vector2 gridPos, unsigned char *mapa){
     return false;
 }
 
-void AddTower(Vector2 pos, int screenWidth, int screenHeight)
+void AddTower(Vector2 pos, int screenWidth, int screenHeight, int bonusTowerPrice, int penaltyTowerPrice)
 {
     if (ownedTowers <= 0 || playerGold < 10) return;
 
@@ -133,7 +134,7 @@ void AddTower(Vector2 pos, int screenWidth, int screenHeight)
     towers[towerCount].active = true;
 
     towerCount++;
-    playerGold -= 10;
+    playerGold -= 10 - bonusTowerPrice + penaltyTowerPrice;
     if (playerGold < 0)  playerGold = 0;
 }
 
@@ -250,7 +251,7 @@ void putTowerOnGrid(Vector2 mousePos, unsigned char *mapa, int screenWidth, int 
 
     if(!IsTowerOnPath(gridPos, mapa)){
         if (!IsTowerOnGrid(gridPos)) {
-            AddTower(cellCenter, screenWidth, screenHeight);
+            AddTower(cellCenter, screenWidth, screenHeight, GetTotalModifier(EFFECT_TOWER_PRICE_BONUS), GetTotalModifier(EFFECT_TOWER_PRICE_PENALTY));
         } else {
             printf("Já existe uma torre nesse grid!\n");
         }
