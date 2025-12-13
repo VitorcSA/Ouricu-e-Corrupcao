@@ -10,14 +10,47 @@
 ActiveEffect activeEffects[MAX_EFFECT_ACTIVE];
 int activeCount = 0;
 
+EffectType StringToEffect(const char *texto)
+{
+    if (texto == NULL) return EFFECT_NONE; 
+    
+    if(strstr(texto, "EFFECT_TOWER_PRICE_BONUS"))               return EFFECT_TOWER_PRICE_BONUS;
+    if(strstr(texto, "EFFECT_TOWER_PRICE_PENALTY"))             return EFFECT_TOWER_PRICE_PENALTY;
+
+    if(strstr(texto, "EFFECT_ARCHER_BONUS_DAMAGE"))             return EFFECT_ARCHER_BONUS_DAMAGE;
+    if(strstr(texto, "EFFECT_WIZARD_BONUS_DAMAGE"))             return EFFECT_WIZARD_BONUS_DAMAGE;
+    if(strstr(texto, "EFFECT_CANNON_BONUS_DAMAGE"))             return EFFECT_CANNON_BONUS_DAMAGE;
+
+    if(strstr(texto, "EFFECT_ARCHER_PENALTY_DAMAGE"))           return EFFECT_ARCHER_PENALTY_DAMAGE;
+    if(strstr(texto, "EFFECT_WIZARD_PENALTY_DAMAGE"))           return EFFECT_WIZARD_PENALTY_DAMAGE;
+    if(strstr(texto, "EFFECT_CANNON_PENALTY_DAMAGE"))           return EFFECT_CANNON_PENALTY_DAMAGE;
+
+    if(strstr(texto, "EFFECT_PODER_BONUS"))                     return EFFECT_PODER_BONUS;
+    if(strstr(texto, "EFFECT_COMIDA_BONUS"))                    return EFFECT_COMIDA_BONUS;
+    if(strstr(texto, "EFFECT_SAUDE_BONUS"))                     return EFFECT_SAUDE_BONUS;
+
+    if(strstr(texto, "EFFECT_PODER_PENALTY"))                   return EFFECT_PODER_PENALTY;
+    if(strstr(texto, "EFFECT_COMIDA_PENALTY"))                  return EFFECT_COMIDA_PENALTY;
+    if(strstr(texto, "EFFECT_SAUDE_PENALTY"))                   return EFFECT_SAUDE_PENALTY;
+ 
+    if(strstr(texto, "EFFECT_GOLD_BONUS_ENEMY"))                return EFFECT_GOLD_BONUS_ENEMY;
+    if(strstr(texto, "EFFECT_GOLD_BONUS_ORC"))                  return EFFECT_GOLD_BONUS_ORC;
+
+    if(strstr(texto, "EFFECT_GOLD_PENALTY_ENEMY"))              return EFFECT_GOLD_PENALTY_ENEMY;
+    if(strstr(texto, "EFFECT_GOLD_PENALTY_ORC"))                return EFFECT_GOLD_PENALTY_ORC;
+
+    if(strstr(texto, "EFFECT_GOLD_BONUS"))                      return EFFECT_GOLD_BONUS;
+    if(strstr(texto, "EFFECT_GOLD_PENALTY"))                    return EFFECT_GOLD_PENALTY;
+ 
+    return EFFECT_NONE;
+}
+
 Dialog *carregarPergunta(const char *arquivo, int numAleatorio) 
 {
     FILE *f = fopen(arquivo, "r");
-    if (!f) {
-        return NULL;
-    }
+    if (!f) return NULL;
 
-    char buffer[512];
+    char buffer[1024];
 
     while (fgets(buffer, sizeof(buffer), f)) {
 
@@ -51,7 +84,10 @@ Dialog *carregarPergunta(const char *arquivo, int numAleatorio)
             //opção 1
             token = strtok(NULL, "|");
             strcpy(p->option1, token ? token : "");
-            p->effect1 = (EffectType)atoi(strtok(NULL, "|"));
+
+            token = strtok(NULL, "|");
+            p->effect1 = StringToEffect(token);
+
             p->effectValue1 = atof(strtok(NULL, "|"));
             p->effectDuration1 = atoi(strtok(NULL, "|"));
 
@@ -59,10 +95,14 @@ Dialog *carregarPergunta(const char *arquivo, int numAleatorio)
             if(p->numOpcoes == 2){
                 token = strtok(NULL, "|");
                 strcpy(p->option2, token ? token : "");
-                p->effect2 = (EffectType)atoi(strtok(NULL, "|"));
+
+                token = strtok(NULL, "|");
+                p->effect2 = StringToEffect(token);
+
                 p->effectValue2 = atof(strtok(NULL, "|"));
                 p->effectDuration2 = atoi(strtok(NULL, "|"));
             }
+            printf("%d\n%d\n%d\n%d\n%d\n%f\n%f\n%d\n%d\n%s\n%s\n%s", p->active, p->effect1, p->effect2, p->effectDuration1, p->effectDuration2, p->effectValue1, p->effectValue2, p->id, p->numOpcoes, p->option1, p->option2, p->text);
 
             fclose(f);
             return p;   // Achou e retorna imediatamente
@@ -81,11 +121,15 @@ void ApplyDialogEffect(Dialog *d, int option, int *gold, float *vida, float *com
     int duration;
 
     if (option == 1) {
+        printf("enum1: %d\n", d->effect1);
         type = d->effect1;
+        printf("type1: %d\n",type);
         value = d->effectValue1;
         duration = d->effectDuration1;
     } else {
+        printf("enum2: %d\n", d->effect2);
         type = d->effect2;
+        printf("type2: %d\n", type);
         value = d->effectValue2;
         duration = d->effectDuration2;
     }
