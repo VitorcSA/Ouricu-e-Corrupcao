@@ -71,7 +71,7 @@ extern float barpoder;
 
 UnitType HUD_GetSelectedUnit(void);
 void HUD_ShowAt(Vector2 pos, int towerIndex);
-void HUD_Update(Tower *tower);
+void HUD_Update(Tower *tower, int bonusArcherPrice, int bonusWizardPrice, int bonusCannonPrice, int penaltyArcherPrice, int penaltyWizardPrice, int penaltyCannonPrice);
 void HUD_Draw(void);
 bool HUD_IsActive(void);
 int HUD_GetSelectedTower(void);

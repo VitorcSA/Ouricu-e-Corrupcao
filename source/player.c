@@ -134,7 +134,7 @@ void AddTower(Vector2 pos, int screenWidth, int screenHeight, int bonusTowerPric
     towers[towerCount].active = true;
 
     towerCount++;
-    playerGold -= 10 - bonusTowerPrice + penaltyTowerPrice;
+    playerGold -= 10 + bonusTowerPrice - penaltyTowerPrice;
     if (playerGold < 0)  playerGold = 0;
 }
 
@@ -299,7 +299,7 @@ void updatePlayers(Players *player, Projects *project, float dt, float attackRan
         }
 }
 
-void updateProjects(Projects *project, bool hasFrames, float dt, float frameTime, int i, int damage, int quantFrames){
+void updateProjects(Projects *project, bool hasFrames, float dt, float frameTime, int i, int damage, int quantFrames, int bonusGold, int penaltyGold){
     if(hasFrames){
         project[i].frameTime += dt;
         if (project[i].frameTime >= frameTime) {
@@ -317,7 +317,7 @@ void updateProjects(Projects *project, bool hasFrames, float dt, float frameTime
             enemies[e].currentHealth -= damage;
             if (enemies[e].currentHealth <= 0) {
                     enemies[e].active = false;
-                    playerGold += GOLD_FOR_ENEMY;
+                    playerGold += GOLD_FOR_ENEMY + bonusGold - penaltyGold;
                 }
             }
             if (x >= 0 && x < MAX_ORCS && orcs[x].active) {
@@ -352,7 +352,7 @@ void UpdatePlayer(unsigned char *mapa, int screenWidth, int screenHeight, int bo
 
     //hud para adicionar personagem
     if (HUD_IsActive()) {
-        HUD_Update(towers);
+        HUD_Update(towers, 0, 0, 0, 0, 0, 0);
         UnitType selected = HUD_GetSelectedUnit();
         int selTower = HUD_GetSelectedTower();
 
@@ -380,17 +380,17 @@ void UpdatePlayer(unsigned char *mapa, int screenWidth, int screenHeight, int bo
     for (int i = 0; i < MAX_ARROWS; i++) {
         if (!arrows[i].active) continue;
         
-        updateProjects(arrows, false, dt, 1, i, ARROW_DAMAGE + bonusArcherDamage - penaltyArcherDamage, 1);
+        updateProjects(arrows, false, dt, 1, i, ARROW_DAMAGE + bonusArcherDamage - penaltyArcherDamage, 1, GetTotalModifier(EFFECT_GOLD_BONUS_ENEMY), GetTotalModifier(EFFECT_GOLD_PENALTY_ENEMY));
     }
 
     for (int i = 0; i < MAX_FIREBALLS; i++) {
         if (!fireballs[i].active) continue;
-        updateProjects(fireballs, true, dt, 0.08f, i, FIREBALL_DAMAGE + bonusWizardDamage - penaltyWizardDamage, FIREBALL_QT_FRAMES);
+        updateProjects(fireballs, true, dt, 0.08f, i, FIREBALL_DAMAGE + bonusWizardDamage - penaltyWizardDamage, FIREBALL_QT_FRAMES, GetTotalModifier(EFFECT_GOLD_BONUS_ENEMY), GetTotalModifier(EFFECT_GOLD_PENALTY_ENEMY));
     }
 
     for (int i = 0; i < MAX_CANNONBALLS; i++) {
         if (!cannonballs[i].active) continue;
-        updateProjects(cannonballs, false, dt, 1, i, CANNONBALL_DAMAGE + bonusCannonDamage - penaltyCannonDamage, 1);
+        updateProjects(cannonballs, false, dt, 1, i, CANNONBALL_DAMAGE + bonusCannonDamage - penaltyCannonDamage, 1, GetTotalModifier(EFFECT_GOLD_BONUS_ENEMY), GetTotalModifier(EFFECT_GOLD_PENALTY_ENEMY));
     }
 }
 

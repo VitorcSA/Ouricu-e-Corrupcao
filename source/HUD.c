@@ -80,7 +80,7 @@ bool HUD_IsActive(void) { return hudVisible; }
 int HUD_GetSelectedTower(void) { return selectedTower; }
 UnitType HUD_GetSelectedUnit(void) { return chosenUnit; }
 
-void HUD_Update(Tower *tower) {
+void HUD_Update(Tower *tower, int bonusArcherPrice, int bonusWizardPrice, int bonusCannonPrice, int penaltyArcherPrice, int penaltyWizardPrice, int penaltyCannonPrice) {
     if (!hudVisible) return;
 
     int screenW = GetScreenWidth();
@@ -102,7 +102,7 @@ void HUD_Update(Tower *tower) {
         if (CheckCollisionPointRec(mouse, archerBtn) && !tower[index].hasDefender) {
             if(playerGold >= 20){
                 chosenUnit = UNIT_ARCHER;
-                playerGold -= 20;
+                playerGold -= 20 + bonusArcherPrice - penaltyArcherPrice;
                 hudVisible = false;
             }
         }
@@ -110,14 +110,14 @@ void HUD_Update(Tower *tower) {
         if (CheckCollisionPointRec(mouse, wizardBtn) && !tower[index].hasDefender) {
             if (wizardUnlocked && playerGold >= 30) {
                 chosenUnit = UNIT_WIZARD;
-                playerGold -= 30;
+                playerGold -= 30 + bonusWizardPrice - penaltyWizardPrice;
                 hudVisible = false;
             }
         }
         else if (CheckCollisionPointRec(mouse, cannonBtn) && !tower[index].hasDefender) {
             if (cannonUnlocked && playerGold >= 40) {
                 chosenUnit = UNIT_CANNON;
-                playerGold -= 40;
+                playerGold -= 40 + bonusCannonPrice - bonusCannonPrice;
                 hudVisible = false;
             }
         }else if (!CheckCollisionPointRec(mouse, hud)) {
