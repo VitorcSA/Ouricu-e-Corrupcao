@@ -98,7 +98,7 @@ int main() {
 
     int slot = 4;
     vidaPortao = 3;
-    currentGameState = SAVE_STATE;
+    currentGameState = DIALOGO_STATE;
     CreateWaveList(&waves, 3 + (int)level * 2);
 
     const char *arquivoMapaTowerDefense = "assets/mapa/mapaTowerDefense";
@@ -435,14 +435,13 @@ int main() {
             }
 
            if (dialogo != NULL && dialogo->active) {
-                DrawDialogScreen(dialogo, screenWidth, screenHeight);
-                int escolha = CheckDialogClick(dialogo, screenWidth, screenHeight);
+                int escolha = DrawDialogScreen(dialogo, screenWidth, screenHeight);
 
                 if (escolha != 0) {
                     printf("Opção %d selecionada:\n", escolha);
                     
                     ApplyDialogEffect(dialogo, escolha, &playerGold, &barsaude, &barcomida, &barpoder);
-
+                    if((EffectType)(2) == EFFECT_TOWER_PRICE_PENALTY)
                     printf("teste\n");
                     free(dialogo);
                     dialogo = NULL;

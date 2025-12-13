@@ -68,13 +68,13 @@ extern int activeCount;
 
 Dialog *carregarPergunta(const char *arquivo, int numAleatorio);
 
-void DrawDialogScreen(Dialog *dialogo, int screenWidth, int screenHeight);
 void ApplyDialogEffect(Dialog *d, int option, int *gold, float *vida, float *comida, float *poder);
 void UpdateEffects();
 void CleanupEffects();
 void resetEffects();
+
 float GetTotalModifier(EffectType typeWanted);
 
-int CheckDialogClick(Dialog *dialogo, int screenWidth, int screenHeight);
+int DrawDialogScreen(Dialog *dialogo, int screenWidth, int screenHeight);
 
 #endif
