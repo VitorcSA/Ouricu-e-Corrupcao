@@ -103,7 +103,7 @@ extern Texture2D arrowTexture;
 
 extern Texture2D wizardTexture;
 extern Texture2D idlewizardTexture;
-extern Texture2D fireballTexture;
+extern Texture2D fireballTexture; 
 
 extern Texture2D cannonTextureIdle;
 extern Texture2D cannonTextureShot;

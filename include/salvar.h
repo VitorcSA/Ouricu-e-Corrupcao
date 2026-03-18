@@ -1,5 +1,5 @@
 #ifndef SALVAR_H
-#define sALVAR_H
+#define SALVAR_H
 
 typedef struct {
     int levelAtual;

@@ -11,6 +11,22 @@
 #include "salvar.h"
 #include "dialog.h"
 
+
+#define DEFAULT_LOGO_PATH "assets/logo.png"
+#define DEFAULT_MUSIC_PATH "assets/cinematic-documentary-epic-dramatic-fallen-kingdom-short-ver-191717.mp3"
+#define DEFAULT_KING_PATH "assets/rei.png"
+
+#define TUTORIAL_DIALOGS \
+	"Você é o rei e tem que defender seu reino de inimigos.",\
+	"Para isso você usará torres e defensores.",\
+	"Clique com o botão esquerdo em algum lugar no campo para adicionar uma torre.",\
+	"Clique com o botão direito na torre para abrir o menu de defensores.",\
+	"Escolha um defensor e posicione-o sobre a torre.",\
+	"Com o tempo você vai desbloqueando novos defensores.",\
+	"Cada defensor tem distâncias de ataque e danos diferentes.",\
+	"Lembre-se: ao gastar muitos recursos apenas em defesa, esquecendo de seu povo:",\
+	"GAME OVER"
+
 void ResetTudo(WaveList *waves){
     resetEffects();
     CleanupEffects();
@@ -29,17 +45,7 @@ void DrawTutorial(void) {
     DrawText("TUTORIAL", (screenWidth - MeasureText("TUTORIAL", 40)) / 2, y, 40, YELLOW);
     y += 70;
 
-    const char *lines[] = {
-    "Você é o rei e tem que defender seu reino de inimigos.",
-    "Para isso você usará torres e defensores.",
-    "Clique com o botão esquerdo em algum lugar no campo para adicionar uma torre.",
-    "Clique com o botão direito na torre para abrir o menu de defensores.",
-    "Escolha um defensor e posicione-o sobre a torre.",
-    "Com o tempo você vai desbloqueando novos defensores.",
-    "Cada defensor tem distâncias de ataque e danos diferentes.",
-    "Lembre-se: ao gastar muitos recursos apenas em defesa, esquecendo de seu povo:",
-    "GAME OVER"
-    };
+    const char *lines[] = {TUTORIAL_DIALOGS};
 
     int numLines = sizeof(lines) / sizeof(lines[0]);
     for (int i = 0; i < numLines; i++) {
@@ -52,21 +58,43 @@ void DrawTutorial(void) {
     }
 }
 float waveCompleteTimer = 0.0f;
-int main() {
-    //Configuração da janela
-    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
-    InitWindow(1280, 720, "Poder e Corrupcao");
-    Image logo = LoadImage("assets/logo.png");
-    SetWindowIcon(logo);
-    Texture2D logoText = LoadTextureFromImage(logo);
-    UnloadImage(logo);
-    SetExitKey(KEY_NULL);
-    SetTargetFPS(60);
-    InitAudioDevice(); 
 
-    Music music = LoadMusicStream("assets/cinematic-documentary-epic-dramatic-fallen-kingdom-short-ver-191717.mp3");
-    SetMusicVolume(music, 0.5f); 
-    PlayMusicStream(music);
+
+
+void loadDefaultMusic(Music *music){
+	*music = LoadMusicStream(DEFAULT_MUSIC_PATH);
+
+	SetMusicVolume(*music, 0.5f); 
+	PlayMusicStream(*music);
+};
+
+void loadDefaultLogo(Texture2D *logo){
+	Image logoImage = LoadImage(DEFAULT_LOGO_PATH);
+	SetWindowIcon(logoImage);
+
+	*logo = LoadTextureFromImage(logoImage);
+    UnloadImage(logoImage);
+
+};
+
+void loadKingTexture(Texture2D *texture){
+	//Iniciar Textura do rei
+	Image image = LoadImage(DEFAULT_KING_PATH);
+	ImageResize(&image, 200,200);
+
+	*texture = LoadTextureFromImage(image);
+
+	UnloadImage(image);
+
+};
+
+int oldmain() {
+
+	Music music; 
+	loadDefaultMusic(&music);
+
+//	Texture2D logo;
+//	loadDefaultLogo(&logo);
 
     int prevGold = -1;
     extern int playerGold;
@@ -76,28 +104,25 @@ int main() {
     GameState currentGameState;
     Dialog *dialogo = NULL;
 
-    //Iniciar Textura do rei
-    Image rei = LoadImage("assets/rei.png");
-    ImageResize(&rei, 200, 200);
-    Texture2D reiTextura = LoadTextureFromImage(rei);
-    UnloadImage(rei);
+	Texture2D kingTexture;
+	loadKingTexture(&kingTexture);
 
-    //Iniciar outras texturas
-    Texture2D fundo = LoadTexture("assets/fundotitulo.png");
-    Texture2D titulo = LoadTexture("assets/titulo.png");
+        //Iniciar outras texturas
+//    Texture2D fundo = LoadTexture("assets/fundotitulo.png");
+//    Texture2D titulo = LoadTexture("assets/titulo.png");
     Texture2D reinoFundo = LoadTexture("assets/reino.png");
 
     Vector2 posicaoRei;
 
     //Tela de inicio do reino
     //TelaLogo(logoText);
-    TelaTitulo(titulo, fundo);
-    InitPlayer();
+    //InitPlayer();
 
     bool borderless = false;
 
     int slot = 4;
     vidaPortao = 3;
+
     currentGameState = SAVE_STATE;
     CreateWaveList(&waves, 3 + (int)level * 2);
 
@@ -133,7 +158,7 @@ int main() {
         int screenHeight = GetScreenHeight();
         float cellWidth = screenWidth / (float)COLS;
         float cellHeight = screenHeight / (float)ROWS;
-        
+
         if (IsWindowResized() || IsKeyPressed(KEY_F11)) {
             if (IsKeyPressed(KEY_F11)) {
                 borderless = !borderless;
@@ -160,7 +185,7 @@ int main() {
             int screenHeight = GetScreenHeight();
             float cellWidth = screenWidth / (float)COLS;
             float cellHeight = screenHeight / (float)ROWS;
-        
+
             RecenterTowers(screenWidth, screenHeight);
             recenterEnemies(screenWidth, screenHeight);
         }
@@ -211,7 +236,7 @@ int main() {
 
             desenharRetangulo(fundoHeight, screenWidth);
             
-            desenharRei( reiTextura, 
+            desenharRei( kingTexture, 
                          posicaoRei, 
                          fundoHeight, 
                          screenWidth );
@@ -463,12 +488,25 @@ int main() {
     CloseAudioDevice();
     UnloadTexture(titulo);
     UnloadTexture(fundo);
-    UnloadImage(logo);
+    UnloadTexture(logo);
     UnloadTexture(reinoFundo);
-    UnloadTexture(reiTextura);
+    UnloadTexture(kingTexture);
     free(mapTower);
 
     UnloadPlayer();
     CloseWindow();
     return 0;
 }
+
+#include "manager.h"
+
+int main(int argc,char *argv[]){
+	if(!initGame()) return -1;
+
+	while(updateGame()){drawGame();}
+
+	(void)endGame();
+
+	return 0;
+};
+
