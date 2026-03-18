@@ -4,7 +4,11 @@
 void initData(Data *data){
 	data->logo.texture.id = -1;
 	data->title.background.id = -1;
-
+	data->menu.background.id = -1;
+	data->menu.king = &data->assets.king;
+	data->menu.player = &data->player;
+	data->save.player = &data->player;
+	data->save.sprites = &data->assets.archer;
 
 }
 
@@ -14,6 +18,11 @@ void loadAssets(Assets *assets){
 	ImageResize(&torre, 64, 64);
 	assets->tower = LoadTextureFromImage(torre);
 	UnloadImage(torre);
+	
+	Image image = LoadImage("assets/rei.png");
+	ImageResize(&image, 200,200);
+	assets->king = LoadTextureFromImage(image);
+	UnloadImage(image);
 
 	assets->archer = LoadTexture("assets/InimigosAnimation/Shot.png");
 

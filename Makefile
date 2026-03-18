@@ -19,4 +19,4 @@ run:
 	@./$(TARGET)
 
 test: compile run
-	@echo iniciando teste
+	@echo Teste concluido

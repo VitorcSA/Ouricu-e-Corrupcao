@@ -1,7 +1,9 @@
 #include <raylib.h>
 #include <math.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include "HUD.h"
+#include "gamedata.h"
 #include "telas.h"
 #include "enemies.h"
 #include "player.h"
@@ -16,17 +18,6 @@
 #define DEFAULT_MUSIC_PATH "assets/cinematic-documentary-epic-dramatic-fallen-kingdom-short-ver-191717.mp3"
 #define DEFAULT_KING_PATH "assets/rei.png"
 
-#define TUTORIAL_DIALOGS \
-	"Você é o rei e tem que defender seu reino de inimigos.",\
-	"Para isso você usará torres e defensores.",\
-	"Clique com o botão esquerdo em algum lugar no campo para adicionar uma torre.",\
-	"Clique com o botão direito na torre para abrir o menu de defensores.",\
-	"Escolha um defensor e posicione-o sobre a torre.",\
-	"Com o tempo você vai desbloqueando novos defensores.",\
-	"Cada defensor tem distâncias de ataque e danos diferentes.",\
-	"Lembre-se: ao gastar muitos recursos apenas em defesa, esquecendo de seu povo:",\
-	"GAME OVER"
-
 void ResetTudo(WaveList *waves){
     resetEffects();
     CleanupEffects();
@@ -36,27 +27,7 @@ void ResetTudo(WaveList *waves){
     resetAll();
 }
 
-void DrawTutorial(void) {
-    const int fontSize = 24;
-    int screenWidth = GetScreenWidth();
-    int screenHeight = GetScreenHeight();
-    int y = screenHeight / 6;
 
-    DrawText("TUTORIAL", (screenWidth - MeasureText("TUTORIAL", 40)) / 2, y, 40, YELLOW);
-    y += 70;
-
-    const char *lines[] = {TUTORIAL_DIALOGS};
-
-    int numLines = sizeof(lines) / sizeof(lines[0]);
-    for (int i = 0; i < numLines; i++) {
-        DrawText(lines[i],
-                 (screenWidth - MeasureText(lines[i], fontSize)) / 2,
-                 y,
-                 fontSize,
-                 WHITE);
-        y += 40;
-    }
-}
 float waveCompleteTimer = 0.0f;
 
 
@@ -198,18 +169,14 @@ int oldmain() {
         case SAVE_STATE:
             resetEffects();
             CleanupEffects();
-            slot = saveSelection(&save, &barcomida, &barpoder, &barsaude, &level, &tempoPassado);
+//            slot = saveSelection(&save, &barcomida, &barpoder, &barsaude, &level, &tempoPassado);
             currentGameState = TUTORIAL_STATE;
 
         //Parte do tutorial
         case TUTORIAL_STATE:
 
-            DrawTutorial();
-            DrawText( "Clique ou pressione ENTER para continuar",
-                      (screenWidth - MeasureText("Clique ou pressione ENTER para continuar", 24)) / 2,
-                       screenHeight - 80, 
-                       24, 
-                       LIGHTGRAY );
+            DrawTutorial(NULL);
+
 
             if (IsKeyPressed(KEY_ENTER) || IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) currentGameState = MENU_STATE;
 
@@ -263,7 +230,7 @@ int oldmain() {
         //Parte da loja
         case LOJA_STATE:
             funlojaAtiva(&currentGameState, &barsaude, &barcomida, &barpoder, &cannonUnlocked, &wizardUnlocked, &prevGold, &ownedTowers, &archerCount, &playerGold, screenWidth, screenHeight);
-            UpdateBars(playerGold, &prevGold, slot, false, fundo, &currentGameState, &waves);
+            //UpdateBars(playerGold, &prevGold, slot, false, fundo, &currentGameState, &waves);
         break;
 
         //Parte do jogo
@@ -285,7 +252,7 @@ int oldmain() {
 
             UpdateGoldHUD(&goldHUD, playerGold);
 
-            UpdateBars(playerGold, &prevGold, slot, true, fundo, &currentGameState, &waves);
+//            UpdateBars(playerGold, &prevGold, slot, true, fundo, &currentGameState, &waves);
 
             ClearBackground((Color){20, 20, 30, 255});
             DrawEnemies2(enemies, walkTexture, MAX_ENEMIES);
@@ -305,7 +272,7 @@ int oldmain() {
             if(vidaPortao <= 0){
                 ResetTudo(&waves);
                 DeleteSave(slot);
-                TelaGameOver(fundo);
+//                TelaGameOver(fundo);
                 currentGameState = SAVE_STATE;
             }
 
@@ -486,10 +453,10 @@ int oldmain() {
     }
     UnloadMusicStream(music);
     CloseAudioDevice();
-    UnloadTexture(titulo);
-    UnloadTexture(fundo);
-    UnloadTexture(logo);
-    UnloadTexture(reinoFundo);
+//    UnloadTexture(titulo);
+//  UnloadTexture(fundo);
+//  UnloadTexture(logo);
+//  UnloadTexture(reinoFundo);
     UnloadTexture(kingTexture);
     free(mapTower);
 

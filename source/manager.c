@@ -1,6 +1,7 @@
 #include "manager.h"
 #include "gamedata.h"
 #include "raylib.h"
+#include "salvar.h"
 #include "telas.h"
 
 #include <stdbool.h>
@@ -29,7 +30,6 @@ void initManager(Manager *manager){
 bool initGame(void){
 	configWindow();
 	initManager(&manager);
-
 	loadAssets(&manager.data.assets);
 
 	return true;
@@ -101,10 +101,24 @@ bool switchState(State state){
 			
 			break;
 		case SAVE:
-			manager.draw = NULL;
-			manager.update = NULL;
+			manager.draw = drawSaveMenu;
+			manager.update = updateSaveMenu;
+			manager.funcData = &manager.data.save;
+			manager.data.state = state;
+
+			break;
+		case TUTORIAL:
+			manager.draw = DrawTutorial;
+			manager.update = updateTutorial;
 			manager.funcData = NULL;
-			manager.data.state = KEEP;
+			manager.data.state = state;
+
+			break;
+		case MENU:
+			manager.draw = drawMenuScreen;
+			manager.update = updateMenuScreen;
+			manager.funcData = &manager.data.menu;
+			manager.data.state = state;
 
 			break;
 	}

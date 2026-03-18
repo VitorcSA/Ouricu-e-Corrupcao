@@ -3,6 +3,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <string.h>
+#include "HUD.h"
 #include "telas.h"
 #include "gamedata.h"
 
@@ -11,10 +13,51 @@
 #define DEFAULT_TITLE_STRING_PATH "assets/titulo.png"
 #define FADE_SPEED 100.0f
 
+#define BTN_START_COR_HOVER                 (Color){0, 100, 0, 255}
+#define BTN_START_COR                       DARKGREEN
+#define BTN_START_LINES_COR                 GOLD
+#define BTN_START_WIDTH                     220
+#define BTN_START_HEIGHT                    60
+#define BTN_START_X                         (screenWidth - BTN_START_WIDTH) / 2
+#define BTN_START_Y                         fundoHeight - 120
+#define BTN_START_FONTE                     30
+
+#define BTN_LOJA_COR_HOVER                  (Color){20, 20, 30, 180}
+#define BTN_LOJA_COR                        (Color){40, 40, 50, 200}
+#define BTN_LOJA_LINES_COR                  (Color){255, 255, 255, 120}
+#define BTN_LOJA_WIDTH                      180
+#define BTN_LOJA_HEIGHT                     60
+#define BTN_LOJA_X                          screenWidth - BTN_LOJA_WIDTH - 20
+#define BTN_LOJA_Y                          20
+#define BTN_LOJA_FONTE                      22
+
+#define TUTORIAL_DIALOGS \
+	"Você é o rei e tem que defender seu reino de inimigos.",\
+	"Para isso você usará torres e defensores.",\
+	"Clique com o botão esquerdo em algum lugar no campo para adicionar uma torre.",\
+	"Clique com o botão direito na torre para abrir o menu de defensores.",\
+	"Escolha um defensor e posicione-o sobre a torre.",\
+	"Com o tempo você vai desbloqueando novos defensores.",\
+	"Cada defensor tem distâncias de ataque e danos diferentes.",\
+	"Lembre-se: ao gastar muitos recursos apenas em defesa, esquecendo de seu povo:",\
+	"GAME OVER"
+
 bool updateLogo(Fase *fase,float *alpha);
 bool updateTitle(void *data);
 void initLogo(Logo *logo);
 void initTitle(Title *title);
+void initMenu(Menu *menu);
+void drawButton(const Button *button);
+State updateButton(Button *button);
+void createButton(Button *button,State whereToGo,Color color,Color colorHover,Color lines,bool isRounded,const char *text,Rectangle dimensions,int font);
+
+void drawLogoScreen(void *data){
+	const Logo *logo = (Logo *)data;
+	DrawTexture(logo->texture,
+                    (GetScreenWidth() - logo->texture.width) / 2,
+                    (GetScreenHeight() - logo->texture.height) / 2,
+                    (Color){255, 255, 255, (unsigned char)logo->alpha});
+};
 
 State updateLogoScreen(void* data){
 	Logo *logo = (Logo *)data;
@@ -24,7 +67,6 @@ State updateLogoScreen(void* data){
 
 	return KEEP;
 }
-
 void initLogo(Logo *logo){
 	logo->alpha = 0.0f;
 	logo->fase = APPEAR;
@@ -35,14 +77,6 @@ void initLogo(Logo *logo){
 	logo->texture = LoadTextureFromImage(logoImage);
 	UnloadImage(logoImage);
 
-};
-
-void drawLogoScreen(void *data){
-	const Logo *logo = (Logo *)data;
-	DrawTexture(logo->texture,
-                    (GetScreenWidth() - logo->texture.width) / 2,
-                    (GetScreenHeight() - logo->texture.height) / 2,
-                    (Color){255, 255, 255, (unsigned char)logo->alpha});
 };
 
 bool updateLogo(Fase *fase,float *alpha){
@@ -281,5 +315,143 @@ void TelaGameOver(Texture2D fundo) {
         EndDrawing();
     }
 }
+
+State updateTutorial(void *data){
+            if (IsKeyPressed(KEY_ENTER) || IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) return MENU;
+
+	    return KEEP;
+};
+
+void DrawTutorial(void *data) {
+    const int fontSize = 24;
+    int screenWidth = GetScreenWidth();
+    int screenHeight = GetScreenHeight();
+    int y = screenHeight / 6;
+
+    DrawText("TUTORIAL", (screenWidth - MeasureText("TUTORIAL", 40)) / 2, y, 40, YELLOW);
+    y += 70;
+
+    const char *lines[] = {TUTORIAL_DIALOGS};
+
+    int numLines = sizeof(lines) / sizeof(lines[0]);
+    for (int i = 0; i < numLines; i++) {
+        DrawText(lines[i],
+                 (screenWidth - MeasureText(lines[i], fontSize)) / 2,
+                 y,
+                 fontSize,
+                 WHITE);
+        y += 40;
+    }
+
+            DrawText( "Clique ou pressione ENTER para continuar",
+                      (screenWidth - MeasureText("Clique ou pressione ENTER para continuar", 24)) / 2,
+                       screenHeight - 80, 
+                       24, 
+                       LIGHTGRAY );
+}
+
+void initMenu(Menu *menu){
+	menu->background = LoadTexture("assets/reino.png");
+
+	float screenHeight = GetScreenHeight();
+	float screenWidth = GetScreenWidth();
+	float fundoHeight = screenHeight - hudHeight;
+
+	createButton(&menu->buttonGame,GAME,BTN_START_COR,BTN_START_COR_HOVER,BTN_START_LINES_COR,false, "Start",(Rectangle){BTN_START_X,BTN_START_Y,BTN_START_WIDTH,BTN_START_HEIGHT},BTN_START_FONTE);
+
+	createButton(&menu->buttonShop,SHOP,BTN_LOJA_COR,BTN_LOJA_COR_HOVER, BTN_LOJA_LINES_COR,true, "loja", (Rectangle){BTN_LOJA_X,BTN_LOJA_Y,BTN_LOJA_WIDTH,BTN_LOJA_HEIGHT},BTN_LOJA_FONTE);
+
+
+}
+
+State updateMenuScreen(void *data){
+	Menu *menu = (Menu *)data;
+	if(menu->background.id == -1) initMenu(menu);
+
+	State state = KEEP;
+
+	if(IsKeyPressed(KEY_ESCAPE)) return SAVE;
+
+	if((state = updateButton(&menu->buttonGame)) != KEEP) return state;
+	if((state = updateButton(&menu->buttonShop)) != KEEP) return state;
+
+	return state;
+};
+
+void drawMenuScreen(void *data){
+	const Menu *menu = (Menu *)data;
+
+	int screenHeight = GetScreenHeight();
+	int screenWidth = GetScreenWidth();
+
+	float fundoHeight = screenHeight - hudHeight;
+	float scaleX = (float)screenWidth / menu->background.width;
+	float scaleY = fundoHeight / menu->background.height;
+	float scale = (scaleX > scaleY) ? scaleX : scaleY;
+
+	desenharReino(menu->background, fundoHeight, scale, screenWidth);
+
+	desenharRetangulo(fundoHeight, screenWidth);
+
+	Vector2 posiçãorei;
+
+	desenharRei(*menu->king,posiçãorei, fundoHeight, screenWidth);
+
+	DrawSideHUDBig(menu->player->health,menu->player->food,menu->player->power);
+
+	RankingHUD(screenHeight);
+
+	writeLevel(screenWidth);
+
+	drawButton(&menu->buttonGame);
+	drawButton(&menu->buttonShop);
+
+	DrawGoldHUDAt(&goldHUD, 20, 20);
+
+};
+
+void drawButton(const Button *button){
+
+    if(!button->isRounded){
+        DrawRectangleRec(button->dimensions, button->isHover ? button->color : button->hoverColor);
+        DrawRectangleLinesEx(button->dimensions, 3, button->lines);
+    }else{
+        DrawRectangleRounded(button->dimensions, 0.2f, 8, button->isHover ? button->color : button->hoverColor);
+        DrawRectangleRoundedLines(button->dimensions, 0.2f, 8, button->lines);
+    }
+
+    int textoLargura = MeasureText(button->text, button->font);
+
+    int textoX = button->dimensions.x + (button->dimensions.width - textoLargura) / 2;
+    int textoY = button->dimensions.y + (button->dimensions.height - button->font) / 2 + 2;
+
+    DrawText(  button->text,
+                textoX,
+                textoY, 
+                button->font, 
+                WHITE );
+}
+
+State updateButton(Button *button){
+	Vector2 mousePos = GetMousePosition();
+	button->isHover = CheckCollisionPointRec(mousePos, button->dimensions);
+
+	if(button->isHover && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) return button->whereToGo;
+	return KEEP;
+};
+
+void createButton(Button *button,State whereToGo,Color color,Color colorHover,Color lines,bool isRounded,const char *text,Rectangle dimensions,int font){
+
+	button->color = color;
+	button->hoverColor = colorHover;
+	button->isHover = false;
+	button->isRounded = isRounded;
+	button->whereToGo = whereToGo;
+	button->dimensions = dimensions;
+	button->font = font;
+	button->lines = lines;
+	strcpy(button->text, text);
+
+};
 
 

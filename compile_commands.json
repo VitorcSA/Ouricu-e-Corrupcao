@@ -1,0 +1,171 @@
+[
+  {
+    "file": "source/criadorMapa.c",
+    "arguments": [
+      "gcc",
+      "-o",
+      "main",
+      "source/criadorMapa.c",
+      "-I",
+      "include"
+    ],
+    "directory": "/home/vitor/Poder-e-Corrupcao",
+    "output": "main"
+  },
+  {
+    "file": "source/dialog.c",
+    "arguments": [
+      "gcc",
+      "-o",
+      "main",
+      "source/dialog.c",
+      "-I",
+      "include"
+    ],
+    "directory": "/home/vitor/Poder-e-Corrupcao",
+    "output": "main"
+  },
+  {
+    "file": "source/enemies.c",
+    "arguments": [
+      "gcc",
+      "-o",
+      "main",
+      "source/enemies.c",
+      "-I",
+      "include"
+    ],
+    "directory": "/home/vitor/Poder-e-Corrupcao",
+    "output": "main"
+  },
+  {
+    "file": "source/extrafunctions.c",
+    "arguments": [
+      "gcc",
+      "-o",
+      "main",
+      "source/extrafunctions.c",
+      "-I",
+      "include"
+    ],
+    "directory": "/home/vitor/Poder-e-Corrupcao",
+    "output": "main"
+  },
+  {
+    "file": "source/game.c",
+    "arguments": [
+      "gcc",
+      "-o",
+      "main",
+      "source/game.c",
+      "-I",
+      "include"
+    ],
+    "directory": "/home/vitor/Poder-e-Corrupcao",
+    "output": "main"
+  },
+  {
+    "file": "source/gamedata.c",
+    "arguments": [
+      "gcc",
+      "-o",
+      "main",
+      "source/gamedata.c",
+      "-I",
+      "include"
+    ],
+    "directory": "/home/vitor/Poder-e-Corrupcao",
+    "output": "main"
+  },
+  {
+    "file": "source/HUD.c",
+    "arguments": [
+      "gcc",
+      "-o",
+      "main",
+      "source/HUD.c",
+      "-I",
+      "include"
+    ],
+    "directory": "/home/vitor/Poder-e-Corrupcao",
+    "output": "main"
+  },
+  {
+    "file": "source/main.c",
+    "arguments": [
+      "gcc",
+      "-o",
+      "main",
+      "source/main.c",
+      "-I",
+      "include"
+    ],
+    "directory": "/home/vitor/Poder-e-Corrupcao",
+    "output": "main"
+  },
+  {
+    "file": "source/manager.c",
+    "arguments": [
+      "gcc",
+      "-o",
+      "main",
+      "source/manager.c",
+      "-I",
+      "include"
+    ],
+    "directory": "/home/vitor/Poder-e-Corrupcao",
+    "output": "main"
+  },
+  {
+    "file": "source/mapa.c",
+    "arguments": [
+      "gcc",
+      "-o",
+      "main",
+      "source/mapa.c",
+      "-I",
+      "include"
+    ],
+    "directory": "/home/vitor/Poder-e-Corrupcao",
+    "output": "main"
+  },
+  {
+    "file": "source/player.c",
+    "arguments": [
+      "gcc",
+      "-o",
+      "main",
+      "source/player.c",
+      "-I",
+      "include"
+    ],
+    "directory": "/home/vitor/Poder-e-Corrupcao",
+    "output": "main"
+  },
+  {
+    "file": "source/salvar.c",
+    "arguments": [
+      "gcc",
+      "-o",
+      "main",
+      "source/salvar.c",
+      "-I",
+      "include"
+    ],
+    "directory": "/home/vitor/Poder-e-Corrupcao",
+    "output": "main"
+  },
+  {
+    "file": "source/telas.c",
+    "arguments": [
+      "gcc",
+      "-o",
+      "main",
+      "source/telas.c",
+      "-I",
+      "include"
+    ],
+    "directory": "/home/vitor/Poder-e-Corrupcao",
+    "output": "main"
+  }
+]
